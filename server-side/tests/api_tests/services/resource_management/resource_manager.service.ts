@@ -14,8 +14,11 @@ export class ResourceManagerService {
         this.activeResources = [];
     }
 
+
     async createAdalTable(schema: AddonDataScheme): Promise<ADALTableService> {
+
         const removableResource: RemovableResource = new ADALTableService(this.papiClient, this.addonUUID, schema);
+
         try {
             await removableResource.initResource();
         }
@@ -23,11 +26,15 @@ export class ResourceManagerService {
             console.error(`createAdalTable: ${ex}`);
             throw new Error((ex as { message: string }).message);
         }
+
         return removableResource;
     }
 
+
     async createRelation(relation: Relation): Promise<RelationService> {
+
         const removableResource: RemovableResource = new RelationService(this.papiClient, relation);
+
         try {
             await removableResource.initResource();
         }
@@ -35,10 +42,13 @@ export class ResourceManagerService {
             console.error(`createRelation: ${ex}`);
             throw new Error((ex as { message: string }).message);
         }
+
         return removableResource;
     }
 
+
     async cleanup(): Promise<any[]> {
+
         const PARALLEL_AMOUNT = 5;
 
         const results: any[] = await Promise.map(this.activeResources,
@@ -48,6 +58,7 @@ export class ResourceManagerService {
             { concurrency: PARALLEL_AMOUNT });
 
         this.activeResources = [];
+
         return results;
     }
 }
