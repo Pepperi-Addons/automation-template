@@ -43,6 +43,17 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
             expect(res).to.have.property('UpToDate').that.is.a('Boolean').and.is.equal(true)
         })
 
+        it('returnURLTest', async () => {
+            const adalService = await syncTestService.getAdalServiceOneField()
+            await adalService.upsertRecord(syncTestService.getAddonDataOneField(1))
+            dateTime.setHours(dateTime.getHours()-1)
+            let auditLog = await syncTestService.callReturnUrlAPI(dateTime.toISOString())
+            expect(auditLog).to.have.property('ResourcesURL').that.is.a('String').and.is.not.undefined
+            let schemes = await syncTestService.getReturnUrlFromAudit(auditLog)
+            adalService.removeResource()
+            expect(schemes).to.contain(syncTestService.getScehmaName())
+        })
+
     })
 
 }

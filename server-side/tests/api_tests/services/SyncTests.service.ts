@@ -24,7 +24,12 @@ export class SyncTestService {
     }
     
 
-   
+    async callReturnUrlAPI(modificationDateTime:string){
+        const baseUrl = `/addons/data/pull?return_url=true`
+        let res = await this.papiClient.post(baseUrl, {ModificationDateTime:modificationDateTime})
+        return res
+    }    
+
     async callSyncPullAPI(modificationDateTime:string) {
         const baseUrl = `/addons/data/pull`
         let res = await this.papiClient.post(baseUrl, {ModificationDateTime:modificationDateTime})
@@ -54,6 +59,46 @@ export class SyncTestService {
         })
         return schemesArray
     }
+
+    async getSchemesFromURL(syncRes:object|any) {
+        let schemesArray: string[] = []
+        syncRes.ResourcesData.map(resource =>{
+            if(resource.Schema.AddonUUID == this.addonUUID){
+                schemesArray.push(resource.Schema.Name)
+            }
+        })
+        return schemesArray
+    }
+
+    getJSON(url: string): Promise<any> {
+        return new Promise((resolve, reject) => {
+          get(url, (res) => {
+              let data = '';
+              res.on('data', (chunk) => {
+                  data += chunk;
+              });
+              res.on('end', () => {
+                  try {
+                    const jsonData = JSON.parse(data);
+                    resolve(jsonData);
+                  } catch (err) {
+                    reject(err);
+                  }
+              });
+          }).on('error', (err) => {
+              reject(err);
+          });
+        });
+      }
+      
+
+    async getReturnUrlFromAudit(syncRes:object) {
+        await this.getAuditLogData(syncRes)
+        let ResourcesURL = this.auditLogRes.ResourcesURL
+        let res = await this.getJSON(ResourcesURL);
+        return this.getSchemesFromURL(res)
+    }
+
     getSchemeWithOneField() {
         const syncSchema:AddonDataScheme = {
             Name: this.schemaName,
