@@ -32,7 +32,19 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
             adalService.removeResource()
             expect(schemes).to.contain(syncTestService.getScehmaName())
         })
+
+        it('futureDate',async()=>{
+            let dateTime = new Date()
+            dateTime.setFullYear(dateTime.getFullYear()+10)
+            const t1 = performance.now()
+            let res =  await syncTestService.callSyncPullAPI(dateTime.toISOString())
+            const t2 = performance.now()
+            expect(t2-t1).to.be.a('Number').and.to.be.lessThanOrEqual(5000)
+            expect(res).to.have.property('UpToDate').that.is.a('Boolean').and.is.equal(true)
+        })
+
     })
+
 }
 
 
