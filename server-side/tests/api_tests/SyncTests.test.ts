@@ -22,56 +22,56 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
         let dateTime = new Date()
 
         it('baseSyncTest', async () => {
+            // creating adal schema and inserting single record
             const adalService = await syncTestService.getAdalServiceOneField()
             await adalService.upsertRecord(syncTestService.getAddonDataOneField(1))
+            // setting modification date time to an hour back for sync testing
             dateTime.setHours(dateTime.getHours()-1)
+            // calling sync api endpoint
             let auditLog = await syncTestService.callSyncPullAPI(dateTime.toISOString())
+            // expecting to have up to date which is false due to the record that was inserted
+            //  expecting execution uri - has the data of the sync action
             expect(auditLog).to.have.property('UpToDate').that.is.a('Boolean').and.is.equal(false)
             expect(auditLog).to.have.property('ExecutionURI').that.is.a('String').and.is.not.undefined
+            // using execution uri getting the data that was updated in sync
             let schemes = await syncTestService.getSchemesFromAudit(auditLog)
+            // dropping adal scheme - for cleanup purposes
             adalService.removeResource()
+            // validating that the created schema is in the sync schemes that was updated
             expect(schemes).to.contain(syncTestService.getScehmaName())
         })
 
         it('futureDate',async()=>{
-            let dateTime = new Date()
+            // adding 10 years to current date for future date validation
             dateTime.setFullYear(dateTime.getFullYear()+10)
+            // checking performance - check time before and after sync request
             const t1 = performance.now()
             let res =  await syncTestService.callSyncPullAPI(dateTime.toISOString())
             const t2 = performance.now()
+            // expecting the future date to take less than 5s
             expect(t2-t1).to.be.a('Number').and.to.be.lessThanOrEqual(5000)
+            // expecting up to date will be true - there are no records with future time
             expect(res).to.have.property('UpToDate').that.is.a('Boolean').and.is.equal(true)
         })
 
         it('returnURLTest', async () => {
+            // creating scheme and record in adal
             const adalService = await syncTestService.getAdalServiceOneField()
             await adalService.upsertRecord(syncTestService.getAddonDataOneField(1))
+            // resetting date and changing to previous hour
+            dateTime = new Date()
             dateTime.setHours(dateTime.getHours()-1)
+            // calling sync pull endpoint and requesting to have a file of changes
             let auditLog = await syncTestService.callReturnUrlAPI(dateTime.toISOString())
+            // validating that the file url is returned
             expect(auditLog).to.have.property('ResourcesURL').that.is.a('String').and.is.not.undefined
             let schemes = await syncTestService.getReturnUrlFromAudit(auditLog)
+            // cleanup
             adalService.removeResource()
+            // validating that the created schema in the file that was received 
             expect(schemes).to.contain(syncTestService.getScehmaName())
         })
 
     })
 
 }
-
-
-// Validate that ADAL object is returned in sync
-
-
-
-
-//  delete object
-
-
-
-
-// check runtime
-
-
-
-
-// connect to CPI side -> get all objects from schema
