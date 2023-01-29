@@ -22,16 +22,18 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
         let dateTime = new Date()
 
         it('baseSyncTest', async () => {
-            const adalService = await syncTestService.getAdalServiceOneField()
-            await adalService.upsertRecord(syncTestService.getAddonDataOneField(1))
+            // initializing adal schema with data, first property is number of fields
+            // second propety is number of characters in each field
+            let adalTable = syncTestService.initAdalTable(1,1)
             dateTime.setHours(dateTime.getHours()-1)
             let auditLog = await syncTestService.callSyncPullAPI(dateTime.toISOString())
             expect(auditLog).to.have.property('UpToDate').that.is.a('Boolean').and.is.equal(false)
             expect(auditLog).to.have.property('ExecutionURI').that.is.a('String').and.is.not.undefined
             let schemes = await syncTestService.getSchemesFromAudit(auditLog)
-            adalService.removeResource()
-            expect(schemes).to.contain(syncTestService.getScehmaName())
+            expect(schemes).to.contain(syncTestService.scehmaName)
         })
+
+        syncTestService.cleanup()
     })
 }
 
