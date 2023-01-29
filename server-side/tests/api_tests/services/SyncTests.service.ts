@@ -12,7 +12,7 @@ export class SyncTestService {
     systemService: GeneralService;
     addonUUID: string;
     schemaName: string;
-    auditLogRes: object | any;
+    activeResources?:ADALTableService[]=[];
 
     constructor(client: Client){
         this.client = client
@@ -20,9 +20,7 @@ export class SyncTestService {
         this.papiClient = this.systemService.papiClient;
         this.addonUUID = "02754342-e0b5-4300-b728-a94ea5e0e8f4";
         this.schemaName="integration_test_schema_of_sync_" + uuid().split('-').join('_');
-        this.auditLogRes = {};
     }
-    
 
     async callReturnUrlAPI(modificationDateTime:string){
         const baseUrl = `/addons/data/pull?return_url=true`
@@ -30,6 +28,19 @@ export class SyncTestService {
         return res
     }    
 
+    async initAdalTable(numberOfFields:number,numberOfCharacters:number) {
+        let adalService = await this.getAdalService(numberOfFields)
+        await adalService.upsertRecord(this.getAddonDataFields(numberOfFields,numberOfCharacters))
+        this.activeResources.push(adalService)
+        return adalService
+    }
+
+    async cleanup() {
+        this.activeResources?.map(async resource=>{
+            await resource.removeResource()
+        })
+    }
+    
     async callSyncPullAPI(modificationDateTime:string) {
         const baseUrl = `/addons/data/pull`
         let res = await this.papiClient.post(baseUrl, {ModificationDateTime:modificationDateTime})
@@ -45,26 +56,13 @@ export class SyncTestService {
         if(res.AuditInfo.Error){
             throw new Error(res.AuditInfo.Error)
         }
-        this.auditLogRes = JSON.parse(res.AuditInfo.ResultObject)
+        return JSON.parse(res.AuditInfo.ResultObject)
     }
 
-    async getSchemesFromAudit(syncRes:object) {
-        await this.getAuditLogData(syncRes)
-        let resultObject = this.auditLogRes
-        let schemesArray: string[] = []
-        resultObject.ResourcesData.map(resource =>{
+    async getSchemesFromAudit(auditLogRes:any) {
+        let schemesArray = auditLogRes.ResourcesData.map(resource =>{
             if(resource.Schema.AddonUUID == this.addonUUID){
-                schemesArray.push(resource.Schema.Name)
-            }
-        })
-        return schemesArray
-    }
-
-    async getSchemesFromURL(syncRes:object|any) {
-        let schemesArray: string[] = []
-        syncRes.ResourcesData.map(resource =>{
-            if(resource.Schema.AddonUUID == this.addonUUID){
-                schemesArray.push(resource.Schema.Name)
+                 return resource.Schema.Name
             }
         })
         return schemesArray
@@ -92,29 +90,16 @@ export class SyncTestService {
       }
       
 
-    async getReturnUrlFromAudit(syncRes:object) {
-        await this.getAuditLogData(syncRes)
-        let ResourcesURL = this.auditLogRes.ResourcesURL
+    async getSchemesFromUrl(syncRes:object) {
+        let auditLogRes = await this.getAuditLogData(syncRes)
+        let ResourcesURL = auditLogRes.ResourcesURL
         let res = await this.getJSON(ResourcesURL);
-        return this.getSchemesFromURL(res)
+        return await this.getSchemesFromAudit(res)
     }
 
-    getSchemeWithOneField() {
-        const syncSchema:AddonDataScheme = {
-            Name: this.schemaName,
-            Type: "data",
-            SyncData: {
-                Sync: true
-            },
-            Fields:{
-                Field1:{Type:"String"}
-            }
-        }
-        return syncSchema
-    }
-    getSchemeWithMultipleFields(fieldNumber:number) {
+    getSchemeWithFields(fieldNumber:number) {
         let fieldNames: {[key:string]:SchemeField} = {}
-        for(let i=0;i<fieldNumber;i++) {
+        for(let i=1;i<fieldNumber+1;i++) {
             let fieldName = "Field"+i
             fieldNames[fieldName]= {"Type": "String"}
         }
@@ -130,29 +115,26 @@ export class SyncTestService {
         return syncSchema
     }
 
-    async getAdalServiceOneField() {
-        const adalService = new ADALTableService(this.papiClient,this.addonUUID,this.getSchemeWithOneField())
+    async getAdalService(numberOfFields:number):Promise<ADALTableService> {
+        const adalSchemaFields = this.getSchemeWithFields(numberOfFields)
+        const adalService = new ADALTableService(this.papiClient,this.addonUUID,adalSchemaFields)
         await adalService.initResource()
         return adalService
     }
 
-    async getAdalSeviceMultipleFields(numberOfFields:number) {
-        const adalSchemaMultipleFields = this.getSchemeWithMultipleFields(numberOfFields)
-        const adalService = new ADALTableService(this.papiClient,this.addonUUID,adalSchemaMultipleFields)
-        await adalService.initResource()
-        return adalService
-    }
-
-    getAddonDataOneField(numberOfCharacters: number){
+    getAddonDataFields(numberOfFields:number ,numberOfCharacters: number){
         let fieldData=''
         for( let i=0; i<numberOfCharacters; i++){
             fieldData+='.'
         }
-        const data: AddonData = {Key: "1", Field1:fieldData}
+        let data: AddonData = {Key: "1", Fields:[]}
+        for(let i=1;i<numberOfFields+1;i++){
+            data.Fields["Field"+i] = fieldData
+        }
         return data
     }
 
-    getScehmaName(){
+    get scehmaName(){
         return this.schemaName
     }
 
