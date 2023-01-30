@@ -1,4 +1,5 @@
-import { NebulaTest } from '../../server-side/tests/api_tests/NebulaTest.test';
+import { DataIndex } from '../tests/api_tests/DataIndex.test';
+import { NebulaTest } from '../tests/api_tests/NebulaTest.test';
 
 import { SchemaExtensions } from '../tests/api_tests/SchemaExtensions.test';
 import GeneralService, { TesterFunctions } from '../potentialQA_SDK/server_side/general.service';
@@ -8,6 +9,8 @@ import { TestDataTests } from '../potentialQA_SDK/server_side/serverInfra.index'
 import fs from 'fs';
 import { UsersTests } from '../tests/api_tests/Users.example.test';
 import { DimxTests } from '../tests/api_tests/DimxTests.test';
+
+import { AddonUUID as AddonUUIDFromAddonConfig } from '../../addon.config.json'; // TODO: remove, part of a temporarily fix
 
 let testName = '';
 let context = {};
@@ -108,6 +111,24 @@ export async function dimx_tests(client: Client, addonClient: Client, request: R
     return (await testerFunctions.run());
 };
 context["dimx_tests"] = dimx_tests;
+
+export async function data_index_where_clause(client: Client, addonClient: Client, request: Request, testerFunctions: TesterFunctions) {
+    // TODO: remove next 3 lines, part of a temporarily fix
+    client.AddonUUID = AddonUUIDFromAddonConfig;
+    let tempService = new GeneralService(client);
+    client.AddonSecretKey = tempService.getSecret()[1];
+
+
+    const service = new GeneralService(client);
+    const serviceAddon = new GeneralService(addonClient);
+    testName = 'DataIndexWhereClause'; //printing your test name - done for logging
+    service.PrintMemoryUseToLog('Start', testName);
+    testerFunctions = service.initiateTesterFunctions(client, testName);
+    await DataIndex(service, serviceAddon, request, testerFunctions);//this is the call to YOUR test function
+    await test_data(client, testerFunctions);//this is done to print versions at the end of test - can be deleted
+    return (await testerFunctions.run());
+};
+context["data_index_where_clause"] = data_index_where_clause;
 
 export async function nebula_test(client: Client, addonClient: Client, request: Request, testerFunctions: TesterFunctions) {
     const service = new GeneralService(client);

@@ -317,7 +317,7 @@ export default class GeneralService {
             sk = this.client.AddonSecretKey;
         } else {
             try {
-                sk = fs.readFileSync('../var_sk', { encoding: 'utf8', flag: 'r' });
+                sk = fs.readFileSync('../../../var_sk', { encoding: 'utf8', flag: 'r' });
             } catch (error) {
                 console.log(`%cSK Not found: ${error}`, ConsoleColors.SystemInformation);
                 sk = '00000000-0000-0000-0000-000000000000';
