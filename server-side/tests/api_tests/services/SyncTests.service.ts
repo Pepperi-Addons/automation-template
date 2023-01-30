@@ -36,9 +36,9 @@ export class SyncTestService {
     }
 
     async cleanup() {
-        this.activeResources?.map(async resource=>{
-            await resource.removeResource()
-        })
+        await Promise.all(this.activeResources.map(resource=>{
+            resource.removeResource()
+        }))
     }
     
     async callSyncPullAPI(modificationDateTime:string) {
