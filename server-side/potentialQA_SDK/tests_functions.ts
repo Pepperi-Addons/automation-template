@@ -1,4 +1,5 @@
 import { DataIndex } from '../tests/api_tests/DataIndex.test';
+import { NebulaTest } from '../tests/api_tests/NebulaTest.test';
 
 import { SchemaExtensions } from '../tests/api_tests/SchemaExtensions.test';
 import GeneralService, { TesterFunctions } from '../potentialQA_SDK/server_side/general.service';
@@ -25,7 +26,8 @@ export async function runTest(addonUUID: string, client: Client, request, tester
     if (request.body.isLocal === undefined) {
         throw Error("Error: isLocal is Mandatory Field Inside Test Request Body");
     }
-    const addonService = client;
+    // copy client object to avoid changing the original client object
+    const addonService = Object.assign({}, client)
     if (request.body.isLocal === "true") {
         addonService.BaseURL = "http://localhost:4500";
     }
@@ -127,3 +129,15 @@ export async function data_index_where_clause(client: Client, addonClient: Clien
     return (await testerFunctions.run());
 };
 context["data_index_where_clause"] = data_index_where_clause;
+
+export async function nebula_test(client: Client, addonClient: Client, request: Request, testerFunctions: TesterFunctions) {
+    const service = new GeneralService(client);
+    const serviceAddon = new GeneralService(addonClient);
+    testName = 'NebulaTest'; //printing your test name - done for logging
+    service.PrintMemoryUseToLog('Start', testName);
+    testerFunctions = service.initiateTesterFunctions(client, testName);
+    await NebulaTest(service, serviceAddon, request, testerFunctions);//this is the call to YOUR test function
+    // await test_data(client, testerFunctions);//this is done to print versions at the end of test - can be deleted
+    return (await testerFunctions.run());
+};
+context["nebula_test"] = nebula_test;
