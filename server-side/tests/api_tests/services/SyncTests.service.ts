@@ -12,7 +12,8 @@ export class SyncTestService {
     systemService: GeneralService;
     addonUUID: string;
     schemaName: string;
-    activeResources?:ADALTableService[]=[];
+    activeResources: ADALTableService[] = [];
+    accountUUID: string;
 
     constructor(client: Client){
         this.client = client
@@ -20,6 +21,7 @@ export class SyncTestService {
         this.papiClient = this.systemService.papiClient;
         this.addonUUID = "02754342-e0b5-4300-b728-a94ea5e0e8f4";
         this.schemaName="integration_test_schema_of_sync_" + uuid().split('-').join('_');
+        this.accountUUID ="0bc8882e-b33b-45ac-8240-5b4fc7d92592"
     }
 
     async callReturnUrlAPI(modificationDateTime:string){
@@ -35,15 +37,27 @@ export class SyncTestService {
         return adalService
     }
 
+    async initAdalAccountRefTable() {
+        let adalService = await this.getAdalServiceAccountRef()
+        await adalService.upsertBatch(this.accountRefData)
+        this.activeResources.push(adalService)
+        return adalService
+    }
+
+    async initAdalUserTable() {
+        let adalService = await this.getAdalServiceUsers()
+        await adalService.upsertBatch(this.userData)
+        this.activeResources.push(adalService)
+        return adalService
+    }
+
     async cleanup() {
-        await Promise.all(this.activeResources.map(resource=>{
-            resource.removeResource()
-        }))
+        await Promise.all(this.activeResources?.map(resource => resource.removeResource()))
     }
     
-    async callSyncPullAPI(modificationDateTime:string) {
+    async callSyncPullAPI(modificationDateTime:string,systemFilter?:any) {
         const baseUrl = `/addons/data/pull`
-        let res = await this.papiClient.post(baseUrl, {ModificationDateTime:modificationDateTime})
+        let res = await this.papiClient.post(baseUrl, {ModificationDateTime:modificationDateTime,SystemFilter:systemFilter})
         return res
     }
 
@@ -115,11 +129,106 @@ export class SyncTestService {
         return syncSchema
     }
 
+    get accountRefScheme(){
+        const syncSchema:AddonDataScheme = {
+            Name: this.schemaName+'_accounts',
+            GenericResource:true,
+            Type: "data",
+            SyncData: {
+                Sync: true
+            },
+            Fields: {
+                AccountUUID: {
+                    Type: "Resource",
+                    Resource: "accounts",
+                    ApplySystemFilter: true
+                },
+                Name:{
+                    Type: "String"
+                }
+            }
+        }
+        return syncSchema
+    }
+
+    get userScheme(){
+        const syncSchema:AddonDataScheme = {
+            Name: this.schemaName+'_users',
+            GenericResource:true,
+            Type: "data",
+            SyncData: {
+                Sync: true
+            },
+            Fields: {
+                UserUUID: {
+                    Type: "Resource",
+                    Resource: "users",
+                    ApplySystemFilter: true
+                },
+                Name:{
+                    Type: "String"
+                }
+            }
+        }
+        return syncSchema
+    }
+
     async getAdalService(numberOfFields:number):Promise<ADALTableService> {
         const adalSchemaFields = this.getSchemeWithFields(numberOfFields)
         const adalService = new ADALTableService(this.papiClient,this.addonUUID,adalSchemaFields)
         await adalService.initResource()
         return adalService
+    }
+
+    async getAdalServiceAccountRef():Promise<ADALTableService>{
+
+        const adalSchemaFields = this.accountRefScheme
+        const adalService = new ADALTableService(this.papiClient,this.addonUUID,adalSchemaFields)
+        await adalService.initResource()
+        return adalService
+    }
+
+    async getAdalServiceUsers():Promise<ADALTableService>{
+        const adalSchemaFields = this.userScheme
+        const adalService = new ADALTableService(this.papiClient,this.addonUUID,adalSchemaFields)
+        await adalService.initResource()
+        return adalService
+    }
+
+    get accountRefData(){
+        let data:AddonData[]=[
+            {   Key:"1",
+                AccountUUID: "0bc8882e-b33b-45ac-8240-5b4fc7d92592",
+                Name : "1"
+            },
+            {
+                Key:"2",
+                AccountUUID: "0bc8882e-b33b-45ac-8240-5b4fc7d92592",
+                Name : "2"
+            },{
+                Key:"3",
+                AccountUUID: "56dcc8e7-a951-4b35-8d28-54c2cb2dacdf",
+                Name : "3"
+            }]
+        return data
+    }
+
+    get userData(){
+        let data:AddonData[]=[
+            {   Key:"1",
+                UserUUID: "3f122e90-239d-46c3-b3c7-57940b2363ae",
+                Name : "1"
+            },
+            {
+                Key:"2",
+                UserUUID: "5ea6471a-0324-4f5e-90ff-df03fb7cd6f6",
+                Name : "2"
+            },{
+                Key:"3",
+                UserUUID: "3aaa3fd5-808f-4dfb-9431-f545de26d0d3",
+                Name : "3"
+            }]
+        return data
     }
 
     getAddonDataFields(numberOfFields:number ,numberOfCharacters: number){
@@ -132,6 +241,12 @@ export class SyncTestService {
             data.Fields["Field"+i] = fieldData
         }
         return data
+    }
+    getSystemFilter(account:boolean,webapp:boolean){
+        let Type = account ? 'Account' : webapp? 'User' : 'None'
+        let SystemFilter = {Type: Type }
+        account ? SystemFilter["AccountUUID"] = this.accountUUID : undefined
+        return SystemFilter
     }
 
     get scehmaName(){
