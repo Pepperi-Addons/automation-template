@@ -1,5 +1,7 @@
 import { ADALTableService } from "../../resource_management/adal_table.service";
 import { SyncTestService } from "../services/sync-tests-service";
+import { AuditLogService } from "../services/audit-log-service";
+import { SyncAdalService } from "../services/sync-adal-service";
 
 export interface TestCommand {
     setupSchemes(): Promise<any>;
@@ -11,9 +13,13 @@ export interface TestCommand {
 
 export class BaseCommand implements TestCommand {
     protected syncTestService: SyncTestService;
+    protected auditLogService: AuditLogService;
+    protected syncAdalService: SyncAdalService;
   
-    constructor(syncTestService: SyncTestService) {
+    constructor(syncTestService: SyncTestService,auditLogService:AuditLogService,syncAdalService:SyncAdalService) {
         this.syncTestService = syncTestService;
+        this.auditLogService= auditLogService;
+        this.syncAdalService = syncAdalService;
     }
     setupSchemes(): Promise<any> {
         throw new Error("Method not implemented.");

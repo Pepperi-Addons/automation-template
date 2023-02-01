@@ -4,6 +4,8 @@ import { Client } from "@pepperi-addons/debug-server/dist";
 import { performance } from "perf_hooks";
 import { CommandFactory } from "./services/sync/test-commands/factory/commands-factory";
 import { TestCommand } from "./services/sync/test-commands/base-command";
+import { AuditLogService } from "./services/sync/services/audit-log-service";
+import { SyncAdalService } from "./services/sync/services/sync-adal-service";
 
 // create ADAL Object
 
@@ -17,16 +19,18 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
         const client: Client = generalService['client']
         const addonUUID = "5122dc6d-745b-4f46-bb8e-bd25225d350a";
         const syncTestService = new SyncTestService(client)
+        const auditLogService = new AuditLogService(client)
+        const syncAdalService = new SyncAdalService(client)
         const papiClient = addonService.papiClient; 
       
         let tests: Test[] = [
           {
             name: 'BaseSyncTest',
-            command: CommandFactory.createCommand('BaseSyncTest', syncTestService)
+            command: CommandFactory.createCommand('BaseSyncTest', syncTestService,auditLogService,syncAdalService)
           },
           {
             name: 'FutureDateCommand',
-            command: CommandFactory.createCommand('FutureDateTest', syncTestService)
+            command: CommandFactory.createCommand('FutureDateTest', syncTestService,auditLogService,syncAdalService)
           },
         ];
       
