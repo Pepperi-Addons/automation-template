@@ -1,8 +1,8 @@
 import { AddonDataScheme, SchemeField, PapiClient,AddonData } from "@pepperi-addons/papi-sdk"
-import  GeneralService from "../../../potentialQA_SDK/server_side/general.service";
+import  GeneralService from "../../../../../potentialQA_SDK/server_side/general.service";
 import { Client } from  '@pepperi-addons/debug-server'
 import { v4 as uuid } from 'uuid';
-import { ADALTableService } from "./resource_management/adal_table.service";
+import { ADALTableService } from "../../resource_management/adal_table.service";
 import { AddonEndpoint } from "@pepperi-addons/papi-sdk/dist/endpoints";
 import { get } from "https"; 
 
@@ -12,7 +12,7 @@ export class SyncTestService {
     systemService: GeneralService;
     addonUUID: string;
     schemaName: string;
-    activeResources?:ADALTableService[];
+    adalServcies:ADALTableService[] = [];
 
     constructor(client: Client){
         this.client = client
@@ -22,15 +22,8 @@ export class SyncTestService {
         this.schemaName="integration_test_schema_of_sync_" + uuid().split('-').join('_');
     }
 
-    async initAdalTable(numberOfFields:number,numberOfCharacters:number) {
-        let adalService = await this.getAdalService(numberOfFields)
-        await adalService.upsertRecord(this.getAddonDataFields(numberOfFields,numberOfCharacters))
-        this.activeResources?.push(adalService)
-        return adalService
-    }
-
     async cleanup() {
-        this.activeResources?.map(async resource=>{
+        this.adalServcies?.map(async resource=>{
             await resource.removeResource()
         })
     }
@@ -63,7 +56,8 @@ export class SyncTestService {
         })
         return schemesArray
     }
-    getSchemeWithFields(fieldNumber:number) {
+
+    generateSchemeWithFields(fieldNumber:number): AddonDataScheme {
         let fieldNames: {[key:string]:SchemeField} = {}
         for(let i=1;i<fieldNumber+1;i++) {
             let fieldName = "Field"+i
@@ -81,14 +75,14 @@ export class SyncTestService {
         return syncSchema
     }
 
-    async getAdalService(numberOfFields:number):Promise<ADALTableService> {
-        const adalSchemaFields = this.getSchemeWithFields(numberOfFields)
-        const adalService = new ADALTableService(this.papiClient,this.addonUUID,adalSchemaFields)
+    async getAdalService(schema: AddonDataScheme):Promise<ADALTableService> {
+        const adalService = new ADALTableService(this.papiClient,this.addonUUID, schema)
         await adalService.initResource()
+        this.adalServcies.push(adalService)
         return adalService
     }
 
-    getAddonDataFields(numberOfFields:number ,numberOfCharacters: number){
+    generateFieldsData(numberOfFields:number ,numberOfCharacters: number): AddonData{
         let fieldData=''
         for( let i=0; i<numberOfCharacters; i++){
             fieldData+='.'
