@@ -40,7 +40,7 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
           });
         }
       
-        syncTestService.cleanup();
+        await syncAdalService.cleanup();
     });
 }
 
