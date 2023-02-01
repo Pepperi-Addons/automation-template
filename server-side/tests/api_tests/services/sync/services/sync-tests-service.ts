@@ -27,7 +27,9 @@ export class SyncTestService {
             await resource.removeResource()
         })
     }
-    
+    async sleep(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms))
+    } 
     async callSyncPullAPI(modificationDateTime:string) {
         const baseUrl = `/addons/data/pull`
         let res = await this.papiClient.post(baseUrl, {ModificationDateTime:modificationDateTime})

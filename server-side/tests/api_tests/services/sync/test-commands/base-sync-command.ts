@@ -1,6 +1,7 @@
 import { ADALTableService } from "../../resource_management/adal_table.service";
 import { BaseCommand as BaseCommand } from "./base-command";
 
+
 export class BaseSyncCommand extends BaseCommand {    
   
     async setupSchemes(): Promise<ADALTableService> {
@@ -15,6 +16,7 @@ export class BaseSyncCommand extends BaseCommand {
         // second propety is number of characters in each field
         const data = this.syncTestService.generateFieldsData(1,1)
         await adalService.upsertRecord(data)
+        await this.syncTestService.sleep(10000)
     }
 
     async syncData(): Promise<any> {
