@@ -19,6 +19,13 @@ export class SyncAdalService {
         this.addonUUID = "02754342-e0b5-4300-b728-a94ea5e0e8f4";
         this.schemaName="integration_test_schema_of_sync_" + uuid().split('-').join('_');
     }
+
+    async cleanup() {
+        await Promise.all(this.adalServcies.map(resource=>{
+            resource.removeResource()
+        }))
+    }
+
     generateSchemeWithFields(fieldNumber:number): AddonDataScheme {
     let fieldNames: {[key:string]:SchemeField} = {}
     for(let i=1;i<fieldNumber+1;i++) {
