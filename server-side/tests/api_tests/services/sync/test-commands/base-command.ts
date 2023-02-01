@@ -5,7 +5,7 @@ export interface TestCommand {
     setupSchemes(): Promise<any>;
     pushData(adalService: ADALTableService): Promise<any>;
     syncData(): Promise<any>;
-    test(objToTest: any, expect: Chai.ExpectStatic)
+    test(objToTest: any, expect: Chai.ExpectStatic): Promise<any>;
     execute(expect: Chai.ExpectStatic): Promise<void>;
 }
 
@@ -24,7 +24,7 @@ export class BaseCommand implements TestCommand {
     syncData(): Promise<any> {
         throw new Error("Method not implemented.");
     }
-    test(objToTest: any, expect: Chai.ExpectStatic) {
+    test(objToTest: any, expect: Chai.ExpectStatic): Promise<any> {
         throw new Error("Method not implemented.");
     }
     async execute(expect: Chai.ExpectStatic): Promise<void> {

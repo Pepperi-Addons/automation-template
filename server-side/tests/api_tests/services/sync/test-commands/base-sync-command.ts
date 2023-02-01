@@ -25,7 +25,7 @@ export class BaseSyncCommand extends BaseCommand {
         return auditLog
     }
     
-    async test(auditLog: any, expect: Chai.ExpectStatic) {
+    async test(auditLog: any, expect: Chai.ExpectStatic): Promise<any> {
         // tests
         expect(auditLog).to.have.property('UpToDate').that.is.a('Boolean').and.is.equal(false)
         expect(auditLog).to.have.property('ExecutionURI').that.is.a('String').and.is.not.undefined
