@@ -28,6 +28,10 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
             name: 'BaseSyncTest',
             command: CommandFactory.createCommand('BaseSyncTest', syncTestService,auditLogService,syncAdalService)
           },
+          {
+            name: 'FutureDateCommand',
+            command: CommandFactory.createCommand('FutureDateTest', syncTestService,auditLogService,syncAdalService)
+          },
         ];
       
         for (const test of tests) {
@@ -36,7 +40,7 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
           });
         }
       
-        await syncAdalService.cleanup();
+        syncTestService.cleanup();
     });
 }
 
