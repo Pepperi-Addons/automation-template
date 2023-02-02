@@ -117,7 +117,7 @@ export async function sync_tests(client: Client, addonClient: Client, request: R
     testName = 'SyncTests'; //printing your test name - done for logging
     service.PrintMemoryUseToLog('Start', testName);
     testerFunctions = service.initiateTesterFunctions(client, testName);
-    await SyncTests(service, serviceAddon, request,testerFunctions) //this is done to print versions at the end of test - can be deleted
+    await SyncTests(service, serviceAddon, request,testerFunctions)
     return (await testerFunctions.run());
 };
 context["sync_tests"] = sync_tests;

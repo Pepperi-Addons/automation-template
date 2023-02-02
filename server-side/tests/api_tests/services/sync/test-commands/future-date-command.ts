@@ -13,7 +13,7 @@ export class FutureDateCommand extends BaseCommand{
         let dateTime = new Date();
         dateTime.setFullYear(dateTime.getFullYear()+1)
         const t1 = performance.now()
-        let auditLog = await this.syncTestService.callSyncPullAPI(dateTime.toISOString())
+        let auditLog = await this.syncService.pull(dateTime.toISOString())
         const t2 = performance.now()
         return {auditLog: auditLog, requesttime:t1-t2}
     }

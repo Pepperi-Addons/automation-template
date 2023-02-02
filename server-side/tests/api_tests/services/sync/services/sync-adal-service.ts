@@ -8,46 +8,51 @@ export class SyncAdalService {
     client : Client
     papiClient: PapiClient;
     systemService: GeneralService;
-    addonUUID: string;
+    addonUUID:string;
     schemaName: string;
-    adalServcies:ADALTableService[] = [];
+    adalServices:ADALTableService[] = [];
 
     constructor(client: Client){
         this.client = client
         this.systemService= new GeneralService(this.client)
         this.papiClient = this.systemService.papiClient;
-        this.addonUUID = "02754342-e0b5-4300-b728-a94ea5e0e8f4";
-        this.schemaName="integration_test_schema_of_sync_" + uuid().split('-').join('_');
+        this.schemaName="";
+        this.addonUUID = '02754342-e0b5-4300-b728-a94ea5e0e8f4'
+    }
+
+    generateScehmaName(suffix?: string){
+        this.schemaName = "integration_test_schema_of_sync_" + uuid().split('-').join('_')+(suffix ? suffix: '')
+        return this.schemaName
     }
 
     async cleanup() {
-        await Promise.all(this.adalServcies.map(resource=>{
+        return await Promise.all(this.adalServices.map(resource=>{
             resource.removeResource()
         }))
     }
 
     generateSchemeWithFields(fieldNumber:number): AddonDataScheme {
-    let fieldNames: {[key:string]:SchemeField} = {}
-    for(let i=1;i<fieldNumber+1;i++) {
-        let fieldName = "Field"+i
-        fieldNames[fieldName]= {"Type": "String"}
-    }
+        let fieldNames: AddonDataScheme['Fields'] = {}
+        for(let i=1;i<fieldNumber+1;i++) {
+            let fieldName = "Field"+i
+            fieldNames[fieldName]= {"Type": "String"}
+        }
 
-    const syncSchema:AddonDataScheme = {
-        Name: this.schemaName,
-        Type: "data",
-        SyncData: {
-            Sync: true
-        },
-        Fields: fieldNames
-    }
-    return syncSchema
+        const syncSchema:AddonDataScheme = {
+            Name: this.generateScehmaName(),
+            Type: "data",
+            SyncData: {
+                Sync: true
+            },
+            Fields: fieldNames
+        }
+        return syncSchema
     }
 
     async getAdalService(schema: AddonDataScheme):Promise<ADALTableService> {
         const adalService = new ADALTableService(this.papiClient,this.addonUUID, schema)
         await adalService.initResource()
-        this.adalServcies.push(adalService)
+        this.adalServices.push(adalService)
         return adalService
     }
 
