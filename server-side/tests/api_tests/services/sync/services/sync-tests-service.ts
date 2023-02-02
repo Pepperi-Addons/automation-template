@@ -3,7 +3,7 @@ import  GeneralService from "../../../../../potentialQA_SDK/server_side/general.
 import { Client } from  '@pepperi-addons/debug-server'
 import { ADALTableService } from "../../resource_management/adal_table.service";
 
-export class SyncTestService {
+export class SyncService {
     client : Client
     papiClient: PapiClient;
     systemService: GeneralService;
@@ -20,7 +20,13 @@ export class SyncTestService {
         return new Promise((resolve) => setTimeout(resolve, ms))
     } 
     
-    async callSyncPullAPI(modificationDateTime:string,return_url: boolean) {
+    async nebulaCleanRebuild(){
+        const baseUrl = `/addons/api/00000000-0000-0000-0000-000000006a91/api/clean_rebuild`
+        let res = await this.papiClient.post(baseUrl)
+        return res
+    }
+
+    async pull(modificationDateTime:string,return_url:boolean) {
         const baseUrl = return_url ? `/addons/api/5122dc6d-745b-4f46-bb8e-bd25225d350a/api/sync_adal_data?return_url=true` : `/addons/data/pull`
         let res = await this.papiClient.post(baseUrl, {ModificationDateTime:modificationDateTime})
         return res

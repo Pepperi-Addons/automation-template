@@ -1,6 +1,6 @@
 import { BaseCommand } from "./base-command";
 
-export class CleanupCommand extends BaseCommand{
+export class CleanRebuild extends BaseCommand{
     setupSchemes(): Promise<any> {
         return Promise.resolve(undefined);
     }
@@ -11,6 +11,6 @@ export class CleanupCommand extends BaseCommand{
         return Promise.resolve(undefined);
     }
     async test(expect: Chai.ExpectStatic): Promise<any> {
-        return await this.syncAdalService.cleanup();
+        return await this.syncService.nebulaCleanRebuild();
     }
 }

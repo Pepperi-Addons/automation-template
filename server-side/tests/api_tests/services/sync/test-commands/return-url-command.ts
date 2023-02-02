@@ -1,7 +1,9 @@
 import { ADALTableService } from "../../resource_management/adal_table.service"
-import { BaseSyncCommand } from "./base-sync-command"
-
-export class ReturnURLCommand extends BaseSyncCommand {
+import { SchemaExistsCommand } from "./schema-exists-command";
+export class ReturnURLCommand extends SchemaExistsCommand {
+    syncTestService: any;
+    auditLogService: any;
+    syncAdalService: any;
     async syncData(): Promise<any> {
         let dateTime = new Date();
         dateTime.setHours(dateTime.getHours()-1)

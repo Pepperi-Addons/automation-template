@@ -2,7 +2,7 @@ import { ADALTableService } from "../../resource_management/adal_table.service";
 import { BaseCommand as BaseCommand } from "./base-command";
 
 
-export class BaseSyncCommand extends BaseCommand {    
+export class SchemaExistsCommand extends BaseCommand {    
   
     async setupSchemes(): Promise<ADALTableService> {
         // generate schema with fields
@@ -16,14 +16,14 @@ export class BaseSyncCommand extends BaseCommand {
         // second propety is number of characters in each field
         const data = this.syncAdalService.generateFieldsData(1,1)
         await adalService.upsertRecord(data)
-        this.syncTestService.sleep(5000)
+        await this.syncService.sleep(this.TIME_TO_SLEEP_FOR_ADAL)
     }
 
     async syncData(): Promise<any> {
         // start sync
         let dateTime = new Date();
         dateTime.setHours(dateTime.getHours()-1)
-        let auditLog = await this.syncTestService.callSyncPullAPI(dateTime.toISOString(),false)
+        let auditLog = await this.syncService.pull(dateTime.toISOString(),false)
         return auditLog
     }
     

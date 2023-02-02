@@ -1,5 +1,7 @@
 import { BaseCommand } from "./base-command";
 
+// Passing a future time to sync should not return data,
+// the result shuold be sync is up to date and should return in no more than 5 Seconds
 export class FutureDateCommand extends BaseCommand{
     setupSchemes(): Promise<any> {
         return Promise.resolve(undefined);
@@ -11,7 +13,7 @@ export class FutureDateCommand extends BaseCommand{
         let dateTime = new Date();
         dateTime.setFullYear(dateTime.getFullYear()+1)
         const t1 = performance.now()
-        let auditLog = await this.syncTestService.callSyncPullAPI(dateTime.toISOString(),false)
+        let auditLog = await this.syncService.pull(dateTime.toISOString(),false)
         const t2 = performance.now()
         return {auditLog: auditLog, requesttime:t1-t2}
     }
