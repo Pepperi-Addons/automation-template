@@ -68,7 +68,7 @@ export async function NebulaTest(generalService: GeneralService, addonService: G
             performanceManager.stopMeasure(`Test 1`);
         })
 
-    })
+    });
 
     describe('NebulaTest Suites', () => {
         const nebulatestService = NebulaServiceFactory.getNebulaService(generalService, addonService.papiClient, dataObj, isLocal);
@@ -1645,6 +1645,75 @@ export async function NebulaTest(generalService: GeneralService, addonService: G
                 await cleanUp(resourceManager, performanceManager);
             });
         });
+
+        describe('Hidden table with documents', () => {
+
+            // Preparations parameters
+            const timeStampBeforeCreation = new Date().toISOString();
+            const futuristicTimeStamp = new Date(Date.now() + 1000 /*sec*/ * 60 /*min*/ * 60 /*hour*/ * 24 /*day*/ * 10).toISOString();
+            let usersSchemaService: ADALTableService | undefined = undefined;
+
+            it('Preparations - create a table pointing to users.', async () => {
+                usersSchemaService = await resourceManager.createAdalTable(getSchemaPointingToUsers());
+                await nebulatestService.pnsInsertSchema(testingAddonUUID, usersSchemaService!.schemaName!);
+                console.debug(`Users Schema: ${usersSchemaService?.schemaName}`);
+            });
+
+            it('Preparations - wait for PNS after table creation.', async () => {
+                await nebulatestService.waitForPNS();
+            });
+
+            it('Preparations - upsert documents into table pointing to users.', async () => {
+                const userDocuments: AddonData[] = [{
+                    Key: '1',
+                    field1: getCurrentUserUUID(addonService.papiClient)
+                }];
+                await usersSchemaService!.upsertBatch(userDocuments);
+                await nebulatestService.pnsInsertRecords(testingAddonUUID, usersSchemaService!.schemaName!, (userDocuments as BasicRecord[]));
+            });
+
+            it('Preparations - wait for PNS after documents upsertion.', async () => {
+                await nebulatestService.waitForPNS();
+            });
+
+            it('Preparations - hide table.', async () => {
+                const schema = usersSchemaService!.getSchema();
+                schema.Hidden = true;
+                await usersSchemaService!.updateSchema(schema);
+                await nebulatestService.pnsUpdateSchemaHiddenStatus(testingAddonUUID, usersSchemaService!.schemaName!, true);
+            });
+
+            it('Preparations - wait for PNS after table creation.', async () => {
+                await nebulatestService.waitForPNS();
+            });
+
+            it('System filter type "None", expect to not get hidden table', async () => {
+                // Get schemas that have the account in their path
+                const filter = buildSystemFilter('None');
+                const getResourcesRequiringSyncParameters = buildGetResourcesRequiringSyncParameters(timeStampBeforeCreation, true, filter);
+                const resourcesRequiringSync = await nebulatestService.getResourcesRequiringSync(getResourcesRequiringSyncParameters);
+
+                // Check that expected schemas are in response
+                expect(resourcesRequiringSync).to.not.be.undefined;
+
+                const schemaPointingToUsers = resourcesRequiringSync.find(resource => {
+                    return (resource.Resource === usersSchemaService!.schemaName && resource.AddonUUID === automationAddonUUID);
+                });
+                expect(schemaPointingToUsers).to.be.undefined;
+            });
+
+            it('Cleanup - unhide table for purging.', async () => {
+                const schema = usersSchemaService!.getSchema();
+                schema.Hidden = false;
+                await usersSchemaService!.updateSchema(schema);
+                await nebulatestService.pnsUpdateSchemaHiddenStatus(testingAddonUUID, usersSchemaService!.schemaName!, true);
+            });
+
+            it(`Cleanup Of All Inserted Data and print performance statistics`, async () => {
+                await cleanUp(resourceManager, performanceManager);
+            });
+        });
+
     });
 }
 
