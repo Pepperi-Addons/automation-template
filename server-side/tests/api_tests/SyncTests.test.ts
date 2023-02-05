@@ -29,13 +29,13 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
             command: CommandFactory.createCommand('SchemaExistsTest', syncAdalService, client)
           },
           {
-            name: 'CleanupCommand',
-            command: CommandFactory.createCommand('CleanupCommand', syncAdalService, client)
+            name: 'FutureDateCommand',
+            command: CommandFactory.createCommand('FutureDateCommand', syncAdalService, client)
           },
           {
-            name: 'FutureDateCommand',
-            command: CommandFactory.createCommand('FutureDateTest', syncService,auditLogService,syncAdalService)
-          },
+            name: 'CleanupCommand',
+            command: CommandFactory.createCommand('CleanupCommand', syncAdalService, client)
+          }
         ];
       
         for (const test of tests) {
