@@ -10,7 +10,7 @@ export class SyncAdalService {
     systemService: GeneralService;
     addonUUID:string;
     schemaName: string;
-    adalServices:ADALTableService[] = [];
+    adalResources:ADALTableService[] = [];
 
     constructor(client: Client){
         this.client = client
@@ -26,9 +26,7 @@ export class SyncAdalService {
     }
 
     async cleanup() {
-        return await Promise.all(this.adalServices.map(resource=>{
-            resource.removeResource()
-        }))
+        return await Promise.all(this.adalResources.map(resource=> resource.removeResource()))
     }
 
     generateSchemeWithFields(fieldNumber:number): AddonDataScheme {
@@ -52,7 +50,7 @@ export class SyncAdalService {
     async getAdalService(schema: AddonDataScheme):Promise<ADALTableService> {
         const adalService = new ADALTableService(this.papiClient,this.addonUUID, schema)
         await adalService.initResource()
-        this.adalServices.push(adalService)
+        this.adalResources.push(adalService)
         return adalService
     }
 

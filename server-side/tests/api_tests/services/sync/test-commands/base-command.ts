@@ -16,13 +16,13 @@ export class BaseCommand implements TestCommand {
     protected syncService: SyncService;
     protected auditLogService: AuditLogService;
     protected syncAdalService: SyncAdalService;
-    protected TIME_TO_SLEEP_FOR_ADAL: number
+    protected TIME_TO_SLEEP_FOR_NEBULA: number
   
     constructor(syncAdalService:SyncAdalService, client: Client) {
         this.syncService = new SyncService(client)
         this.auditLogService = new AuditLogService(client)
         this.syncAdalService = syncAdalService;
-        this.TIME_TO_SLEEP_FOR_ADAL = 5000;
+        this.TIME_TO_SLEEP_FOR_NEBULA = 8000;
     }
     setupSchemes(): Promise<any> {
         throw new Error("Method not implemented.");

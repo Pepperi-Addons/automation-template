@@ -1,6 +1,7 @@
 import { Client } from "@pepperi-addons/debug-server/dist";
 import { PapiClient } from "@pepperi-addons/papi-sdk";
 import GeneralService from "../../../../../potentialQA_SDK/server_side/general.service";
+import { GlobalService } from "./global-service";
 import { SyncService } from "./sync-tests-service";
 
 export class AuditLogService {
@@ -22,7 +23,7 @@ export class AuditLogService {
     async getAuditLogData(syncRes:any){
         let res = await this.papiClient.get(syncRes['ExecutionURI'])
         while(res.Status.Name =='InProgress'){
-            await this.syncService.sleep(this.TIME_TO_SLEEP_FOR_AUDIT)
+            await GlobalService.sleep(this.TIME_TO_SLEEP_FOR_AUDIT)
             res = await this.papiClient.get(syncRes['ExecutionURI'])
         }
         if(res.AuditInfo.Error){

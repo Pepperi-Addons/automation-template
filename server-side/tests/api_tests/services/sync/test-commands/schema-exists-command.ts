@@ -17,7 +17,7 @@ export class SchemaExistsCommand extends BaseCommand {
         // second propety is number of characters in each field
         const data = this.syncAdalService.generateFieldsData(1,1)
         await adalService.upsertRecord(data)
-        await GlobalService.sleep(this.TIME_TO_SLEEP_FOR_ADAL)
+        await GlobalService.sleep(this.TIME_TO_SLEEP_FOR_NEBULA)
     }
 
     async syncData(): Promise<any> {
