@@ -1,7 +1,8 @@
+import { Client } from "@pepperi-addons/debug-server/dist";
 import { ADALTableService } from "../../resource_management/adal_table.service";
-import { AuditLogService } from "../services/audit-log-service";
+import { GlobalSyncService } from "../services/global-service";
 import { SyncAdalService } from "../services/sync-adal-service";
-import { SyncService } from "../services/sync-tests-service";
+import { TIME_TO_SLEEP_FOR_NEBULA } from "../services/sync-tests-service";
 import { SystemFilterService } from "../services/system-filter-service";
 import { BaseCommand as BaseCommand } from "./base-command";
 
@@ -9,9 +10,10 @@ import { BaseCommand as BaseCommand } from "./base-command";
 export class SystemFilterNone extends BaseCommand {
     protected systemFilterService: SystemFilterService; 
     protected adalTableServices? : {account:ADALTableService,user:ADALTableService,none:ADALTableService}
-    constructor(syncService: SyncService,auditLogService:AuditLogService,syncAdalService:SyncAdalService,systemFilterService:SystemFilterService){
-        super(syncService,auditLogService,syncAdalService)
-        this.systemFilterService = systemFilterService
+    auditLogService: any;
+    constructor(adalTableService: SyncAdalService,client:Client){
+        super(adalTableService, client)
+        this.systemFilterService = new SystemFilterService(client)
     } 
   
     async setupSchemes(): Promise<any> {
@@ -35,7 +37,7 @@ export class SystemFilterNone extends BaseCommand {
         await adalService.user.upsertBatch(userData)
         const noneData = this.systemFilterService.generateSystemFilterData(false,false)
         await adalService.none.upsertBatch(noneData)
-        await this.syncService.sleep(this.TIME_TO_SLEEP_FOR_ADAL)
+        await GlobalSyncService.sleep(TIME_TO_SLEEP_FOR_NEBULA)
     }
 
     async syncData(): Promise<any> {
@@ -43,7 +45,10 @@ export class SystemFilterNone extends BaseCommand {
         let dateTime = new Date();
         dateTime.setHours(dateTime.getHours()-1)
         const systemFilter = this.systemFilterService.getSystemFilter(false,false)
-        let auditLog = await this.syncService.pull(dateTime.toISOString(),false, systemFilter)
+        let auditLog = await this.syncService.pull({
+            ModificationDateTime:dateTime.toISOString(),
+            ...systemFilter
+        },false)
         return auditLog
     }
     

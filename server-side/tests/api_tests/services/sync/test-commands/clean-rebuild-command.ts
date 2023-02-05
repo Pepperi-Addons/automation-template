@@ -7,10 +7,13 @@ export class CleanRebuild extends BaseCommand{
     pushData(): Promise<any> {
         return Promise.resolve(undefined);
     }
-    syncData(): Promise<any> {
+    processSyncResponse(syncRes: any): Promise<any> {
+        return Promise.resolve(undefined)
+    }
+    sync(): Promise<any> {
         return Promise.resolve(undefined);
     }
-    async test(expect: Chai.ExpectStatic): Promise<any> {
+    async test(objToTest: any,syncData:any, expect: Chai.ExpectStatic): Promise<any> {
         return await this.syncService.nebulaCleanRebuild();
     }
 }
