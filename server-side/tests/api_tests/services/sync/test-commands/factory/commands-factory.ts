@@ -1,5 +1,6 @@
 import { SchemaExistsCommand } from "../schema-exists-command";
 import { TestCommand } from "../base-command";
+import { FutureDateCommand } from "../future-date-command";
 import { SyncAdalService } from "../../services/sync-adal-service";
 import { CleanupCommand } from "../cleanup-command";
 import { CleanRebuild } from "../clean-rebuild-command";
@@ -10,6 +11,7 @@ export class CommandFactory {
   private static commandMap = {
     CleanRebuild: CleanRebuild,
     SchemaExistsTest: SchemaExistsCommand,
+    FutureDateCommand: FutureDateCommand,
     CleanupCommand: CleanupCommand,
   };
 

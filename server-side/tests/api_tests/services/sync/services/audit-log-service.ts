@@ -29,7 +29,6 @@ export class AuditLogService {
         if(res.AuditInfo.Error){
             throw new Error(res.AuditInfo.Error)
         }
-        // console.log(res)
         return JSON.parse(res.AuditInfo.ResultObject)
     }
 
