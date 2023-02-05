@@ -3,7 +3,9 @@ export class ReturnURLCommand extends SchemaExistsCommand {
     async syncData(): Promise<any> {
         let dateTime = new Date();
         dateTime.setHours(dateTime.getHours()-1)
-        let auditLog = await this.syncService.pull(dateTime.toISOString(),true)
+        let auditLog = await this.syncService.pull({
+            ModificationDateTime: dateTime.toISOString(),
+        },true)
         return auditLog
     }
     async test(auditLog: any, expect: Chai.ExpectStatic): Promise<any> {

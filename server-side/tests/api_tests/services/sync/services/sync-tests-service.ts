@@ -26,13 +26,17 @@ export class SyncService {
         return res
     }
 
-    async pull(modificationDateTime:string,return_url:boolean) {
+    async pull(options: PullOptions,return_url: boolean = false) {
         const baseUrl = return_url ? `/addons/api/5122dc6d-745b-4f46-bb8e-bd25225d350a/api/sync_adal_data?return_url=true` : `/addons/data/pull`
-        let res = await this.papiClient.post(baseUrl, {ModificationDateTime:modificationDateTime})
+        let res = await this.papiClient.post(baseUrl, options)
         return res
     }
 
 }
 
+export interface PullOptions {
+    ModificationDateTime: string;
+    SystemFilter?: object;
+}
 
 
