@@ -8,6 +8,7 @@ import { TestDataTests } from '../potentialQA_SDK/server_side/serverInfra.index'
 import fs from 'fs';
 import { UsersTests } from '../tests/api_tests/Users.example.test';
 import { DimxTests } from '../tests/api_tests/DimxTests.test';
+import { SyncTests } from '../tests/api_tests/SyncTests.test';
 
 import { AddonUUID as AddonUUIDFromAddonConfig } from '../../addon.config.json'; // TODO: remove, part of a temporarily fix
 
@@ -109,6 +110,17 @@ export async function dimx_tests(client: Client, addonClient: Client, request: R
     return (await testerFunctions.run());
 };
 context["dimx_tests"] = dimx_tests;
+
+export async function sync_tests(client: Client, addonClient: Client, request: Request, testerFunctions: TesterFunctions) {
+    const service = new GeneralService(client);
+    const serviceAddon = new GeneralService(addonClient)
+    testName = 'SyncTests'; //printing your test name - done for logging
+    service.PrintMemoryUseToLog('Start', testName);
+    testerFunctions = service.initiateTesterFunctions(client, testName);
+    await SyncTests(service, serviceAddon, request,testerFunctions)
+    return (await testerFunctions.run());
+};
+context["sync_tests"] = sync_tests;
 
 export async function data_index_where_clause(client: Client, addonClient: Client, request: Request, testerFunctions: TesterFunctions) {
     // TODO: remove next 3 lines, part of a temporarily fix
