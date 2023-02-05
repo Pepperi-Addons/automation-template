@@ -1,10 +1,7 @@
 import GeneralService, { TesterFunctions } from "../../potentialQA_SDK/server_side/general.service";
-import { SyncService } from "./services/sync/services/sync-tests-service";
 import { Client } from "@pepperi-addons/debug-server/dist";
-import { performance } from "perf_hooks";
 import { CommandFactory } from "./services/sync/test-commands/factory/commands-factory";
 import { TestCommand } from "./services/sync/test-commands/base-command";
-import { AuditLogService } from "./services/sync/services/audit-log-service";
 import { SyncAdalService } from "./services/sync/services/sync-adal-service";
 
 // create ADAL Object

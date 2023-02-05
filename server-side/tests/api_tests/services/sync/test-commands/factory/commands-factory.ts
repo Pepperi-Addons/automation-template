@@ -1,8 +1,5 @@
-import { SyncService } from "../../services/sync-tests-service";
-import { AnotherSyncTestCommand } from "../another-sync-test-command";
 import { SchemaExistsCommand } from "../schema-exists-command";
 import { TestCommand } from "../base-command";
-import { AuditLogService } from "../../services/audit-log-service";
 import { SyncAdalService } from "../../services/sync-adal-service";
 import { CleanupCommand } from "../cleanup-command";
 import { CleanRebuild } from "../clean-rebuild-command";
