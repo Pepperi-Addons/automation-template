@@ -21,16 +21,18 @@ export class SyncService {
         let res = await this.papiClient.post(baseUrl)
         return res
     }
-    async sleep(ms) {
-        return new Promise((resolve) => setTimeout(resolve, ms))
-    } 
-    async pull(modificationDateTime:string) {
+     
+    async pull(options: PullOptions) {
         const baseUrl = `/addons/data/pull`
-        let res = await this.papiClient.post(baseUrl, {ModificationDateTime:modificationDateTime})
+        let res = await this.papiClient.post(baseUrl, options)
         return res
     }
 
 }
 
+export interface PullOptions {
+    ModificationDateTime: string;
+    SystemFilter?: object;
+}
 
 
