@@ -40,8 +40,7 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
           {
             name: 'CleanupCommand',
             command: CommandFactory.createCommand('CleanupCommand', syncAdalService, client)
-          },
-          
+          }
         ];
       
         for (const test of tests) {

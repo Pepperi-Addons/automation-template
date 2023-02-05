@@ -2,7 +2,6 @@ import { SyncService } from "../../services/sync-tests-service";
 import { SchemaExistsCommand } from "../schema-exists-command";
 import { TestCommand } from "../base-command";
 import { FutureDateCommand } from "../future-date-command";
-import { AuditLogService } from "../../services/audit-log-service";
 import { SyncAdalService } from "../../services/sync-adal-service";
 import { ReturnURLCommand } from "../return-url-command";
 import { CleanupCommand } from "../cleanup-command";
