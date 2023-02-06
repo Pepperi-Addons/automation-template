@@ -196,6 +196,40 @@ export class NebulaLocalFunctions extends NebulaTestService {
         }
     }
 
+    async pnsUpdateSchemaHiddenStatus(addonUUID: string, resource: string, hiddenNewValue: boolean) {
+
+        const data: PNSPostBody = {
+            addonUUID: this.adalAddonUUID,
+            resource: 'schemes',
+            action: 'update',
+            modifiedObjects: [{
+                ObjectKey: `${this.distributorUUID}_${addonUUID}_${resource}`,
+                ModifiedFields: [
+                    {
+                        FieldID: "Hidden",
+                        NewValue: {
+                            Sync: hiddenNewValue
+                        },
+                        OldValue: {
+                            Sync: !hiddenNewValue
+                        }
+                    }
+                ]
+            }]
+        }
+
+        const url = this.nebulaSchemesChangesRelativeURL;
+
+        try {
+            const postPNSdataResults = await this.pnsEmulator.postPNSData(data, url);
+            console.log(`postPNSdataResults: ${JSON.stringify(postPNSdataResults)}`);
+        }
+        catch (ex) {
+            console.error(`Error in pnsUpdateSchemaSyncStatus: ${ex}`);
+            throw new Error((ex as { message: string }).message);
+        }
+    }
+
     async pnsUpdateSchemaSyncStatus(addonUUID: string, resource: string, NewSyncStatus: boolean) {
         var data: PNSPostBody = {
             addonUUID: this.adalAddonUUID,

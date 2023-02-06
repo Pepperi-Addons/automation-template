@@ -102,6 +102,10 @@ export class NebulaTestService {
     pnsInsertSchema(testingAddonUUID: string, tableName: string) {
         return;
     }
+
+    pnsUpdateSchemaHiddenStatus(addonUUID: string, resource: string, hiddenNewValue: boolean) {
+        return;
+    }
     papiClient: PapiClient;
     routerClient: PapiClient;
     generalService: GeneralService;
