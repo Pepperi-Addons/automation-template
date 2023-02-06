@@ -39,6 +39,16 @@ export class SyncService {
         })
         return schemesArray
     }
+
+    async getFields(schemaNames:any){
+        let fields ={account:{},user:{},none:{}}
+        let schemesArray = this.syncData.ResourcesData.map(resource =>{
+            Object.entries(schemaNames).find(([key, value]) => {if(value == resource.Schema.Name){
+                fields[key] = resource.Objects
+            }})
+        })
+        return fields
+    }
     
     async nebulaCleanRebuild(){
         const baseUrl = `/addons/api/00000000-0000-0000-0000-000000006a91/api/clean_rebuild`
