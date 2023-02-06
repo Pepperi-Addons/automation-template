@@ -9,6 +9,7 @@ import { CleanRebuild } from "../clean-rebuild-command";
 import { Client } from "@pepperi-addons/debug-server/dist";
 import { SystemFilterNone } from "../system-filter-none-command";
 import { SystemFilterAccount } from "../system-filter-account-command";
+import { SystemFilterUser } from "../system-filter-user-command";
 
 export class CommandFactory {
   // a map of command types to command classes
@@ -19,6 +20,7 @@ export class CommandFactory {
     ReturnURLCommand: ReturnURLCommand,
     SystemFilterNone: SystemFilterNone,
     SystemFilterAccount: SystemFilterAccount,
+    SystemFilterUser:SystemFilterUser,
     CleanupCommand: CleanupCommand
   };
 
