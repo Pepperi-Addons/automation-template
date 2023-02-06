@@ -6,13 +6,13 @@ import { SyncAdalService } from "./sync-adal-service";
 export class SystemFilterService extends SyncAdalService {    
     private accountUUIDS: string[] =["3b5e29fb-ba1a-44ae-a84f-532028a9a28a","2d639aed-3a42-49b8-aaec-cdecc1fd2a37","f6521e90-7edc-49da-b9ed-28e7b252cfbc"]
     private usertUUIDS: string[] =["31cfbcba-08f0-4af8-900f-fcccde066af4","27f21174-29c7-4b70-bb72-b2d8f77b4bf6"]
+    private CORE_RESOURCES_ADDON_UUID ='fc5a5974-3b30-4430-8feb-7d5b9699bc9f'
 
     generateSystemFilterScheme(account: boolean, user:boolean){
-        const userField:AddonDataScheme['Fields'] = {UserUUID:{Type: "Resource", Resource: "users", ApplySystemFilter: true },Name:{Type: "String"}}
-        const accountField:AddonDataScheme['Fields'] = {AccountUUID: {Type: "Resource", Resource: "accounts", ApplySystemFilter: true }}
+        const userField:AddonDataScheme['Fields'] = {UserUUID:{Type: "Resource", Resource: "users", ApplySystemFilter: true,AddonUUID: this.CORE_RESOURCES_ADDON_UUID},Name:{Type: "String"}}
+        const accountField:AddonDataScheme['Fields'] = {AccountUUID: {Type: "Resource", Resource: "accounts", ApplySystemFilter: true },Name:{Type: "String"}}
         const syncSchema:AddonDataScheme = {
             Name: this.generateScehmaName(account ? '_account' : user ? '_user' : '_none'),
-            GenericResource:true,
             Type: "data",
             SyncData: {
                 Sync: true
