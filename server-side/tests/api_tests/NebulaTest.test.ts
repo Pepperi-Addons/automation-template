@@ -1683,7 +1683,7 @@ export async function NebulaTest(generalService: GeneralService, addonService: G
                 await nebulatestService.pnsUpdateSchemaHiddenStatus(testingAddonUUID, usersSchemaService!.schemaName!, true);
             });
 
-            it('Preparations - wait for PNS after table creation.', async () => {
+            it('Preparations - wait for PNS after hiding table.', async () => {
                 await nebulatestService.waitForPNS();
             });
 
@@ -1714,7 +1714,55 @@ export async function NebulaTest(generalService: GeneralService, addonService: G
             });
         });
 
+        describe('Table with documents - verify we get type & sync data', () => {
+
+            // Preparations parameters
+            const timeStampBeforeCreation = new Date().toISOString();
+            let usersSchemaService: ADALTableService | undefined = undefined;
+
+            it('Preparations - create a table pointing to users.', async () => {
+                usersSchemaService = await resourceManager.createAdalTable(getSchemaPointingToUsers());
+                await nebulatestService.pnsInsertSchema(testingAddonUUID, usersSchemaService!.schemaName!);
+                console.debug(`Users Schema: ${usersSchemaService?.schemaName}`);
+            });
+
+            it('Preparations - wait for PNS after table creation.', async () => {
+                await nebulatestService.waitForPNS();
+            });
+
+            it('Preparations - upsert documents into table pointing to users.', async () => {
+                const userDocuments: AddonData[] = [{
+                    Key: '1',
+                    field1: getCurrentUserUUID(addonService.papiClient)
+                }];
+                await usersSchemaService!.upsertBatch(userDocuments);
+                await nebulatestService.pnsInsertRecords(testingAddonUUID, usersSchemaService!.schemaName!, (userDocuments as BasicRecord[]));
+            });
+
+            it('Preparations - wait for PNS after documents upsertion.', async () => {
+                await nebulatestService.waitForPNS();
+            });
+
+            it('System filter type "None", expect to get table with type and sync data fields', async () => {
+                // Get schemas that have the account in their path
+                const filter = buildSystemFilter('None');
+                const getResourcesRequiringSyncParameters = buildGetResourcesRequiringSyncParameters(timeStampBeforeCreation, true, filter);
+                const resourcesRequiringSync = await nebulatestService.getResourcesRequiringSync(getResourcesRequiringSyncParameters);
+
+                // Check that expected schemas & fields are in response
+                expect(resourcesRequiringSync).to.not.be.undefined;
+                expect(resourcesRequiringSync.length).to.be.at.least(1);
+                expect(resourcesRequiringSync[0].Type).to.not.be.undefined;
+                expect(resourcesRequiringSync[0].SyncData).to.not.be.undefined;
+            });
+
+            it(`Cleanup Of All Inserted Data and print performance statistics`, async () => {
+                await cleanUp(resourceManager, performanceManager);
+            });
+        });
+
     });
+    
 }
 
 function getShortUUID(): string {
