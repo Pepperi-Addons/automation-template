@@ -1,5 +1,5 @@
 import { ADALTableService } from "../../resource_management/adal_table.service";
-import { GlobalSyncService } from "../services/global-service";
+import { GlobalSyncService } from "../services/global-sync-service";
 import { BaseCommand as BaseCommand } from "./base-command";
 
 
@@ -31,7 +31,7 @@ export class SchemaExistsCommand extends BaseCommand {
     }
 
     async processSyncResponse(syncRes: any): Promise<any> {
-        await this.syncService.handleSyncData(syncRes)
+        return await this.syncService.handleSyncData(syncRes)
     }
     
     async test(auditLog: any,syncData:any, expect: Chai.ExpectStatic): Promise<any> {

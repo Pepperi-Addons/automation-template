@@ -1,4 +1,3 @@
-import { resolve } from "dns";
 import { BaseCommand } from "./base-command";
 
 // Passing a future time to sync should not return data,

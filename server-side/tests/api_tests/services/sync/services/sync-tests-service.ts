@@ -2,7 +2,7 @@ import { PapiClient } from "@pepperi-addons/papi-sdk"
 import  GeneralService from "../../../../../potentialQA_SDK/server_side/general.service";
 import { Client } from  '@pepperi-addons/debug-server'
 import { ADALTableService } from "../../resource_management/adal_table.service";
-import { GlobalSyncService } from "./global-service";
+import { GlobalSyncService } from "./global-sync-service";
 import { AuditLogService } from "./audit-log-service";
 
 export class SyncService {
@@ -26,8 +26,8 @@ export class SyncService {
     }
 
     async handleSyncData(syncRes:any,return_url: boolean = false){
-        let resultObject = return_url ? await this.getSyncDataFromUrl(syncRes.ResourcesURL) : await this.auditLogService.getSyncDataFromAudit(syncRes)
-        this.syncData = resultObject
+        this.syncData = return_url ? await this.getSyncDataFromUrl(syncRes.ResourcesURL) : await this.auditLogService.getSyncDataFromAudit(syncRes)
+        return this.syncData;
     }
 
     async getSchemes() {

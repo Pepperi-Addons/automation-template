@@ -9,7 +9,7 @@ export class ReturnURLCommand extends SchemaExistsCommand {
         return auditLog
     }
     async processSyncResponse(syncRes: any): Promise<any> {
-        await this.syncService.handleSyncData(syncRes,true)
+        return await this.syncService.handleSyncData(syncRes,true)
     }
     async test(auditLog: any, objToTest: any, expect: Chai.ExpectStatic): Promise<any> {
         // tests
