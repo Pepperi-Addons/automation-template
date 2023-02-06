@@ -35,10 +35,10 @@ export class SchemaExistsCommand extends BaseCommand {
         return this.syncDataResult.data;
     }
     
-    async test(auditLog: any,syncData:any, expect: Chai.ExpectStatic): Promise<any> {
+    async  test(syncRes: any, syncData:any, expect: Chai.ExpectStatic): Promise<any> {
         // tests
-        expect(auditLog).to.have.property('UpToDate').that.is.a('Boolean').and.is.equal(false)
-        expect(auditLog).to.have.property('ExecutionURI').that.is.a('String').and.is.not.undefined
+        expect(syncRes).to.have.property('UpToDate').that.is.a('Boolean').and.is.equal(false)
+        expect(syncRes).to.have.property('ExecutionURI').that.is.a('String').and.is.not.undefined
         let schemes = await this.syncDataResult.getSchemes()
         expect(schemes).to.contain(this.syncAdalService.schemeName)
     }

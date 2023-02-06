@@ -49,7 +49,10 @@ export class BaseCommand implements TestCommand {
         throw new Error("Method not implemented.");
     }
     // test should be implemented by child classes and should test the sync response and the data result.
-    test(objToTest: any,syncData:any, expect: Chai.ExpectStatic): Promise<any> {
+    // parameters:
+    // syncRes - the sync response (execution uuid, audit log url, etc.)
+    // syncData - the data result of the sync
+    test(syncRes: any, syncData:any, expect: Chai.ExpectStatic): Promise<any> {
         throw new Error("Method not implemented.");
     }
 

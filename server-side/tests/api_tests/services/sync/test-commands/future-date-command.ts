@@ -24,10 +24,10 @@ export class FutureDateCommand extends BaseCommand{
         // in this test we do not validate sync data, only sync response
         return Promise.resolve(undefined)
     }
-    async test(dataToTest:ObjectToTest, syncData:any, expect: Chai.ExpectStatic): Promise<any> {
+    async test(syncRes: ObjectToTest, syncData:any, expect: Chai.ExpectStatic): Promise<any> {
         // tests
-        expect(dataToTest.syncResult).to.have.property('UpToDate').that.is.a('Boolean').and.is.equal(true)
-        expect(dataToTest.syncTime).to.be.a('Number').and.to.be.lessThanOrEqual(this.OPTIMAL_FUTURE_SYNC_TIME)
+        expect(syncRes.syncResult).to.have.property('UpToDate').that.is.a('Boolean').and.is.equal(true)
+        expect(syncRes.syncTime).to.be.a('Number').and.to.be.lessThanOrEqual(this.OPTIMAL_FUTURE_SYNC_TIME)
     }
 }
 
