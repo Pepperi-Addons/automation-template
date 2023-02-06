@@ -20,7 +20,7 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
     const papiClient = addonService.papiClient; 
   
     // Note: CleanRebuild and CleanupCommand are not part of the tests
-    // just an hack to make sure that nebulas will work
+    // just an hack to make sure that nebula will work
     let tests: Test[] = [
       {
         name: 'CleanRebuild',
