@@ -7,8 +7,9 @@ import { ReturnURLCommand } from "../return-url-command";
 import { CleanupCommand } from "../cleanup-command";
 import { CleanRebuild } from "../clean-rebuild-command";
 import { Client } from "@pepperi-addons/debug-server/dist";
-import { SystemFilterNone } from "../system-filter-none-command";
+import { DeltaTestCommand } from "../delta-test-command";
 import { SystemFilterAccount } from "../system-filter-account-command";
+import { SystemFilterNone } from "../system-filter-none-command";
 import { SystemFilterUser } from "../system-filter-user-command";
 
 export class CommandFactory {
@@ -21,6 +22,7 @@ export class CommandFactory {
     SystemFilterNone: SystemFilterNone,
     SystemFilterAccount: SystemFilterAccount,
     SystemFilterUser:SystemFilterUser,
+    DeltaTestCommand: DeltaTestCommand,
     CleanupCommand: CleanupCommand
   };
 

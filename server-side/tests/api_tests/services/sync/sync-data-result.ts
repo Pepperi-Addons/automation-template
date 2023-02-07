@@ -12,6 +12,10 @@ export class SyncDataResult {
         return schemesArray
     }
 
+    getFieldBySchemaName(schemaName:string){
+        return this.data.ResourcesData.find(resource => resource.Schema.Name == schemaName).Objects
+    }
+
     getFields(schemaNames:any):FieldsData{
         let fields:FieldsData = {
             account: [],
