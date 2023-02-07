@@ -5,17 +5,17 @@ export class ReturnURLCommand extends SchemaExistsCommand {
         dateTime.setHours(dateTime.getHours()-1)
         let auditLog = await this.syncService.pull({
             ModificationDateTime: dateTime.toISOString(),
-        },true)
+        },true, false)
         return auditLog
     }
     async processSyncResponse(syncRes: any): Promise<any> {
-        await this.syncService.handleSyncData(syncRes,true)
+        return await this.syncService.handleSyncData(syncRes,true)
     }
-    async test(auditLog: any, objToTest: any, expect: Chai.ExpectStatic): Promise<any> {
+    async test(syncRes: any, syncData: any, expect: Chai.ExpectStatic): Promise<any> {
         // tests
-        expect(auditLog).to.have.property('ResourcesURL').that.is.a('String').and.is.not.undefined
-        await this.syncService.handleSyncData(auditLog,true)
-        let schemes = await this.syncService.getSchemes()
+        expect(syncRes).to.have.property('ResourcesURL').that.is.a('String').and.is.not.undefined
+        await this.syncService.handleSyncData(syncRes,true)
+        let schemes = await this.syncDataResult.getSchemes()
         expect(schemes).to.contain(this.syncAdalService.schemeName)
     }
     

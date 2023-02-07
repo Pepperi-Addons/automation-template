@@ -1,6 +1,5 @@
 import { ADALTableService } from "../../resource_management/adal_table.service";
-import { GlobalSyncService } from "../services/global-service";
-import { TIME_TO_SLEEP_FOR_NEBULA } from "../services/sync-tests-service";
+import { GlobalSyncService } from "../services/global-sync-service";
 import { BaseCommand as BaseCommand } from "./base-command";
 
 
@@ -18,7 +17,7 @@ export class SchemaExistsCommand extends BaseCommand {
         // second propety is number of characters in each field
         const data = this.syncAdalService.generateFieldsData(1,1)
         await adalService.upsertRecord(data)
-        await GlobalSyncService.sleep(TIME_TO_SLEEP_FOR_NEBULA)
+        await GlobalSyncService.sleep(this.TIME_TO_SLEEP_FOR_NEBULA)
     }
 
     async sync(): Promise<any> {
@@ -27,19 +26,20 @@ export class SchemaExistsCommand extends BaseCommand {
         // start sync
         let auditLog = await this.syncService.pull({
             ModificationDateTime: dateTime.toISOString(),
-        })
+        }, false, false)
         return auditLog
     }
 
     async processSyncResponse(syncRes: any): Promise<any> {
-        await this.syncService.handleSyncData(syncRes)
+        this.syncDataResult.data =  await this.syncService.handleSyncData(syncRes)
+        return this.syncDataResult.data;
     }
     
-    async test(auditLog: any,syncData:any, expect: Chai.ExpectStatic): Promise<any> {
+    async  test(syncRes: any, syncData:any, expect: Chai.ExpectStatic): Promise<any> {
         // tests
-        expect(auditLog).to.have.property('UpToDate').that.is.a('Boolean').and.is.equal(false)
-        expect(auditLog).to.have.property('ExecutionURI').that.is.a('String').and.is.not.undefined
-        let schemes = await this.syncService.getSchemes()
+        expect(syncRes).to.have.property('UpToDate').that.is.a('Boolean').and.is.equal(false)
+        expect(syncRes).to.have.property('ExecutionURI').that.is.a('String').and.is.not.undefined
+        let schemes = await this.syncDataResult.getSchemes()
         expect(schemes).to.contain(this.syncAdalService.schemeName)
     }
     

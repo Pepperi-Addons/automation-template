@@ -1,4 +1,3 @@
-import { resolve } from "dns";
 import { BaseCommand } from "./base-command";
 
 // Passing a future time to sync should not return data,
@@ -17,7 +16,7 @@ export class FutureDateCommand extends BaseCommand{
         const t1 = performance.now()
         let auditLog = await this.syncService.pull({
             ModificationDateTime: dateTime.toISOString(),
-        })
+        }, false, false)
         const t2 = performance.now()
         return {syncResult: auditLog, syncTime:t1-t2}
     }
@@ -25,10 +24,10 @@ export class FutureDateCommand extends BaseCommand{
         // in this test we do not validate sync data, only sync response
         return Promise.resolve(undefined)
     }
-    async test(dataToTest:ObjectToTest, syncData:any, expect: Chai.ExpectStatic): Promise<any> {
+    async test(syncRes: ObjectToTest, syncData:any, expect: Chai.ExpectStatic): Promise<any> {
         // tests
-        expect(dataToTest.syncResult).to.have.property('UpToDate').that.is.a('Boolean').and.is.equal(true)
-        expect(dataToTest.syncTime).to.be.a('Number').and.to.be.lessThanOrEqual(this.OPTIMAL_FUTURE_SYNC_TIME)
+        expect(syncRes.syncResult).to.have.property('UpToDate').that.is.a('Boolean').and.is.equal(true)
+        expect(syncRes.syncTime).to.be.a('Number').and.to.be.lessThanOrEqual(this.OPTIMAL_FUTURE_SYNC_TIME)
     }
 }
 

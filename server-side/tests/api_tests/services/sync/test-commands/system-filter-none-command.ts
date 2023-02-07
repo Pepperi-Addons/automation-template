@@ -1,6 +1,6 @@
 import { Client } from "@pepperi-addons/debug-server/dist";
 import { ADALTableService } from "../../resource_management/adal_table.service";
-import { GlobalSyncService } from "../services/global-service";
+import { GlobalSyncService } from "../services/global-sync-service";
 import { SyncAdalService } from "../services/sync-adal-service";
 import { TIME_TO_SLEEP_FOR_NEBULA } from "../services/sync-tests-service";
 import { SystemFilterService } from "../services/system-filter-service";
@@ -48,12 +48,13 @@ export class SystemFilterNone extends BaseCommand {
         let auditLog = await this.syncService.pull({
             ModificationDateTime:dateTime.toISOString(),
             ...systemFilter
-        },false)
+        },false,false)
         return auditLog
     }
 
     async processSyncResponse(syncRes: any): Promise<any> {
-        await this.syncService.handleSyncData(syncRes,false)
+        this.syncDataResult.data =  await this.syncService.handleSyncData(syncRes)
+        return this.syncDataResult.data;
     }
     
     async test(auditLog: any, objToTest: any, expect: Chai.ExpectStatic): Promise<any> {
@@ -61,9 +62,9 @@ export class SystemFilterNone extends BaseCommand {
         const schemaNames:{account:string, user:string,none:string} = this.syncAdalService.getSchemaNameFromAdalServices(this.adalTableServices)
         expect(auditLog).to.have.property('UpToDate').that.is.a('Boolean').and.is.equal(false)
         expect(auditLog).to.have.property('ExecutionURI').that.is.a('String').and.is.not.undefined
-        let schemes = await this.syncService.getSchemes()
+        let schemes = await this.syncDataResult.getSchemes()
         expect(schemes).to.contain(schemaNames.account).and.to.contain(schemaNames.user).and.to.contain(schemaNames.none)
-        let fields = await this.syncService.getFields(schemaNames)
+        let fields = await this.syncDataResult.getFields(schemaNames)
         expect(fields).to.have.a.property('user');
         expect(fields).to.have.a.property('none');
         expect(fields).to.have.a.property('account');
