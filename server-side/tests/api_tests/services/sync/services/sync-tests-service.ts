@@ -31,8 +31,8 @@ export class SyncService {
         return res
     }
 
-    async pull(options: PullOptions, returnUrl: boolean, wacd: boolean) {
-        const baseUrl = `/addons/data/pull?return_url=${returnUrl}&wacd=${wacd}`
+    async pull(options: PullOptions, returnUrl: boolean, wacd: boolean, connectAccount: boolean) {
+        const baseUrl = `/addons/data/pull?return_url=${!!returnUrl}&wacd=${!!wacd}&connect_account=${!!connectAccount}`
         let res = await this.papiClient.post(baseUrl, options)
         return res
     }
