@@ -3,6 +3,7 @@ import { PapiClient, AddonDataScheme, SchemeField, AddonData } from "@pepperi-ad
 import GeneralService from "../../../../../potentialQA_SDK/server_side/general.service";
 import { ADALTableService } from "../../resource_management/adal_table.service";
 import { v4 as uuid } from 'uuid';
+import { ADALService } from "../../../../../potentialQA_SDK/server_side/adal.service";
 
 export class SyncAdalService {
     client : Client
@@ -22,6 +23,14 @@ export class SyncAdalService {
 
     async cleanup() {
         return await Promise.all(this.adalResources.map(resource=> resource.removeResource()))
+    }
+
+    async cleanupOtherTestSchemes() {
+        const adalService = new ADALService(this.papiClient);
+        const schemas = await this.papiClient.addons.data.schemes.get({})
+        // filter out schemes with prefix integration_test_schema_of_sync_
+        const integrationTestSchemas = schemas.filter(schema => schema.Name.startsWith('integration_test_schema_of_sync'))
+        await Promise.all(integrationTestSchemas.map(schema => adalService.deleteSchema(schema.Name)))
     }
     
     generateScehmaName(suffix?: string){
