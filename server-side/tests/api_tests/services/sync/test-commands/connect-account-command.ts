@@ -3,15 +3,17 @@ import { SystemFilterNone } from "./system-filter-none-command";
 
 export class ConnectAccountCommand extends SystemFilterNone {
 
+    connectedAccountUUID: string = "3b5e29fb-ba1a-44ae-a84f-532028a9a28a";
+    
     async sync(): Promise<any> {
         // start sync
         let dateTime = new Date();
         dateTime.setHours(dateTime.getHours()-1)
-        const systemFilter = this.systemFilterService.getSystemFilter(true,false,"3b5e29fb-ba1a-44ae-a84f-532028a9a28a")
-        let auditLog = await this.syncService.pull({
+        const systemFilter = this.systemFilterService.getSystemFilter(true, false, this.connectedAccountUUID)
+        let auditLog = await this.syncService.pullConnectAccount({
             ModificationDateTime:dateTime.toISOString(),
             ...systemFilter
-        },false, false, true)
+        },this.connectedAccountUUID)
         return auditLog
     }
 
@@ -24,6 +26,8 @@ export class ConnectAccountCommand extends SystemFilterNone {
         expect(syncData.ResourcesData[0].user_defined_tables).to.have.property('Rows').that.is.a('Object').and.is.not.empty
         expect(syncData.ResourcesData[0].user_defined_tables.Rows).to.have.property('m_Rows').that.is.a('Array').and.is.not.empty
         const rows = syncData.ResourcesData[0].user_defined_tables.Rows.m_Rows
+        // rows must have at least one row or more
+        expect(rows).to.have.lengthOf.above(0)
         rows.forEach(row => {
             expect(row).to.have.property('ItemArray').that.is.a('Array').and.is.not.empty
             expect(row.ItemArray[0]).to.be.a('String').and.is.not.empty // WrntyID
@@ -39,8 +43,11 @@ export class ConnectAccountCommand extends SystemFilterNone {
             expect(GlobalSyncService.isValidJSON(values)).to.be.true;
             expect(row.ItemArray[9]).to.be.a('String').and.is.equal("0") // WriteToNucleusTime
             expect(row.ItemArray[10]).to.be.a('String').and.is.not.empty // ResolvedWrntyID
-            // todo: check the object properties
         });
+        // check the object properties
+        const objRow = rows.find(row => JSON.parse(row.ItemArray[8]).hasOwnProperty('Account_Field'))
+        const obj = JSON.parse(objRow.ItemArray[8])
+        expect(obj).to.have.property('Account_Field').that.is.a('String').and.is.equal(this.connectedAccountUUID)
 
     }    
 }

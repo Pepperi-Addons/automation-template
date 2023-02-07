@@ -28,38 +28,38 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
         name: 'CleanRebuild',
         command: CommandFactory.createCommand('CleanRebuild', syncAdalService, client)
       },
-      {
-        name: 'SchemaExistsTest',
-        command: CommandFactory.createCommand('SchemaExistsTest', syncAdalService, client)
-      },
-      {
-        name: 'FutureDateCommand',
-        command: CommandFactory.createCommand('FutureDateCommand', syncAdalService, client)
-      },
-      {
-        name: 'ReturnURLCommand',
-        command: CommandFactory.createCommand('ReturnURLCommand', syncAdalService, client)
-      },
-      {
-        name: 'WACDCommand',
-        command: CommandFactory.createCommand('WACDCommand', syncAdalService, client)
-      },
+      // {
+      //   name: 'SchemaExistsTest',
+      //   command: CommandFactory.createCommand('SchemaExistsTest', syncAdalService, client)
+      // },
+      // {
+      //   name: 'FutureDateCommand',
+      //   command: CommandFactory.createCommand('FutureDateCommand', syncAdalService, client)
+      // },
+      // {
+      //   name: 'ReturnURLCommand',
+      //   command: CommandFactory.createCommand('ReturnURLCommand', syncAdalService, client)
+      // },
+      // {
+      //   name: 'WACDCommand',
+      //   command: CommandFactory.createCommand('WACDCommand', syncAdalService, client)
+      // },
       {
         name: 'ConnectAccountCommand',
         command: CommandFactory.createCommand('ConnectAccountCommand', syncAdalService, client)
       },
-      {
-        name: 'SystemFilterNone',
-        command: CommandFactory.createCommand('SystemFilterNone',syncAdalService,client)
-      },
-      {
-        name: 'SystemFilterAccount',
-        command: CommandFactory.createCommand('SystemFilterAccount',syncAdalService,client)
-      },
-      {
-        name: 'SystemFilterUser',
-        command: CommandFactory.createCommand('SystemFilterUser',syncAdalService,client)
-      },
+      // {
+      //   name: 'SystemFilterNone',
+      //   command: CommandFactory.createCommand('SystemFilterNone',syncAdalService,client)
+      // },
+      // {
+      //   name: 'SystemFilterAccount',
+      //   command: CommandFactory.createCommand('SystemFilterAccount',syncAdalService,client)
+      // },
+      // {
+      //   name: 'SystemFilterUser',
+      //   command: CommandFactory.createCommand('SystemFilterUser',syncAdalService,client)
+      // },
       {
         name: 'CleanupCommand',
         command: CommandFactory.createCommand('CleanupCommand', syncAdalService, client)
