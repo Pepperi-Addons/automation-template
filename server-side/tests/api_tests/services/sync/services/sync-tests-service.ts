@@ -4,6 +4,7 @@ import { Client } from  '@pepperi-addons/debug-server'
 import { GlobalSyncService } from "./global-sync-service";
 import { AuditLogService } from "./audit-log-service";
 
+export const TIME_TO_SLEEP_FOR_NEBULA: number = 8000
 export class SyncService {
     client : Client
     papiClient: PapiClient;
@@ -22,7 +23,13 @@ export class SyncService {
     }
 
     async handleSyncData(syncRes:any,return_url: boolean = false){
-        return  return_url ? await this.getSyncDataFromUrl(syncRes.ResourcesURL) : await this.auditLogService.getSyncDataFromAudit(syncRes)
+        let data =await this.auditLogService.getSyncDataFromAudit(syncRes)
+        if(return_url){
+            return  await this.getSyncDataFromUrl(data.ResourcesURL)
+        }
+        else{
+            return data
+        }
     }
     
     async nebulaCleanRebuild(){
@@ -45,3 +52,8 @@ export interface PullOptions {
 }
 
 
+export interface FieldsData{
+    account:any[];
+    user:any[];
+    none:any[];
+}

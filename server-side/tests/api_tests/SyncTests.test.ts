@@ -3,6 +3,8 @@ import { Client } from "@pepperi-addons/debug-server/dist";
 import { CommandFactory } from "./services/sync/test-commands/factory/commands-factory";
 import { TestCommand } from "./services/sync/test-commands/base-command";
 import { SyncAdalService } from "./services/sync/services/sync-adal-service";
+import { SystemFilterService } from "./services/sync/services/system-filter-service";
+
 
 // create ADAL Object
 
@@ -11,7 +13,7 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
   const expect = tester.expect;
   const it = tester.it;
   const dataObj = request.body.Data;
-  
+
   describe("SyncTests Suites",() => {
     const client: Client = generalService['client']
     const addonUUID = "5122dc6d-745b-4f46-bb8e-bd25225d350a";
@@ -41,6 +43,22 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
       {
         name: 'WACDCommand',
         command: CommandFactory.createCommand('WACDCommand', syncAdalService, client)
+      },
+      {
+        name: 'ConnectAccountCommand',
+        command: CommandFactory.createCommand('ConnectAccountCommand', syncAdalService, client)
+      },
+      {
+        name: 'SystemFilterNone',
+        command: CommandFactory.createCommand('SystemFilterNone',syncAdalService,client)
+      },
+      {
+        name: 'SystemFilterAccount',
+        command: CommandFactory.createCommand('SystemFilterAccount',syncAdalService,client)
+      },
+      {
+        name: 'SystemFilterUser',
+        command: CommandFactory.createCommand('SystemFilterUser',syncAdalService,client)
       },
       {
         name: 'CleanupCommand',
