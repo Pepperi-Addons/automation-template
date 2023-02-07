@@ -15,6 +15,7 @@ export class WACDCommand extends SchemaExistsCommand {
     }
 
     test(auditLog: any, syncData: any, expect: Chai.ExpectStatic): Promise<any> {
+        super.test(auditLog, syncData, expect) // test that schema with data exists
         expect(syncData.ResourcesData).to.be.an('Array').that.is.not.empty
         for (let metaDataResource of syncData.ResourcesData) {
             // Resource level tests
@@ -30,6 +31,9 @@ export class WACDCommand extends SchemaExistsCommand {
             expect(mapDataMetaData).to.have.property('Key2Type').that.is.a('Number').and.is.not.undefined
             expect(mapDataMetaData).to.have.property('ExternalID').that.is.a('String').and.is.not.undefined
             expect(mapDataMetaData).to.have.property('Configuration').that.is.a('String').and.is.not.undefined
+            // test that configuration is a valid JSON
+            expect(GlobalSyncService.isValidJSON(mapDataMetaData.Configuration)).to.be.true
+
 
             // MapData level tests - Data may be empty or with multiple elements
             expect(metaDataResource.Data).to.be.an('Array')
