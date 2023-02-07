@@ -29,6 +29,13 @@ export class SyncAdalService {
         return this.schemaName
     }
 
+    async changeSchemaToHidden(table:ADALTableService){
+        let schema = table.getSchema()
+        schema.Hidden = true
+        this.adalResources = this.adalResources.filter(r=> r.schemaName != schema.Name)
+        return await this.papiClient.addons.data.schemes.post(schema)
+    }
+
     getSchemaNameFromAdalService(adalTableServices : any){
         let name = adalTableServices ?  adalTableServices.map(service =>{
             return service.schemaName

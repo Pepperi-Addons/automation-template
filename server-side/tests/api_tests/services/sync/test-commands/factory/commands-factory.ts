@@ -11,6 +11,7 @@ import { DeltaTestCommand } from "../delta-test-command";
 import { SystemFilterAccount } from "../system-filter-account-command";
 import { SystemFilterNone } from "../system-filter-none-command";
 import { SystemFilterUser } from "../system-filter-user-command";
+import { ResyncCommand } from "../resync-command";
 
 export class CommandFactory {
   // a map of command types to command classes
@@ -23,6 +24,7 @@ export class CommandFactory {
     SystemFilterAccount: SystemFilterAccount,
     SystemFilterUser:SystemFilterUser,
     DeltaTestCommand: DeltaTestCommand,
+    ResyncCommand:ResyncCommand,
     CleanupCommand: CleanupCommand
   };
 
