@@ -1,5 +1,5 @@
 import { ADALTableService } from "../../resource_management/adal_table.service";
-import { GlobalService } from "../services/global-service";
+import { GlobalSyncService } from "../services/global-sync-service";
 import { BaseCommand as BaseCommand } from "./base-command";
 
 
@@ -17,24 +17,29 @@ export class SchemaExistsCommand extends BaseCommand {
         // second propety is number of characters in each field
         const data = this.syncAdalService.generateFieldsData(1,1)
         await adalService.upsertRecord(data)
-        await GlobalService.sleep(this.TIME_TO_SLEEP_FOR_NEBULA)
+        await GlobalSyncService.sleep(this.TIME_TO_SLEEP_FOR_NEBULA)
     }
 
-    async syncData(): Promise<any> {
+    async sync(): Promise<any> {
         let dateTime = new Date();
         dateTime.setHours(dateTime.getHours()-1)
         // start sync
         let auditLog = await this.syncService.pull({
             ModificationDateTime: dateTime.toISOString(),
-        })
+        }, false, false)
         return auditLog
     }
+
+    async processSyncResponse(syncRes: any): Promise<any> {
+        this.syncDataResult.data =  await this.syncService.handleSyncData(syncRes)
+        return this.syncDataResult.data;
+    }
     
-    async test(auditLog: any, expect: Chai.ExpectStatic): Promise<any> {
+    async  test(syncRes: any, syncData:any, expect: Chai.ExpectStatic): Promise<any> {
         // tests
-        expect(auditLog).to.have.property('UpToDate').that.is.a('Boolean').and.is.equal(false)
-        expect(auditLog).to.have.property('ExecutionURI').that.is.a('String').and.is.not.undefined
-        let schemes = await this.auditLogService.getSchemesFromAudit(auditLog)
+        expect(syncRes).to.have.property('UpToDate').that.is.a('Boolean').and.is.equal(false)
+        expect(syncRes).to.have.property('ExecutionURI').that.is.a('String').and.is.not.undefined
+        let schemes = await this.syncDataResult.getSchemes()
         expect(schemes).to.contain(this.syncAdalService.schemeName)
     }
     
