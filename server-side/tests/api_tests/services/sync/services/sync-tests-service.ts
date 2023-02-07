@@ -22,7 +22,13 @@ export class SyncService {
     }
 
     async handleSyncData(syncRes:any,return_url: boolean = false){
-        return  return_url ? await this.getSyncDataFromUrl(syncRes.ResourcesURL) : await this.auditLogService.getSyncDataFromAudit(syncRes)
+        let data =await this.auditLogService.getSyncDataFromAudit(syncRes)
+        if(return_url){
+            return  await this.getSyncDataFromUrl(data.ResourcesURL)
+        }
+        else{
+            return data
+        }
     }
     
     async nebulaCleanRebuild(){
