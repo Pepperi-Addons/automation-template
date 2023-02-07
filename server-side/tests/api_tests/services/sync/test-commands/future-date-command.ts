@@ -18,7 +18,7 @@ export class FutureDateCommand extends BaseCommand{
             ModificationDateTime: dateTime.toISOString(),
         })
         const t2 = performance.now()
-        return {syncResult: auditLog, syncTime:t1-t2}
+        return {syncResult: auditLog, syncTime:t2-t1}
     }
     async test(dataToTest:ObjectToTest, expect: Chai.ExpectStatic): Promise<any> {
         // tests
