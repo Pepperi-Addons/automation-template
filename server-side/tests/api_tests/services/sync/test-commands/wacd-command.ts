@@ -48,36 +48,6 @@ export class WACDCommand extends SchemaExistsCommand {
     }
 
 }
-
-interface MapDataResult {
-    MetaData: MapDataMetaData[];
-    Data: MapData[];
-}
-
-interface MapDataMetaData {
-    ["ObjectID.ID"]: number;
-    Hidden: boolean;
-    Key1Type: number;
-    Key2Type: number;
-    ExternalID: string;
-    Configuration: string;
-}
-interface MapData {
-    Key1: string;
-    Key2: string;
-    Values: string;
-    Hidden: boolean;
-    ["MapDataMetaData.ObjectID.ID"]: number;
-    ["ObjectID.ID"]: number;
-}
-interface WACDSyncResult {
-    ResourcesURL?: string;
-    ResourcesContentLength?: number;
-    Failures?: any;
-    ResourcesData?: MapDataResult[];
-    Files?: any[];
-}
-
 // example of wacd sync result
 /*
 {
