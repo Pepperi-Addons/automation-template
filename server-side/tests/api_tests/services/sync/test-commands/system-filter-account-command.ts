@@ -40,7 +40,7 @@ export class SystemFilterAccount extends SystemFilterNone {
         expect(fields).to.have.a.property('user');
         expect(fields).to.have.a.property('none');
         expect(fields).to.have.a.property('account');
-        expect(Object.keys(fields.account)).to.have.a.lengthOf(3)
+        expect(Object.keys(fields.account)).to.have.a.lengthOf(1)
         expect(Object.keys(fields.user)).to.have.a.lengthOf(1)
         expect(Object.keys(fields.none)).to.have.a.lengthOf(3)
     }

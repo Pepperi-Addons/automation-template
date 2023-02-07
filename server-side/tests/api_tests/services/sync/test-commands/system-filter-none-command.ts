@@ -18,11 +18,11 @@ export class SystemFilterNone extends BaseCommand {
   
     async setupSchemes(): Promise<any> {
         // generate schema with fields
-        const accountSchema = this.systemFilterService.generateSystemFilterScheme(true,false)
+        const accountSchema = this.systemFilterService.generateSystemFilterScheme('Account')
         const accountAdalService = await this.syncAdalService.getAdalService(accountSchema)
-        const userSchema = this.systemFilterService.generateSystemFilterScheme(false,true)
+        const userSchema = this.systemFilterService.generateSystemFilterScheme('User')
         const userAdalService = await this.syncAdalService.getAdalService(userSchema)
-        const noneSchema = this.systemFilterService.generateSystemFilterScheme(false,false)
+        const noneSchema = this.systemFilterService.generateSystemFilterScheme('None')
         const noneAdalService = await this.syncAdalService.getAdalService(noneSchema)
         this.adalTableServices = {account:accountAdalService,user:userAdalService,none:noneAdalService}
         return this.adalTableServices;    

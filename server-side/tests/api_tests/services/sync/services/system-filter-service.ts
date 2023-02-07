@@ -5,20 +5,18 @@ import { SyncAdalService } from "./sync-adal-service";
 
 export class SystemFilterService extends SyncAdalService {    
     private accountUUIDS: string[] =["3b5e29fb-ba1a-44ae-a84f-532028a9a28a","2d639aed-3a42-49b8-aaec-cdecc1fd2a37","f6521e90-7edc-49da-b9ed-28e7b252cfbc"]
-    private usertUUIDS: string[] =["31cfbcba-08f0-4af8-900f-fcccde066af4","27f21174-29c7-4b70-bb72-b2d8f77b4bf6"]
+    private userUUIDS: string[] =["31cfbcba-08f0-4af8-900f-fcccde066af4","27f21174-29c7-4b70-bb72-b2d8f77b4bf6","cbfc3250-acab-46c6-a51b-67ed6442531d"]
     private CORE_RESOURCES_ADDON_UUID ='fc5a5974-3b30-4430-8feb-7d5b9699bc9f'
 
-    generateSystemFilterScheme(account: boolean, user:boolean){
-        const userField:AddonDataScheme['Fields'] = {UserUUID:{Type: "Resource", Resource: "users", ApplySystemFilter: true,AddonUUID: this.CORE_RESOURCES_ADDON_UUID},Name:{Type: "String"}}
-        const accountField:AddonDataScheme['Fields'] = {AccountUUID: {Type: "Resource", Resource: "accounts", ApplySystemFilter: true },Name:{Type: "String"}}
+    generateSystemFilterScheme(type: 'User'|'Account'|'None'){
         const syncSchema:AddonDataScheme = {
-            Name: this.generateScehmaName(account ? '_account' : user ? '_user' : '_none'),
+            Name: this.generateScehmaName(`_${type.toLowerCase()}`),
             Type: "data",
             SyncData: {
                 Sync: true
             }
         }
-        syncSchema.Fields= user ? userField : account ? accountField : {Name:{Type: "String"}}
+        syncSchema.Fields= this.generateSchemaField(type)
         return syncSchema
     }
 
@@ -35,8 +33,8 @@ export class SystemFilterService extends SyncAdalService {
                 Name : "3"
             }]
         baseData.map((field,index) =>{
-            field.UserUUID = user ?  this.usertUUIDS[index] : undefined
-            field.AccountUUID = account ?  this.accountUUIDS[index] : undefined
+            field.User_Field = user ?  this.userUUIDS[index] : undefined
+            field.Account_Field = account ?  this.accountUUIDS[index] : undefined
         })
         return baseData
     }
@@ -49,5 +47,23 @@ export class SystemFilterService extends SyncAdalService {
         }
         account ? SystemFilter.SystemFilter["AccountUUID"] = accountUUID : undefined
         return SystemFilter
+    }
+
+    generateSchemaField(type: 'User'|'Account'|'None'){
+        const resource = type=='User' ? 'users': 'accounts';
+        const nameField: AddonDataScheme['Fields']={
+            Name:{
+                Type: "String"
+            }
+        }
+        const resourceField:AddonDataScheme['Fields'] = {
+            [`${type}_Field`]:{
+                Type: "Resource", 
+                Resource: resource, 
+                ApplySystemFilter: true,
+                AddonUUID: this.CORE_RESOURCES_ADDON_UUID
+            }
+        }
+        return type!='None' ? resourceField : nameField
     }
 }

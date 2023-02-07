@@ -40,13 +40,15 @@ export class SyncService {
         return schemesArray
     }
 
-    async getFields(schemaNames:any){
-        let fields ={account:{},user:{},none:{}}
-        let schemesArray = this.syncData.ResourcesData.map(resource =>{
-            Object.entries(schemaNames).find(([key, value]) => {if(value == resource.Schema.Name){
-                fields[key] = resource.Objects
-            }})
-        })
+    getFields(schemaNames:any):FieldsData{
+        let fields:FieldsData = {
+            account: [],
+            user: [],
+            none: []
+        }
+        fields.account = this.syncData.ResourcesData.find(resource => resource.Schema.Name == schemaNames.account).Objects
+        fields.user = this.syncData.ResourcesData.find(resource => resource.Schema.Name == schemaNames.user).Objects
+        fields.none = this.syncData.ResourcesData.find(resource => resource.Schema.Name == schemaNames.none).Objects
         return fields
     }
     
@@ -70,3 +72,8 @@ export interface PullOptions {
 }
 
 
+export interface FieldsData{
+    account:any[];
+    user:any[];
+    none:any[];
+}
