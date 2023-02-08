@@ -1,7 +1,7 @@
 import { GlobalSyncService } from "../services/global-sync-service";
 import { SystemFilterNone } from "./system-filter-none-command";
 
-export class ConnectAccountCommand extends SystemFilterNone {
+export class PapiConnectAccountCommand extends SystemFilterNone {
 
     connectedAccountUUID: string = "3b5e29fb-ba1a-44ae-a84f-532028a9a28a";
     
