@@ -65,11 +65,13 @@ export class SystemFilterNone extends BaseCommand {
         let schemes = await this.syncDataResult.getSchemes()
         expect(schemes).to.contain(schemaNames.account).and.to.contain(schemaNames.user).and.to.contain(schemaNames.none)
         let fields = await this.syncDataResult.getFields(schemaNames)
+        const currentUserUUID = GlobalSyncService.getCurrentUserUUID(this.systemFilterService.papiClient)
         expect(fields).to.have.a.property('user');
         expect(fields).to.have.a.property('none');
         expect(fields).to.have.a.property('account');
-        expect(Object.keys(fields.account)).to.have.a.lengthOf(3)
-        expect(Object.keys(fields.user)).to.have.a.lengthOf(3)
+        expect(Object.keys(fields.account)).to.have.a.lengthOf(1)
+        expect(Object.keys(fields.user)).to.have.a.lengthOf(1)
+        expect(fields.user[0].User_Field == currentUserUUID)
         expect(Object.keys(fields.none)).to.have.a.lengthOf(3)
     }
   }
