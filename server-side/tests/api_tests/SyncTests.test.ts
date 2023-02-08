@@ -3,7 +3,6 @@ import { Client } from "@pepperi-addons/debug-server/dist";
 import { CommandFactory } from "./services/sync/test-commands/factory/commands-factory";
 import { TestCommand } from "./services/sync/test-commands/base-command";
 import { SyncAdalService } from "./services/sync/services/sync-adal-service";
-import { SystemFilterService } from "./services/sync/services/system-filter-service";
 
 
 // create ADAL Object
@@ -51,6 +50,10 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
       {
         name: 'SystemFilterUser',
         command: CommandFactory.createCommand('SystemFilterUser',syncAdalService,client)
+      },
+      {
+        name: 'WACDCommand',
+        command: CommandFactory.createCommand('WACDCommand', syncAdalService, client)
       },
       {
         name: 'CleanupCommand',

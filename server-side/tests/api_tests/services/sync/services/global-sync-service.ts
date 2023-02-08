@@ -32,5 +32,15 @@ export class GlobalSyncService {
               reject(err);
           });
         });
-      }
+    }
+
+    static isValidJSON(str: string): boolean {
+        try {
+            JSON.parse(str);
+        } catch (e) {
+            return false;
+        }
+        return true;
+    }
+
 }

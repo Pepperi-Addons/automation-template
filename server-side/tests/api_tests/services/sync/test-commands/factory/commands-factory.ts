@@ -10,6 +10,7 @@ import { Client } from "@pepperi-addons/debug-server/dist";
 import { SystemFilterNone } from "../system-filter-none-command";
 import { SystemFilterAccount } from "../system-filter-account-command";
 import { SystemFilterUser } from "../system-filter-user-command";
+import { WACDCommand } from "../wacd-command";
 
 export class CommandFactory {
   // a map of command types to command classes
@@ -21,6 +22,7 @@ export class CommandFactory {
     SystemFilterNone: SystemFilterNone,
     SystemFilterAccount: SystemFilterAccount,
     SystemFilterUser:SystemFilterUser,
+    WACDCommand: WACDCommand,
     CleanupCommand: CleanupCommand
   };
 
