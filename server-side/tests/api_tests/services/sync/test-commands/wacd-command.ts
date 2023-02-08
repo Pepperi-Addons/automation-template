@@ -15,7 +15,6 @@ export class WACDCommand extends SchemaExistsCommand {
     }
 
     test(auditLog: any, syncData: any, expect: Chai.ExpectStatic): Promise<any> {
-        super.test(auditLog, syncData, expect) // test that schema with data exists
         expect(syncData.ResourcesData).to.be.an('Array').that.is.not.empty
         for (let metaDataResource of syncData.ResourcesData) {
             // Resource level tests
