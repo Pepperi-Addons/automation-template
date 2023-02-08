@@ -7,6 +7,7 @@ import { ReturnURLCommand } from "../return-url-command";
 import { CleanupCommand } from "../cleanup-command";
 import { CleanRebuild } from "../clean-rebuild-command";
 import { Client } from "@pepperi-addons/debug-server/dist";
+import { WACDCommand } from "../wacd-command";
 
 export class CommandFactory {
   // a map of command types to command classes
@@ -15,6 +16,7 @@ export class CommandFactory {
     SchemaExistsTest: SchemaExistsCommand,
     FutureDateCommand: FutureDateCommand,
     ReturnURLCommand: ReturnURLCommand,
+    WACDCommand: WACDCommand,
     CleanupCommand: CleanupCommand
   };
 
