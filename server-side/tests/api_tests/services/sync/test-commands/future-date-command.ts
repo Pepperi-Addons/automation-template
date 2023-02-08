@@ -18,7 +18,7 @@ export class FutureDateCommand extends BaseCommand{
             ModificationDateTime: dateTime.toISOString(),
         }, false, false)
         const t2 = performance.now()
-        return {syncResult: auditLog, syncTime:t1-t2}
+        return {syncResult: auditLog, syncTime:t2-t1}
     }
     processSyncResponse(syncRes: any): Promise<any> {
         // in this test we do not validate sync data, only sync response
