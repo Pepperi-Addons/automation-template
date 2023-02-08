@@ -1,4 +1,3 @@
-import { SyncService } from "../../services/sync-tests-service";
 import { SchemaExistsCommand } from "../schema-exists-command";
 import { TestCommand } from "../base-command";
 import { FutureDateCommand } from "../future-date-command";
@@ -11,6 +10,7 @@ import { DeltaTestCommand } from "../delta-test-command";
 import { SystemFilterAccount } from "../system-filter-account-command";
 import { SystemFilterNone } from "../system-filter-none-command";
 import { SystemFilterUser } from "../system-filter-user-command";
+import { WACDCommand } from "../wacd-command";
 
 export class CommandFactory {
   // a map of command types to command classes
@@ -23,6 +23,7 @@ export class CommandFactory {
     SystemFilterAccount: SystemFilterAccount,
     SystemFilterUser:SystemFilterUser,
     DeltaTestCommand: DeltaTestCommand,
+    WACDCommand: WACDCommand,
     CleanupCommand: CleanupCommand
   };
 

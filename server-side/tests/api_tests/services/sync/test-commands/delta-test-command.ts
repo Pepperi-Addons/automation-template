@@ -15,11 +15,11 @@ export class DeltaTestCommand extends BaseCommand {
         // and after creating old scheme for delta tests
         const oldSchema = this.syncAdalService.generateSchemeWithFields(1)
         const oldAdalService = await this.syncAdalService.getAdalService(oldSchema)
-        this.adalSchemes['oldScheme'] = oldAdalService
-        this.adalSchemes['timeOfNewScheme'] = new Date()
+        this.adalSchemes.oldScheme = oldAdalService
+        this.adalSchemes.timeOfNewScheme = new Date()
         const newSchema = this.syncAdalService.generateSchemeWithFields(1)
         const newAdalService = await this.syncAdalService.getAdalService(newSchema)
-        this.adalSchemes['newScheme'] = newAdalService
+        this.adalSchemes.newScheme = newAdalService
         return newAdalService  
     }
 
@@ -39,7 +39,7 @@ export class DeltaTestCommand extends BaseCommand {
         // start sync
         const t1 = performance.now()
         let auditLog = await this.syncService.pull({
-            ModificationDateTime: this.adalSchemes['timeOfNewScheme'].toISOString(),
+            ModificationDateTime: this.adalSchemes.timeOfNewScheme.toISOString(),
         }, false, false)
         const t2 = performance.now()
         return {syncResult: auditLog, syncTime:t2-t1}
