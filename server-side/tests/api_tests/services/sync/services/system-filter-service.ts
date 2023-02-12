@@ -1,5 +1,8 @@
-import { AddonDataScheme,AddonData } from "@pepperi-addons/papi-sdk"
+import { AddonDataScheme,AddonData, Account } from "@pepperi-addons/papi-sdk"
+import { ADALTableService } from "../../resource_management/adal_table.service";
 import { SyncAdalService } from "./sync-adal-service";
+import { v4 as uuid } from 'uuid';
+import { GlobalSyncService } from "./global-sync-service";
 
 export class SystemFilterService extends SyncAdalService {    
     private accountUUIDS: any = this.papiClient.accounts.iter({
@@ -17,6 +20,7 @@ export class SystemFilterService extends SyncAdalService {
         })
     });
     private CORE_RESOURCES_ADDON_UUID = 'fc5a5974-3b30-4430-8feb-7d5b9699bc9f'
+    private accoutsCreated: Account[] = []
 
     generateSystemFilterScheme(type: 'User' | 'Account' | 'None'){
         const syncSchema:AddonDataScheme = {
@@ -30,20 +34,20 @@ export class SystemFilterService extends SyncAdalService {
         return syncSchema
     }
 
-    generateSystemFilterData(account: boolean, user:boolean){
+    generateSystemFilterData(account: boolean, user: boolean){
         if(this.userUUIDS.length < 3 || this.accountUUIDS.length < 3 ){
-            throw new Error(`User uuid count is ${this.userUUIDS.length}, Account uuid count is ${this.accountUUIDS.length},
+            throw new Error(`User uuid count is ${ this.userUUIDS.length }, Account uuid count is ${ this.accountUUIDS.length },
             both need to be at least 3`)
         }
         let baseData:AddonData[] = [
-            {   Key:"1",
+            {   Key: "1",
                 Name : "1",
             },
             {
-                Key:"2",
+                Key: "2",
                 Name : "2"
             },{
-                Key:"3",
+                Key: "3",
                 Name : "3"
             }]
         baseData.map((field,index) =>{
@@ -54,7 +58,7 @@ export class SystemFilterService extends SyncAdalService {
     }
 
     getSystemFilter(account:boolean,webapp:boolean,accountUUID?:string){
-        let Type = account ? 'Account' : webapp? 'User' : 'None'
+        let Type = account ? 'Account' : webapp ? 'User' : 'None'
         let SystemFilter = {
             SystemFilter: {
                 Type: Type 
@@ -74,7 +78,7 @@ export class SystemFilterService extends SyncAdalService {
                 Type: "String"
             }
         }
-        const resourceField:AddonDataScheme['Fields'] = {
+        const resourceField: AddonDataScheme['Fields'] = {
             [`${type}_Field`]: {
                 Type: "Resource", 
                 Resource: resource, 
@@ -83,5 +87,26 @@ export class SystemFilterService extends SyncAdalService {
             }
         }
         return type != 'None' ? resourceField : nameField
+    }
+
+    async createAccount(is_hidden: boolean = false){
+        let account = await this.papiClient.accounts.upsert({
+            Key: 'account_for_sync_tests'+uuid().split('-').join('_'), 
+            ExternalID: Math.round(Math.random() * 10000 + 1).toString(),
+            Hidden: is_hidden,
+            Users: {
+                Data: {
+                    UUID: GlobalSyncService.getCurrentUserUUID(this.papiClient)
+                }
+            } 
+        })
+        this.accoutsCreated.push(account)
+        return account
+    }
+
+    async cleanupAccounts(){
+        this.accoutsCreated.map(account => {
+            this.papiClient.accounts.delete(account.InternalID!)
+        })
     }
 }

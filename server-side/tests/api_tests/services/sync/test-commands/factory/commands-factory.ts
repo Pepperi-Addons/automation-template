@@ -13,6 +13,7 @@ import { SystemFilterNone } from "../system-filter-none-command";
 import { SystemFilterUser } from "../system-filter-user-command";
 import { ResyncCommand } from "../resync-command";
 import { WACDCommand } from "../wacd-command";
+import { ConnectAccountDelta } from "../connect-account-delta-command";
 
 export class CommandFactory {
   // a map of command types to command classes
@@ -27,6 +28,7 @@ export class CommandFactory {
     DeltaTestCommand: DeltaTestCommand,
     ResyncCommand:ResyncCommand,
     WACDCommand: WACDCommand,
+    ConnectAccountDelta:ConnectAccountDelta,
     CleanupCommand: CleanupCommand
   };
 
