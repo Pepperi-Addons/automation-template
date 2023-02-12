@@ -20,9 +20,10 @@ export class PapiConnectAccountCommand extends SystemFilterNone {
     }
 
     async test(syncRes: any, syncData: any, expect: Chai.ExpectStatic): Promise<any> {
-        // tests
+        // sync res tests
         expect(syncRes).to.have.property('UpToDate').that.is.a('Boolean').and.is.equal(false)
         expect(syncData).to.have.property('ResourcesData').that.is.a('Array').and.is.not.empty
+        // sync data tests
         expect(syncData.ResourcesData[0]).to.have.property('user_defined_tables').that.is.a('Object').and.is.not.empty
         expect(syncData.ResourcesData[0].user_defined_tables).to.have.property('Headers').that.is.a('Array').and.is.not.empty
         expect(syncData.ResourcesData[0].user_defined_tables).to.have.property('Rows').that.is.a('Object').and.is.not.empty
