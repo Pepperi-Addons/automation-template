@@ -1,11 +1,22 @@
-import { AddonDataScheme, SchemeField, PapiClient,AddonData, Account } from "@pepperi-addons/papi-sdk"
-import { Client } from  '@pepperi-addons/debug-server'
-import GeneralService from "../../../../../potentialQA_SDK/server_side/general.service";
+import { AddonDataScheme,AddonData } from "@pepperi-addons/papi-sdk"
 import { SyncAdalService } from "./sync-adal-service";
+import { GlobalSyncService } from "./global-sync-service";
 
 export class SystemFilterService extends SyncAdalService {    
-    private accountUUIDS: string[] =["3b5e29fb-ba1a-44ae-a84f-532028a9a28a","2d639aed-3a42-49b8-aaec-cdecc1fd2a37","f6521e90-7edc-49da-b9ed-28e7b252cfbc"]
-    private userUUIDS: string[] =["31cfbcba-08f0-4af8-900f-fcccde066af4","27f21174-29c7-4b70-bb72-b2d8f77b4bf6","cbfc3250-acab-46c6-a51b-67ed6442531d"]
+    private accountUUIDS: any = this.papiClient.accounts.iter({
+        fields: ['UUID']
+    }).toArray().then(accounts => { 
+        this.accountUUIDS = accounts.map(uuid => {
+            return uuid.UUID
+        })
+    });
+    private userUUIDS: any = this.papiClient.users.iter({
+        fields: ['UUID']
+    }).toArray().then(users => { 
+        this.userUUIDS = users.map(uuid => {
+            return uuid.UUID
+        })
+    });
     private CORE_RESOURCES_ADDON_UUID ='fc5a5974-3b30-4430-8feb-7d5b9699bc9f'
 
     generateSystemFilterScheme(type: 'User'|'Account'|'None'){
@@ -37,6 +48,25 @@ export class SystemFilterService extends SyncAdalService {
             field.Account_Field = account ?  this.accountUUIDS[index] : undefined
         })
         return baseData
+    }
+
+    async getAccountUUIDOfCurrentUser(): Promise<string> {
+        // Get data
+        const accounts = await this.papiClient.accounts.iter().toArray();
+        const currentUserUUID = GlobalSyncService.getCurrentUserUUID(this.papiClient);
+        const accountsUsers = await this.papiClient.get(`/addons/data/${this.CORE_RESOURCES_ADDON_UUID}/account_users?where=Hidden=0`);
+
+        const pointingAccountUsers = accountsUsers.filter(accountUser => accountUser.User === currentUserUUID);
+
+        const accountThatPoints = accounts.find(account => pointingAccountUsers.find(pau => pau.Account === account.UUID));
+
+        // const accountThatPoints = accounts.find(account => account.UUID === pointingAccountUsers[0].Account);
+        if (pointingAccountUsers.length === 0) {
+            throw new Error('Could not find an account that points to current user, create one and try again.');
+        }
+
+        // Search for an account that points to current user
+        return accountThatPoints!.UUID!
     }
 
     getSystemFilter(account:boolean,webapp:boolean,accountUUID?:string){

@@ -3,7 +3,9 @@ import { SystemFilterNone } from "./system-filter-none-command";
 
 export class PapiConnectAccountCommand extends SystemFilterNone {
 
-    connectedAccountUUID: string = "3b5e29fb-ba1a-44ae-a84f-532028a9a28a";
+    private connectedAccountUUID = this.systemFilterService.getAccountUUIDOfCurrentUser().then(uuid => 
+        this.connectedAccountUUID = uuid
+        );
     
     async sync(): Promise<any> {
         // start sync
