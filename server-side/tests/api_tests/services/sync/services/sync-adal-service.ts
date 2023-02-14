@@ -15,9 +15,9 @@ export class SyncAdalService {
 
     constructor(client: Client){
         this.client = client
-        this.systemService= new GeneralService(this.client)
-        this.papiClient = this.systemService.papiClient;
-        this.schemaName="";
+        this.systemService = new GeneralService(this.client)
+        this.papiClient = this.systemService.papiClient as any;
+        this.schemaName = "";
         this.addonUUID = '02754342-e0b5-4300-b728-a94ea5e0e8f4'
     }
 
@@ -79,7 +79,7 @@ export class SyncAdalService {
         return adalService
     }
 
-    generateFieldsData(numberOfFields:number ,numberOfCharacters: number): AddonData{
+    generateFieldsData(numberOfFields:number, numberOfCharacters: number): AddonData{
         let fieldData=''
         for( let i=0; i<numberOfCharacters; i++){
             fieldData+='.'

@@ -38,13 +38,13 @@ export class SystemFilterNone extends BaseCommand {
     async pushData(adalService: any): Promise<any> {
         // initializing adal schema with data, first property is number of fields
         // second propety is number of characters in each field
-        const accountData = this.systemFilterService.generateSystemFilterData(true,false)
+        const accountData = this.systemFilterService.generateSystemFilterAccountsData()
         await adalService.account.upsertBatch(accountData)
         
-        const userData = this.systemFilterService.generateSystemFilterData(false,true)
+        const userData = this.systemFilterService.generateSystemFilterUserData();
         await adalService.user.upsertBatch(userData)
         
-        const noneData = this.systemFilterService.generateSystemFilterData(false,false)
+        const noneData = this.syncAdalService.generateFieldsData(2, 1)
         await adalService.none.upsertBatch(noneData)
         
         await GlobalSyncService.sleep(TIME_TO_SLEEP_FOR_NEBULA)
@@ -80,15 +80,15 @@ export class SystemFilterNone extends BaseCommand {
         expect(responseSchemes).to.contain(this.adalTableServices?.none.schemaName)
         
         const noneObjects = this.syncDataResult.getObjects(this.adalTableServices!.none.schemaName)
-        expect(Object.keys(noneObjects)).to.have.a.lengthOf(3)
+        expect(Object.keys(noneObjects)).to.have.a.lengthOf(2)
         
         const accountObjects = this.syncDataResult.getObjects(this.adalTableServices!.account.schemaName)
-        expect(Object.keys(noneObjects)).to.have.a.lengthOf(3)
+        expect(Object.keys(accountObjects)).to.have.a.lengthOf(1)
         
         const userObjects = this.syncDataResult.getObjects(this.adalTableServices!.user.schemaName)
-        expect(Object.keys(noneObjects)).to.have.a.lengthOf(3)
+        expect(Object.keys(userObjects)).to.have.a.lengthOf(1)
 
-        const currentUserUUID = GlobalSyncService.getCurrentUserUUID(this.systemFilterService.papiClient)
+        const currentUserUUID = this.systemFilterService.usersService.getCurrentUserUUID();
     
         expect(userObjects[0].User_Field == currentUserUUID)
     }

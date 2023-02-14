@@ -1,24 +1,18 @@
 import { AddonDataScheme,AddonData, Account } from "@pepperi-addons/papi-sdk"
-import { GlobalSyncService } from "./global-sync-service";
+import { AccountsService, CORE_RESOURCES_ADDON_UUID } from "./accounts-service";
 import { SyncAdalService } from "./sync-adal-service";
+import { UsersService } from "./users-service";
 
-export class SystemFilterService extends SyncAdalService {    
-    private accountUUIDS: any = this.papiClient.accounts.iter({
-        fields: ['UUID']
-    }).toArray().then(accounts => { 
-        this.accountUUIDS = accounts.map(uuid => {
-            return uuid.UUID
-        })
-    });
-    private userUUIDS: any = this.papiClient.users.iter({
-        fields: ['UUID']
-    }).toArray().then(users => { 
-        this.userUUIDS = users.map(uuid => {
-            return uuid.UUID
-        })
-    });
-    private CORE_RESOURCES_ADDON_UUID = 'fc5a5974-3b30-4430-8feb-7d5b9699bc9f'
+export class SystemFilterService extends SyncAdalService {  
+    accountsService: AccountsService;
+    usersService: UsersService;
 
+    constructor(client) {
+        super(client);
+        this.accountsService = new AccountsService(this.papiClient);
+        this.usersService = new UsersService(this.papiClient);
+    }
+  
     generateSystemFilterScheme(type: 'User' | 'Account' | 'None'){
         const syncSchema:AddonDataScheme = {
             Name: this.generateScehmaName(`_${type.toLowerCase()}`),
@@ -31,64 +25,43 @@ export class SystemFilterService extends SyncAdalService {
         return syncSchema
     }
 
-    generateSystemFilterData(account: boolean, user:boolean){
-        if(this.userUUIDS.length < 3 || this.accountUUIDS.length < 3 ){
-            throw new Error(`User uuid count is ${this.userUUIDS.length}, Account uuid count is ${this.accountUUIDS.length},
-            both need to be at least 3`)
-        }
-        let baseData:AddonData[] = [
+    async generateSystemFilterUserData() {
+        const currentUserUUID = this.usersService.getCurrentUserUUID();
+        const notCurrentUserUUID = await this.usersService.getNotCurrentUserUUID();
+        let fieldsData:AddonData[] = [
             {   Key:"1",
                 Name : "1",
+                User_Field: currentUserUUID
             },
             {
                 Key:"2",
-                Name : "2"
-            },{
-                Key:"3",
-                Name : "3"
-            }]
-        baseData.map((field,index) =>{
-            field.User_Field = user ?  this.userUUIDS[index] : undefined
-            field.Account_Field = account ?  this.accountUUIDS[index] : undefined
-        })
-        return baseData
+                Name : "2",
+                User_Field: notCurrentUserUUID
+            }
+        ]        
+        return fieldsData
+
     }
-
-    async getConnectedAccounts(): Promise<any[]> {
-        // Get data
-        const accounts = await this.papiClient.accounts.iter().toArray();
-        const currentUserUUID = GlobalSyncService.getCurrentUserUUID(this.papiClient);
-        const accountsUsers = await this.papiClient.get(`/addons/data/${this.CORE_RESOURCES_ADDON_UUID}/account_users?where=Hidden=0`);
-
-        const connectedAccountUsers = accountsUsers.filter(accountUser => accountUser.User === currentUserUUID);
-
-        const accountThatConnected = accounts.map(account => {
-            connectedAccountUsers.find(conn => {
-                if(conn.Account === account.UUID){
-                    return account
-                }
-            })
-        })
-
-        // const accountThatPoints = accounts.find(account => account.UUID === pointingAccountUsers[0].Account);
-        if (connectedAccountUsers.length === 0) {
-            throw new Error('Could not find an account that points to current user, create one and try again.');
-        }
-
-        // Search for an account that points to current user
-        return accountThatConnected
-    }
-
-    async getAccountUUIDOfCurrentUser(): Promise<string> {
-        const accountsConnected = await this.getConnectedAccounts()
-        return accountsConnected[0].UUID
-    }
-
-    async getNumberOfConnectAccount(): Promise<number> {
-        const accountsConnected = await this.getConnectedAccounts()
-        return accountsConnected.length
-    }
+    async generateSystemFilterAccountsData(): Promise<AddonData[]> {
+        const connectedAccounts = await this.accountsService.getConnectedAccounts();
+        const notConnectedAccounts = await this.accountsService.getNotConnectedAccounts();
         
+        const connectedAccount = connectedAccounts[0];
+        const notConnectedAccount =  notConnectedAccounts[0];
+        
+        let fieldsData:AddonData[] = [
+            {   Key:"1",
+                Name : "1",
+                Account_Field: connectedAccount.UUID
+            },
+            {
+                Key:"2",
+                Name : "2",
+                Account_Field: notConnectedAccount.UUID
+            }
+        ]        
+        return fieldsData
+    }        
 
     getSystemFilter(account:boolean,webapp:boolean,accountUUID?:string){
         let Type = account ? 'Account' : webapp? 'User' : 'None'
@@ -116,7 +89,7 @@ export class SystemFilterService extends SyncAdalService {
                 Type: "Resource", 
                 Resource: resource, 
                 ApplySystemFilter: true,
-                AddonUUID: this.CORE_RESOURCES_ADDON_UUID
+                AddonUUID: CORE_RESOURCES_ADDON_UUID
             }
         }
         return type != 'None' ? resourceField : nameField

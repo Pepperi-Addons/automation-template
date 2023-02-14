@@ -27,18 +27,27 @@ export class SystemFilterUser extends SystemFilterNone {
     }
     
     async test(auditLog: any, objToTest: any, expect: Chai.ExpectStatic): Promise<any> {
-        // tests
-        const schemaNames:{account:string, user:string,none:string} = this.syncAdalService.getSchemaNameFromAdalServices(this.adalTableServices)
-        expect(auditLog).to.have.property('UpToDate').that.is.a('Boolean').and.is.equal(false)
-        expect(auditLog).to.have.property('ExecutionURI').that.is.a('String').and.is.not.undefined
-        let schemes = await this.syncDataResult.getSchemes()
-        expect(schemes).to.contain(schemaNames.account).and.to.contain(schemaNames.user).and.to.contain(schemaNames.none)
-        let fields = await this.syncDataResult.getFields(schemaNames)
-        expect(fields).to.have.a.property('user');
-        expect(fields).to.have.a.property('none');
-        expect(fields).to.have.a.property('account');
-        expect(Object.keys(fields.account)).to.have.a.lengthOf(0)
-        expect(Object.keys(fields.user)).to.have.a.lengthOf(1)
-        expect(Object.keys(fields.none)).to.have.a.lengthOf(3)
+       // tests
+       expect(auditLog).to.have.property('UpToDate').that.is.a('Boolean').and.is.equal(false)
+       expect(auditLog).to.have.property('ExecutionURI').that.is.a('String').and.is.not.undefined
+
+       const responseSchemes = await this.syncDataResult.getSchemes()
+       expect(responseSchemes).to.contain(this.adalTableServices?.account.schemaName)
+       expect(responseSchemes).to.contain(this.adalTableServices?.user.schemaName)
+       expect(responseSchemes).to.contain(this.adalTableServices?.none.schemaName)
+       
+       const noneObjects = this.syncDataResult.getObjects(this.adalTableServices!.none.schemaName)
+       expect(Object.keys(noneObjects)).to.have.a.lengthOf(2)
+       
+       const accountObjects = this.syncDataResult.getObjects(this.adalTableServices!.account.schemaName)
+       expect(Object.keys(accountObjects)).to.have.a.lengthOf(0)
+       
+       const userObjects = this.syncDataResult.getObjects(this.adalTableServices!.user.schemaName)
+       expect(Object.keys(userObjects)).to.have.a.lengthOf(1)
+
+       const currentUserUUID = this.systemFilterService.usersService.getCurrentUserUUID();
+   
+       expect(userObjects[0].User_Field == currentUserUUID)
+
     }
   }
