@@ -1,16 +1,19 @@
-import { SchemaExistsCommand } from "../schema-exists-command";
-import { TestCommand } from "../base-command";
-import { FutureDateCommand } from "../future-date-command";
-import { SyncAdalService } from "../../services/sync-adal-service";
-import { ReturnURLCommand } from "../return-url-command";
-import { CleanupCommand } from "../cleanup-command";
-import { CleanRebuild } from "../clean-rebuild-command";
 import { Client } from "@pepperi-addons/debug-server/dist";
-import { DeltaTestCommand } from "../delta-test-command";
-import { SystemFilterAccount } from "../system-filter-account-command";
-import { SystemFilterNone } from "../system-filter-none-command";
-import { SystemFilterUser } from "../system-filter-user-command";
-import { WACDCommand } from "../wacd-command";
+import { SyncAdalService } from "../../services/sync-adal-service";
+import { 
+  CleanRebuild,
+  CleanupCommand,
+  DeltaTestCommand,
+  FutureDateCommand,
+  PapiConnectAccountCommand,
+  ReturnURLCommand,
+  SchemaExistsCommand,
+  SystemFilterAccount,
+  SystemFilterNone,
+  SystemFilterUser,
+  TestCommand,
+  WACDCommand,
+} from "..";
 
 export class CommandFactory {
   // a map of command types to command classes
@@ -19,11 +22,12 @@ export class CommandFactory {
     SchemaExistsTest: SchemaExistsCommand,
     FutureDateCommand: FutureDateCommand,
     ReturnURLCommand: ReturnURLCommand,
+    WACDCommand: WACDCommand,
+    PapiConnectAccountCommand: PapiConnectAccountCommand,
     SystemFilterNone: SystemFilterNone,
     SystemFilterAccount: SystemFilterAccount,
     SystemFilterUser:SystemFilterUser,
     DeltaTestCommand: DeltaTestCommand,
-    WACDCommand: WACDCommand,
     CleanupCommand: CleanupCommand
   };
 

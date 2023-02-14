@@ -40,6 +40,14 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
         command: CommandFactory.createCommand('ReturnURLCommand', syncAdalService, client)
       },
       {
+        name: 'WACDCommand',
+        command: CommandFactory.createCommand('WACDCommand', syncAdalService, client)
+      },
+      {
+        name: 'PapiConnectAccountCommand',
+        command: CommandFactory.createCommand('PapiConnectAccountCommand', syncAdalService, client)
+      },
+      {
         name: 'SystemFilterNone',
         command: CommandFactory.createCommand('SystemFilterNone',syncAdalService,client)
       },
