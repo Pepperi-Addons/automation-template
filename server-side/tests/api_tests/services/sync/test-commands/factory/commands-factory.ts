@@ -3,6 +3,7 @@ import { SyncAdalService } from "../../services/sync-adal-service";
 import { 
   CleanRebuild,
   CleanupCommand,
+  DeltaTestCommand,
   FutureDateCommand,
   PapiConnectAccountCommand,
   ResyncCommand,
