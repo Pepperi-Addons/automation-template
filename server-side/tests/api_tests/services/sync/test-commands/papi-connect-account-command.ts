@@ -3,19 +3,18 @@ import { SystemFilterNone } from "./system-filter-none-command";
 
 export class PapiConnectAccountCommand extends SystemFilterNone {
 
-    private connectedAccountUUID = this.systemFilterService.getAccountUUIDOfCurrentUser().then(uuid => 
-        this.connectedAccountUUID = uuid
-        );
-    
+    connectedAccountUUID: string = "";
+
     async sync(): Promise<any> {
+        this.connectedAccountUUID = await this.systemFilterService.accountsService.getConnectedAccountUUID();
         // start sync
         let dateTime = new Date();
         dateTime.setHours(dateTime.getHours()-1)
-        const systemFilter = this.systemFilterService.getSystemFilter(true, false, this.connectedAccountUUID)
+        const systemFilter = this.systemFilterService.generateSystemFilter(true, false, this.connectedAccountUUID)
         let auditLog = await this.syncService.pullConnectAccount({
-            ModificationDateTime:dateTime.toISOString(),
+            ModificationDateTime: dateTime.toISOString(),
             ...systemFilter
-        },this.connectedAccountUUID)
+        }, this.connectedAccountUUID)
         return auditLog
     }
 
