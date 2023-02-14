@@ -11,6 +11,7 @@ export class SystemFilterNone extends BaseCommand {
     protected systemFilterService: SystemFilterService; 
     protected adalTableServices? : {account:ADALTableService,user:ADALTableService,none:ADALTableService}
     auditLogService: any;
+    
     constructor(adalTableService: SyncAdalService,client:Client){
         super(adalTableService, client)
         this.systemFilterService = new SystemFilterService(client)
@@ -58,7 +59,7 @@ export class SystemFilterNone extends BaseCommand {
             ModificationDateTime: dateTime.toISOString(),
             ...systemFilter
         }, false, false)
-        
+
         return auditLog
     }
 
