@@ -27,7 +27,7 @@ export class BaseCommand implements TestCommand {
     constructor(syncAdalService:SyncAdalService, client: Client) {
         this.syncService = new SyncService(client)
         this.syncAdalService = syncAdalService;
-        this.TIME_TO_SLEEP_FOR_NEBULA = 8000;
+        this.TIME_TO_SLEEP_FOR_NEBULA = 10000;
         this.syncDataResult = new SyncDataResult()
     }
     // setupSchemes should be implemented by child classes and should setup the necessary ADAL schemes

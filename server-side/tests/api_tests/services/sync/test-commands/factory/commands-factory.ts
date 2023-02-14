@@ -7,6 +7,9 @@ import { ReturnURLCommand } from "../return-url-command";
 import { CleanupCommand } from "../cleanup-command";
 import { CleanRebuild } from "../clean-rebuild-command";
 import { Client } from "@pepperi-addons/debug-server/dist";
+import { SystemFilterNone } from "../system-filter-none-command";
+import { SystemFilterAccount } from "../system-filter-account-command";
+import { SystemFilterUser } from "../system-filter-user-command";
 import { WACDCommand } from "../wacd-command";
 
 export class CommandFactory {
@@ -16,6 +19,9 @@ export class CommandFactory {
     SchemaExistsTest: SchemaExistsCommand,
     FutureDateCommand: FutureDateCommand,
     ReturnURLCommand: ReturnURLCommand,
+    SystemFilterNone: SystemFilterNone,
+    SystemFilterAccount: SystemFilterAccount,
+    SystemFilterUser:SystemFilterUser,
     WACDCommand: WACDCommand,
     CleanupCommand: CleanupCommand
   };

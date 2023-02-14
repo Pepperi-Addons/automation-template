@@ -4,6 +4,7 @@ import { Client } from  '@pepperi-addons/debug-server'
 import { GlobalSyncService } from "./global-sync-service";
 import { AuditLogService } from "./audit-log-service";
 
+export const TIME_TO_SLEEP_FOR_NEBULA: number = 8000
 export class SyncService {
     client : Client
     papiClient: PapiClient;
@@ -48,5 +49,3 @@ export interface PullOptions {
     ModificationDateTime: string;
     SystemFilter?: object;
 }
-
-

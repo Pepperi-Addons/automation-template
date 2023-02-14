@@ -11,4 +11,9 @@ export class SyncDataResult {
         })
         return schemesArray
     }
+
+    getObjects(schemaName: string): any[] {
+        return this.data.ResourcesData.find(resource => resource.Schema.Name == schemaName).Objects;
+    }
+    
 }

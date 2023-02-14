@@ -1,9 +1,10 @@
-import { get } from "https"; 
+import { PapiClient } from "@pepperi-addons/papi-sdk";
+import { get } from "https";
 
 export class GlobalSyncService {
     static async sleep(ms: number) {
         return new Promise((resolve) => setTimeout(resolve, ms))
-    }  
+    }
 
     static async httpGet(url: string): Promise<any> {
         return new Promise((resolve, reject) => {

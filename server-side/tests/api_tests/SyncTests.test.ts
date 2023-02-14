@@ -4,6 +4,7 @@ import { CommandFactory } from "./services/sync/test-commands/factory/commands-f
 import { TestCommand } from "./services/sync/test-commands/base-command";
 import { SyncAdalService } from "./services/sync/services/sync-adal-service";
 
+
 // create ADAL Object
 
 export async function SyncTests(generalService: GeneralService, addonService: GeneralService, request, tester: TesterFunctions){
@@ -11,7 +12,7 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
   const expect = tester.expect;
   const it = tester.it;
   const dataObj = request.body.Data;
-  
+
   describe("SyncTests Suites",() => {
     const client: Client = generalService['client']
     const addonUUID = "5122dc6d-745b-4f46-bb8e-bd25225d350a";
@@ -37,6 +38,18 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
       {
         name: 'ReturnURLCommand',
         command: CommandFactory.createCommand('ReturnURLCommand', syncAdalService, client)
+      },
+      {
+        name: 'SystemFilterNone',
+        command: CommandFactory.createCommand('SystemFilterNone',syncAdalService,client)
+      },
+      {
+        name: 'SystemFilterAccount',
+        command: CommandFactory.createCommand('SystemFilterAccount',syncAdalService,client)
+      },
+      {
+        name: 'SystemFilterUser',
+        command: CommandFactory.createCommand('SystemFilterUser',syncAdalService,client)
       },
       {
         name: 'WACDCommand',
