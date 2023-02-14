@@ -60,6 +60,10 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
         command: CommandFactory.createCommand('SystemFilterUser',syncAdalService,client)
       },
       {
+        name: 'WACDCommand',
+        command: CommandFactory.createCommand('WACDCommand', syncAdalService, client)
+      },
+      {
         name: 'CleanupCommand',
         command: CommandFactory.createCommand('CleanupCommand', syncAdalService, client)
       }
