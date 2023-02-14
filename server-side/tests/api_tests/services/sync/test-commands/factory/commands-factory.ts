@@ -13,6 +13,8 @@ import { SystemFilterNone } from "../system-filter-none-command";
 import { SystemFilterUser } from "../system-filter-user-command";
 import { ResyncCommand } from "../resync-command";
 import { WACDCommand } from "../wacd-command";
+import { PapiClient } from "@pepperi-addons/papi-sdk";
+import { NumberOfRecordsCommand } from "../number-of-records-command";
 
 export class CommandFactory {
   // a map of command types to command classes
@@ -23,18 +25,19 @@ export class CommandFactory {
     ReturnURLCommand: ReturnURLCommand,
     SystemFilterNone: SystemFilterNone,
     SystemFilterAccount: SystemFilterAccount,
-    SystemFilterUser:SystemFilterUser,
+    SystemFilterUser: SystemFilterUser,
     DeltaTestCommand: DeltaTestCommand,
-    ResyncCommand:ResyncCommand,
+    ResyncCommand: ResyncCommand,
     WACDCommand: WACDCommand,
+    NumberOfRecordsCommand: NumberOfRecordsCommand,
     CleanupCommand: CleanupCommand
   };
 
-  static createCommand(type: string, syncAdalService: SyncAdalService, client: Client): TestCommand {
+  static createCommand(type: string, syncAdalService: SyncAdalService, client: Client,papiClient?:PapiClient): TestCommand {
     const CommandClass = CommandFactory.commandMap[type];
     if (!CommandClass) {
       throw new Error('Unknown command type');
     }
-    return new CommandClass(syncAdalService, client);
+    return new CommandClass(syncAdalService, client,papiClient);
   }
 }
