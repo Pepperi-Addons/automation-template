@@ -79,14 +79,14 @@ export class SyncAdalService {
         return adalService
     }
 
-    generateFieldsData(numberOfFields:number, numberOfCharacters: number): AddonData{
+    generateFieldsData(numberOfFields:number, numberOfCharacters: number): AddonData[]{
         let fieldData=''
         for( let i=0; i<numberOfCharacters; i++){
             fieldData+='.'
         }
-        let data: AddonData = {Key: "1", Fields:[]}
+        let data: AddonData[] = []
         for(let i=1;i<numberOfFields+1;i++){
-            data.Fields["Field"+i] = fieldData
+            data.push({Key: i.toString(),["Field"+i]: fieldData})
         }
         return data
     }

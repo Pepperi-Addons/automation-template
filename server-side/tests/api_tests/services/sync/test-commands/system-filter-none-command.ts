@@ -38,13 +38,13 @@ export class SystemFilterNone extends BaseCommand {
     async pushData(adalService: any): Promise<any> {
         // initializing adal schema with data, first property is number of fields
         // second propety is number of characters in each field
-        const accountData = this.systemFilterService.generateSystemFilterAccountsData()
+        const accountData = await this.systemFilterService.generateSystemFilterAccountsData()
         await adalService.account.upsertBatch(accountData)
         
-        const userData = this.systemFilterService.generateSystemFilterUserData();
+        const userData = await this.systemFilterService.generateSystemFilterUserData();
         await adalService.user.upsertBatch(userData)
         
-        const noneData = this.syncAdalService.generateFieldsData(2, 1)
+        const noneData = await this.syncAdalService.generateFieldsData(2, 1)
         await adalService.none.upsertBatch(noneData)
         
         await GlobalSyncService.sleep(TIME_TO_SLEEP_FOR_NEBULA)

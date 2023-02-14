@@ -41,15 +41,8 @@ export class AccountsService {
 
         const connectedAccountUsers = accountsUsers.filter(accountUser => accountUser.User === currentUserUUID);
 
-        const accountThatConnected = accounts.map(account => {
-            connectedAccountUsers.find(conn => {
-                if(conn.Account === account.UUID){
-                    return account
-                }
-            })
-        })
+        const accountThatConnected = accounts.filter(account => connectedAccountUsers.find(accountUser => accountUser.Account === account.UUID));
 
-        // const accountThatPoints = accounts.find(account => account.UUID === pointingAccountUsers[0].Account);
         if (connectedAccountUsers.length === 0) {
             throw new Error('Could not find an account that points to current user, create one and try again.');
         }
