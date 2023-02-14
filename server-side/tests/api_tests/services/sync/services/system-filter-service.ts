@@ -1,4 +1,5 @@
-import { AddonDataScheme,AddonData } from "@pepperi-addons/papi-sdk"
+import { AddonDataScheme,AddonData, Account } from "@pepperi-addons/papi-sdk"
+import { GlobalSyncService } from "./global-sync-service";
 import { SyncAdalService } from "./sync-adal-service";
 
 export class SystemFilterService extends SyncAdalService {    
@@ -53,7 +54,43 @@ export class SystemFilterService extends SyncAdalService {
         return baseData
     }
 
-    getSystemFilter(account: boolean, webapp: boolean, accountUUID?: string){
+    async getConnectedAccounts(): Promise<any[]> {
+        // Get data
+        const accounts = await this.papiClient.accounts.iter().toArray();
+        const currentUserUUID = GlobalSyncService.getCurrentUserUUID(this.papiClient);
+        const accountsUsers = await this.papiClient.get(`/addons/data/${this.CORE_RESOURCES_ADDON_UUID}/account_users?where=Hidden=0`);
+
+        const connectedAccountUsers = accountsUsers.filter(accountUser => accountUser.User === currentUserUUID);
+
+        const accountThatConnected = accounts.map(account => {
+            connectedAccountUsers.find(conn => {
+                if(conn.Account === account.UUID){
+                    return account
+                }
+            })
+        })
+
+        // const accountThatPoints = accounts.find(account => account.UUID === pointingAccountUsers[0].Account);
+        if (connectedAccountUsers.length === 0) {
+            throw new Error('Could not find an account that points to current user, create one and try again.');
+        }
+
+        // Search for an account that points to current user
+        return accountThatConnected
+    }
+
+    async getAccountUUIDOfCurrentUser(): Promise<string> {
+        const accountsConnected = await this.getConnectedAccounts()
+        return accountsConnected[0].UUID
+    }
+
+    async getNumberOfConnectAccount(): Promise<number> {
+        const accountsConnected = await this.getConnectedAccounts()
+        return accountsConnected.length
+    }
+        
+
+    getSystemFilter(account:boolean,webapp:boolean,accountUUID?:string){
         let Type = account ? 'Account' : webapp? 'User' : 'None'
         let SystemFilter = {
             SystemFilter: {

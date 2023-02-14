@@ -18,7 +18,7 @@ export class SystemFilterAccount extends SystemFilterNone {
         // start sync
         let dateTime = new Date();
         dateTime.setHours(dateTime.getHours()-1)
-        const systemFilter = this.systemFilterService.getSystemFilter(true,false,"3b5e29fb-ba1a-44ae-a84f-532028a9a28a")
+        const systemFilter = this.systemFilterService.getSystemFilter(true,false,await this.systemFilterService.getAccountUUIDOfCurrentUser())
         let auditLog = await this.syncService.pull({
             ModificationDateTime:dateTime.toISOString(),
             ...systemFilter
@@ -38,7 +38,7 @@ export class SystemFilterAccount extends SystemFilterNone {
         expect(fields).to.have.a.property('none');
         expect(fields).to.have.a.property('account');
         expect(Object.keys(fields.account)).to.have.a.lengthOf(1)
-        expect(Object.keys(fields.user)).to.have.a.lengthOf(1)
-        expect(Object.keys(fields.none)).to.have.a.lengthOf(3)
+        expect(Object.keys(fields.user)).to.have.a.lengthOf(0)
+        expect(Object.keys(fields.none)).to.have.a.lengthOf(0)
     }
   }
