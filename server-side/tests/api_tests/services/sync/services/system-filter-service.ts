@@ -13,7 +13,7 @@ export class SystemFilterService extends SyncAdalService {
         this.usersService = new UsersService(this.papiClient);
     }
   
-    generateSystemFilterScheme(type: 'User' | 'Account' | 'None'){
+    generateScheme(type: 'User' | 'Account' | 'None'){
         const syncSchema:AddonDataScheme = {
             Name: this.generateScehmaName(`_${type.toLowerCase()}`),
             Type: "data",
@@ -25,7 +25,7 @@ export class SystemFilterService extends SyncAdalService {
         return syncSchema
     }
 
-    async generateSystemFilterUserData() {
+    async generateUserData() {
         const currentUserUUID = this.usersService.getCurrentUserUUID();
         const notCurrentUserUUID = await this.usersService.getNotCurrentUserUUID();
         let fieldsData:AddonData[] = [
@@ -42,7 +42,7 @@ export class SystemFilterService extends SyncAdalService {
         return fieldsData
 
     }
-    async generateSystemFilterAccountsData(): Promise<AddonData[]> {
+    async generateAccountsData(): Promise<AddonData[]> {
         const connectedAccounts = await this.accountsService.getConnectedAccounts();
         const notConnectedAccounts = await this.accountsService.getNotConnectedAccounts();
         
@@ -63,7 +63,7 @@ export class SystemFilterService extends SyncAdalService {
         return fieldsData
     }        
 
-    getSystemFilter(account:boolean,webapp:boolean,accountUUID?:string){
+    generateSystemFilter(account:boolean,webapp:boolean,accountUUID?:string){
         let Type = account ? 'Account' : webapp? 'User' : 'None'
         let SystemFilter = {
             SystemFilter: {

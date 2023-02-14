@@ -38,22 +38,6 @@ export class SyncAdalService {
         return this.schemaName
     }
 
-    getSchemaNameFromAdalService(adalTableServices : any){
-        let name = adalTableServices ?  adalTableServices.map(service =>{
-            return service.schemaName
-        }) : ''
-        return name
-    }
-
-    getSchemaNameFromAdalServices(adalTableServices : any){
-        let names:{account:string,user:string,none:string} = {
-            account:adalTableServices.account.schemaName,
-            user:adalTableServices.user.schemaName,
-            none:adalTableServices.none.schemaName
-        }
-        return names
-    }
-
     generateSchemeWithFields(fieldNumber:number): AddonDataScheme {
         let fieldNames: AddonDataScheme['Fields'] = {}
         for(let i=1;i<fieldNumber+1;i++) {

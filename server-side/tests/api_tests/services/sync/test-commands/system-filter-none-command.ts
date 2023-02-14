@@ -18,9 +18,9 @@ export class SystemFilterNone extends BaseCommand {
   
     async setupSchemes(): Promise<any> {
         // generate schema with fields
-        const accountSchema = this.systemFilterService.generateSystemFilterScheme('Account')
-        const userSchema = this.systemFilterService.generateSystemFilterScheme('User')
-        const noneSchema = this.systemFilterService.generateSystemFilterScheme('None')
+        const accountSchema = this.systemFilterService.generateScheme('Account')
+        const userSchema = this.systemFilterService.generateScheme('User')
+        const noneSchema = this.systemFilterService.generateScheme('None')
         // upser schemes
         const accountAdalService = await this.syncAdalService.getAdalService(accountSchema)
         const userAdalService = await this.syncAdalService.getAdalService(userSchema)
@@ -38,10 +38,10 @@ export class SystemFilterNone extends BaseCommand {
     async pushData(adalService: any): Promise<any> {
         // initializing adal schema with data, first property is number of fields
         // second propety is number of characters in each field
-        const accountData = await this.systemFilterService.generateSystemFilterAccountsData()
+        const accountData = await this.systemFilterService.generateAccountsData()
         await adalService.account.upsertBatch(accountData)
         
-        const userData = await this.systemFilterService.generateSystemFilterUserData();
+        const userData = await this.systemFilterService.generateUserData();
         await adalService.user.upsertBatch(userData)
         
         const noneData = await this.syncAdalService.generateFieldsData(2, 1)
@@ -54,7 +54,7 @@ export class SystemFilterNone extends BaseCommand {
         // start sync
         let dateTime = new Date();
         dateTime.setHours(dateTime.getHours()-1)
-        const systemFilter = this.systemFilterService.getSystemFilter(false,false)
+        const systemFilter = this.systemFilterService.generateSystemFilter(false,false)
         
         let auditLog = await this.syncService.pull({
             ModificationDateTime: dateTime.toISOString(),

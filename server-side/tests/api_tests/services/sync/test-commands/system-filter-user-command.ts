@@ -18,7 +18,7 @@ export class SystemFilterUser extends SystemFilterNone {
         // start sync
         let dateTime = new Date();
         dateTime.setHours(dateTime.getHours()-1)
-        const systemFilter = this.systemFilterService.getSystemFilter(false,true)
+        const systemFilter = this.systemFilterService.generateSystemFilter(false,true)
         let auditLog = await this.syncService.pull({
             ModificationDateTime:dateTime.toISOString(),
             ...systemFilter

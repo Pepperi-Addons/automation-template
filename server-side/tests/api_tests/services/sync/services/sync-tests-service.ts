@@ -50,10 +50,3 @@ export interface PullOptions {
     ModificationDateTime: string;
     SystemFilter?: object;
 }
-
-
-export interface FieldsData{
-    account:any[];
-    user:any[];
-    none:any[];
-}

@@ -51,13 +51,8 @@ export class AccountsService {
         return accountThatConnected
     }
 
-    async getAccountUUIDOfCurrentUser(): Promise<string> {
+    async getConnectedAccountUUID(): Promise<string> {
         const accountsConnected = await this.getConnectedAccounts()
         return accountsConnected[0].UUID
-    }
-
-    async getNumberOfConnectAccount(): Promise<number> {
-        const accountsConnected = await this.getConnectedAccounts()
-        return accountsConnected.length
     }
 }

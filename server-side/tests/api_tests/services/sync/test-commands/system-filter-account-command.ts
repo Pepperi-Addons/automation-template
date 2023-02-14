@@ -17,11 +17,11 @@ export class SystemFilterAccount extends SystemFilterNone {
     } 
   
     async sync(): Promise<any> {
-        this.connectedAccountUUID = await this.systemFilterService.accountsService.getAccountUUIDOfCurrentUser()
+        this.connectedAccountUUID = await this.systemFilterService.accountsService.getConnectedAccountUUID()
         // start sync
         let dateTime = new Date();
         dateTime.setHours(dateTime.getHours()-1)
-        const systemFilter = this.systemFilterService.getSystemFilter(true, false, this.connectedAccountUUID)
+        const systemFilter = this.systemFilterService.generateSystemFilter(true, false, this.connectedAccountUUID)
         let auditLog = await this.syncService.pull({
             ModificationDateTime:dateTime.toISOString(),
             ...systemFilter
@@ -31,7 +31,7 @@ export class SystemFilterAccount extends SystemFilterNone {
     
     async test(auditLog: any, objToTest: any, expect: Chai.ExpectStatic): Promise<any> {
         // tests
-       expect(auditLog).to.have.property('UpToDate').that.is.a('Boolean').and.is.equal(false)
+        expect(auditLog).to.have.property('UpToDate').that.is.a('Boolean').and.is.equal(false)
         expect(auditLog).to.have.property('ExecutionURI').that.is.a('String').and.is.not.undefined
 
         const responseSchemes = await this.syncDataResult.getSchemes()
