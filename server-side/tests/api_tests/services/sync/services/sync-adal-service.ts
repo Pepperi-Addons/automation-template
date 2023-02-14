@@ -11,13 +11,13 @@ export class SyncAdalService {
     systemService: GeneralService;
     addonUUID:string;
     schemaName: string;
-    adalResources:ADALTableService[] = [];
+    adalResources: ADALTableService[] = [];
 
     constructor(client: Client){
         this.client = client
-        this.systemService= new GeneralService(this.client)
-        this.papiClient = this.systemService.papiClient;
-        this.schemaName="";
+        this.systemService = new GeneralService(this.client)
+        this.papiClient = this.systemService.papiClient as any;
+        this.schemaName = "";
         this.addonUUID = '02754342-e0b5-4300-b728-a94ea5e0e8f4'
     }
 
@@ -38,27 +38,11 @@ export class SyncAdalService {
         return this.schemaName
     }
 
-    async changeSchemaToHidden(table:ADALTableService){
+    async changeSchemaToHidden(table: ADALTableService){
         let schema = table.getSchema()
         schema.Hidden = true
         this.adalResources = this.adalResources.filter(r=> r.schemaName != schema.Name)
         return await this.papiClient.addons.data.schemes.post(schema)
-    }
-
-    getSchemaNameFromAdalService(adalTableServices : any){
-        let name = adalTableServices ?  adalTableServices.map(service =>{
-            return service.schemaName
-        }) : ''
-        return name
-    }
-
-    getSchemaNameFromAdalServices(adalTableServices : any){
-        let names:{account:string,user:string,none:string} = {
-            account:adalTableServices.account.schemaName,
-            user:adalTableServices.user.schemaName,
-            none:adalTableServices.none.schemaName
-        }
-        return names
     }
 
     generateSchemeWithFields(fieldNumber:number): AddonDataScheme {
@@ -86,14 +70,14 @@ export class SyncAdalService {
         return adalService
     }
 
-    generateFieldsData(numberOfFields:number ,numberOfCharacters: number): AddonData{
+    generateFieldsData(numberOfFields:number, numberOfCharacters: number): AddonData[]{
         let fieldData=''
         for( let i=0; i<numberOfCharacters; i++){
             fieldData+='.'
         }
-        let data: AddonData = {Key: "1", Fields:[]}
+        let data: AddonData[] = []
         for(let i=1;i<numberOfFields+1;i++){
-            data.Fields["Field"+i] = fieldData
+            data.push({Key: i.toString(),["Field"+i]: fieldData})
         }
         return data
     }

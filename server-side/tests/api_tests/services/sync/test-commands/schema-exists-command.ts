@@ -16,7 +16,7 @@ export class SchemaExistsCommand extends BaseCommand {
         // initializing adal schema with data, first property is number of fields
         // second propety is number of characters in each field
         const data = this.syncAdalService.generateFieldsData(1,1)
-        await adalService.upsertRecord(data)
+        await adalService.upsertBatch(data)
         await GlobalSyncService.sleep(this.TIME_TO_SLEEP_FOR_NEBULA)
     }
 
