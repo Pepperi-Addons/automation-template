@@ -53,7 +53,7 @@ export class SystemFilterService extends SyncAdalService {
         return baseData
     }
 
-    getSystemFilter(account:boolean,webapp:boolean,accountUUID?:string){
+    getSystemFilter(account: boolean, webapp: boolean, accountUUID?: string){
         let Type = account ? 'Account' : webapp? 'User' : 'None'
         let SystemFilter = {
             SystemFilter: {
