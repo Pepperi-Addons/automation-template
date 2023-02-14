@@ -19,6 +19,7 @@ export class UsersService {
         const notCurrentUsers = await this.getNotCurrentUsers();
         return notCurrentUsers[0].UUID;
     }
+    
     async getNotCurrentUsers(): Promise<any[]> {
         const users = await this.getUsers();
         const currentUserUUID = this.getCurrentUserUUID();

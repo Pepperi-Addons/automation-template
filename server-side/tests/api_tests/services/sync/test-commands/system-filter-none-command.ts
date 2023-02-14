@@ -28,16 +28,14 @@ export class SystemFilterNone extends BaseCommand {
         
         this.adalTableServices = {
             account: accountAdalService,
-            user:userAdalService,
-            none:noneAdalService
+            user: userAdalService,
+            none: noneAdalService
         }
         
         return this.adalTableServices;    
     }
 
     async pushData(adalService: any): Promise<any> {
-        // initializing adal schema with data, first property is number of fields
-        // second propety is number of characters in each field
         const accountData = await this.systemFilterService.generateAccountsData()
         await adalService.account.upsertBatch(accountData)
         
