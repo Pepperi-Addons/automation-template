@@ -16,8 +16,6 @@ export class DeltaTestCommand extends BaseCommand {
         const firstAdalService = await this.syncAdalService.getAdalService(firstSchema)
         this.firstSchemeADALTable = firstAdalService
 
-        this.timeOfNewScheme = new Date()
-
         const secondSchema = this.syncAdalService.generateSchemeWithFields(1)
         const secondAdalService = await this.syncAdalService.getAdalService(secondSchema)
         this.secondSchemeADALTable = secondAdalService
@@ -31,9 +29,9 @@ export class DeltaTestCommand extends BaseCommand {
         const data = this.syncAdalService.generateFieldsData(1, 1)
         
         // upserting the same data for both schemes and saving again the time between second and first
-        await this.firstSchemeADALTable!.upsertRecord(data)
+        await this.firstSchemeADALTable!.upsertBatch(data)
         this.timeOfNewScheme = new Date()
-        await this.secondSchemeADALTable!.upsertRecord(data)
+        await this.secondSchemeADALTable!.upsertBatch(data)
         
         // sleeping for allowing nebula to synchronize its data from adal
         await GlobalSyncService.sleep(this.TIME_TO_SLEEP_FOR_NEBULA)
