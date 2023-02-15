@@ -64,14 +64,13 @@ export class DeltaTestCommand extends BaseCommand {
         expect(syncRes.syncResult).to.have.property('UpToDate').that.is.a('Boolean').and.is.equal(false)
         expect(syncRes.syncResult).to.have.property('ExecutionURI').that.is.a('String').and.is.not.undefined
 
-        // getting schemes from sync response and validating that both second and first schemes is in the rsponse,
-        // because sync returns all of the schemas even if they are not for sync
+        // getting schemes from sync response and validating that only new schema is in the schemes to sync
         let schemes = await this.syncDataResult.getSchemes()
         expect(schemes).to.not.contain(oldSchemaName)
         expect(schemes).to.contain(newSchemaName)
 
-        // getting from the sync response the fields from each scheme,
-        // validating that the first scheme will not have any field to update and the second will have a field
+        // getting from the sync response the fields from new scheme,
+        // validating that the new scheme will have a field
         let newField = this.syncDataResult.getObjects(newSchemaName)
         expect(newField).to.be.an('Array').of.lengthOf.least(1)
 
