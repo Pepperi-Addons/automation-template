@@ -16,8 +16,6 @@ export class DeltaTestCommand extends BaseCommand {
         const firstAdalService = await this.syncAdalService.getAdalService(firstSchema)
         this.firstSchemeADALTable = firstAdalService
 
-        this.timeOfNewScheme = new Date()
-
         const secondSchema = this.syncAdalService.generateSchemeWithFields(1)
         const secondAdalService = await this.syncAdalService.getAdalService(secondSchema)
         this.secondSchemeADALTable = secondAdalService
@@ -31,9 +29,11 @@ export class DeltaTestCommand extends BaseCommand {
         const data = this.syncAdalService.generateFieldsData(1, 1)
         
         // upserting the same data for both schemes and saving again the time between second and first
-        await this.firstSchemeADALTable!.upsertRecord(data)
+        await this.firstSchemeADALTable!.upsertBatch(data)
+        await GlobalSyncService.sleep(this.TIME_TO_SLEEP_FOR_NEBULA)
+
         this.timeOfNewScheme = new Date()
-        await this.secondSchemeADALTable!.upsertRecord(data)
+        await this.secondSchemeADALTable!.upsertBatch(data)
         
         // sleeping for allowing nebula to synchronize its data from adal
         await GlobalSyncService.sleep(this.TIME_TO_SLEEP_FOR_NEBULA)
@@ -64,17 +64,14 @@ export class DeltaTestCommand extends BaseCommand {
         expect(syncRes.syncResult).to.have.property('UpToDate').that.is.a('Boolean').and.is.equal(false)
         expect(syncRes.syncResult).to.have.property('ExecutionURI').that.is.a('String').and.is.not.undefined
 
-        // getting schemes from sync response and validating that both second and first schemes is in the rsponse,
-        // because sync returns all of the schemas even if they are not for sync
+        // getting schemes from sync response and validating that only new schema is in the schemes to sync
         let schemes = await this.syncDataResult.getSchemes()
-        expect(schemes).to.contain(oldSchemaName)
+        expect(schemes).to.not.contain(oldSchemaName)
         expect(schemes).to.contain(newSchemaName)
 
-        // getting from the sync response the fields from each scheme,
-        // validating that the first scheme will not have any field to update and the second will have a field
-        let oldField = this.syncDataResult.getObjects(oldSchemaName)
+        // getting from the sync response the fields from new scheme,
+        // validating that the new scheme will have a field
         let newField = this.syncDataResult.getObjects(newSchemaName)
-        expect(oldField).to.be.an('Array').of.length(0)
         expect(newField).to.be.an('Array').of.lengthOf.least(1)
 
         // validating that the answer from sync will return quickly
