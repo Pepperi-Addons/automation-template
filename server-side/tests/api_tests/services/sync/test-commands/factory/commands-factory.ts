@@ -6,6 +6,7 @@ import {
   DeltaTestCommand,
   FutureDateCommand,
   PapiConnectAccountCommand,
+  ResyncCommand,
   ReturnURLCommand,
   SchemaExistsCommand,
   SystemFilterAccount,
@@ -22,12 +23,12 @@ export class CommandFactory {
     SchemaExistsTest: SchemaExistsCommand,
     FutureDateCommand: FutureDateCommand,
     ReturnURLCommand: ReturnURLCommand,
-    WACDCommand: WACDCommand,
     PapiConnectAccountCommand: PapiConnectAccountCommand,
     SystemFilterNone: SystemFilterNone,
     SystemFilterAccount: SystemFilterAccount,
     SystemFilterUser:SystemFilterUser,
-    DeltaTestCommand: DeltaTestCommand,
+    ResyncCommand:ResyncCommand,
+    WACDCommand: WACDCommand,
     CleanupCommand: CleanupCommand
   };
 

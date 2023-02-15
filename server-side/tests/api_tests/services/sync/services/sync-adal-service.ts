@@ -11,7 +11,7 @@ export class SyncAdalService {
     systemService: GeneralService;
     addonUUID:string;
     schemaName: string;
-    adalResources:ADALTableService[] = [];
+    adalResources: ADALTableService[] = [];
 
     constructor(client: Client){
         this.client = client
@@ -36,6 +36,13 @@ export class SyncAdalService {
     generateScehmaName(suffix?: string){
         this.schemaName = "integration_test_schema_of_sync_" + uuid().split('-').join('_')+(suffix ? suffix: '')
         return this.schemaName
+    }
+
+    async changeSchemaToHidden(table: ADALTableService){
+        let schema = table.getSchema()
+        schema.Hidden = true
+        this.adalResources = this.adalResources.filter(r=> r.schemaName != schema.Name)
+        return await this.papiClient.addons.data.schemes.post(schema)
     }
 
     generateSchemeWithFields(fieldNumber:number): AddonDataScheme {

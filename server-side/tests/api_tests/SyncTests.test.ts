@@ -64,8 +64,8 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
         command: CommandFactory.createCommand('DeltaTestCommand', syncAdalService, client)
       },
       {
-        name: 'WACDCommand',
-        command: CommandFactory.createCommand('WACDCommand', syncAdalService, client)
+        name: 'ResyncCommand',
+        command: CommandFactory.createCommand('ResyncCommand', syncAdalService, client)
       },
       {
         name: 'CleanupCommand',
