@@ -17,12 +17,15 @@ export class ResyncCommand extends BaseCommand {
         const hiddenAdalService = await this.syncAdalService.getAdalService(hiddenSchema)
         this.adalSchemes.hiddenScheme = hiddenAdalService
         await this.syncAdalService.changeSchemaToHidden(hiddenAdalService)
+
         const newSchema = this.syncAdalService.generateSchemeWithFields(1)
         const newAdalService = await this.syncAdalService.getAdalService(newSchema)
         this.adalSchemes.newScheme = newAdalService
+
         const noDataSchema = this.syncAdalService.generateSchemeWithFields(1)
         const noDataAdalService = await this.syncAdalService.getAdalService(noDataSchema)
         this.adalSchemes.noDataScheme = noDataAdalService
+        
         return newAdalService  
     }
 
@@ -31,7 +34,7 @@ export class ResyncCommand extends BaseCommand {
         // second propety is number of characters in each field
         const data = this.syncAdalService.generateFieldsData(1,1)
         // upserting the same data for both schemes and saving again the time between new and old
-        await this.adalSchemes.newScheme.upsertRecord(data)
+        await this.adalSchemes.newScheme.upsertBatch(data)
         // sleeping for allowing nebula to synchronize its data from adal
         await GlobalSyncService.sleep(this.TIME_TO_SLEEP_FOR_NEBULA)
     }
@@ -68,9 +71,9 @@ export class ResyncCommand extends BaseCommand {
 
         // getting from the sync response the fields from each scheme,
         // validating that the old scheme will not have any field to update and the new will have a field
-        let newField = this.syncDataResult.getFieldBySchemaName(newSchemaName)
+        let newField = this.syncDataResult.getObjects(newSchemaName)
         expect(newField).to.be.an('Array').of.lengthOf.least(1)
-        let noDataField = this.syncDataResult.getFieldBySchemaName(noDataSchemaName)
+        let noDataField = this.syncDataResult.getObjects(noDataSchemaName)
         expect(noDataField).to.be.an('Array').of.length(0)
     }
     
