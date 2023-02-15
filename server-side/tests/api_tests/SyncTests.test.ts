@@ -60,6 +60,10 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
         command: CommandFactory.createCommand('SystemFilterUser',syncAdalService,client)
       },
       {
+        name: 'DeltaTestCommand',
+        command: CommandFactory.createCommand('DeltaTestCommand', syncAdalService, client)
+      },
+      {
         name: 'WACDCommand',
         command: CommandFactory.createCommand('WACDCommand', syncAdalService, client)
       },

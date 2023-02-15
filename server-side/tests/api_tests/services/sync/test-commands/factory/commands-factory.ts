@@ -3,6 +3,7 @@ import { SyncAdalService } from "../../services/sync-adal-service";
 import { 
   CleanRebuild,
   CleanupCommand,
+  DeltaTestCommand,
   FutureDateCommand,
   PapiConnectAccountCommand,
   ReturnURLCommand,
@@ -26,6 +27,7 @@ export class CommandFactory {
     SystemFilterNone: SystemFilterNone,
     SystemFilterAccount: SystemFilterAccount,
     SystemFilterUser:SystemFilterUser,
+    DeltaTestCommand: DeltaTestCommand,
     CleanupCommand: CleanupCommand
   };
 
