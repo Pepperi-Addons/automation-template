@@ -16,7 +16,7 @@ const chai_as_promised_1 = __importDefault(require("chai-as-promised"));
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const mochawesome_1 = __importDefault(require("mochawesome"));
-const general_service_1 = require("../potentialQA_SDK/server_side/general.service");
+const general_service_1 = require("./server_side/general.service");
 //SYS REPORTING
 // import GeneralService from './services/general.service';
 // import jwt_decode from 'jwt-decode';

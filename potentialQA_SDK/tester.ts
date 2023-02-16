@@ -5,7 +5,7 @@ import fs from 'fs';
 import path from 'path';
 import Mochawesome from 'mochawesome';
 import { Client } from '@pepperi-addons/debug-server';
-import { ConsoleColors } from '../potentialQA_SDK/server_side/general.service';
+import { ConsoleColors } from './server_side/general.service';
 //SYS REPORTING
 // import GeneralService from './services/general.service';
 // import jwt_decode from 'jwt-decode';
