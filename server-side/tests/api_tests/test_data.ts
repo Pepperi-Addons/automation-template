@@ -1,4 +1,4 @@
-import { GeneralService, TesterFunctions } from "tests";
+import { GeneralService, TesterFunctions } from "test_infra";
 
 
 const installedAddons = {

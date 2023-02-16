@@ -1,7 +1,8 @@
 // 00000000-0000-0000-0000-00000000ada1
 import { FindOptions, User, PapiClient } from '@pepperi-addons/papi-sdk';
-import GeneralService from '../../../potentialQA_SDK/server_side/general.service';
 import jwtDecode from "jwt-decode";
+import { GeneralService } from 'test_infra';
+
 
 export class SchemaExtensionsService {
 

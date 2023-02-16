@@ -3,13 +3,14 @@ import { NebulaTest } from './tests/api_tests/NebulaTest.test';
 
 import { SchemaExtensions } from './tests/api_tests/SchemaExtensions.test';
 import { Client, Request } from '@pepperi-addons/debug-server';
-import {JsonMapper} from '../potentialQA_SDK/mapper';
-import { TestDataTests } from '../potentialQA_SDK/server_side/serverInfra.index';
+import { JsonMapper } from 'test_infra';
+// import { TestDataTests } from '../potentialQA_SDK/server_side/serverInfra.index';
 import { UsersTests } from './tests/api_tests/Users.example.test';
 import { DimxTests } from './tests/api_tests/DimxTests.test';
 
 import { AddonUUID as AddonUUIDFromAddonConfig } from '../addon.config.json'; // TODO: remove, part of a temporarily fix
-import { GeneralService, TesterFunctions } from 'tests';
+import { GeneralService, TesterFunctions } from 'test_infra';
+import {TestDataTests} from './tests/api_tests/test_data';
 
 let testName = '';
 let context = {};

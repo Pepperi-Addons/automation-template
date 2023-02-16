@@ -15,7 +15,8 @@ import {
     BatchApiResponse,
     ArchiveBody,
 } from '@pepperi-addons/papi-sdk';
-import GeneralService from '../../../potentialQA_SDK/server_side/general.service';
+import { GeneralService } from 'test_infra';
+// import GeneralService from '../../../potentialQA_SDK/server_side/general.service';
 
 const apiCallsInterval = 4000;
 

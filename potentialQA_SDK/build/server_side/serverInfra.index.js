@@ -12,6 +12,4 @@ const import_export_atd_service_1 = require("./import-export-atd.service");
 exports.ImportExportATDService = import_export_atd_service_1.ImportExportATDService;
 const objects_service_1 = require("./objects.service");
 exports.ObjectsService = objects_service_1.ObjectsService;
-const test_data_1 = require("../../server-side/tests/api_tests/test_data");
-exports.TestDataTests = test_data_1.TestDataTests;
 //# sourceMappingURL=serverInfra.index.js.map

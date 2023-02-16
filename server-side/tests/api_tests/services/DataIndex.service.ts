@@ -6,7 +6,9 @@ import {
     AddonDataScheme,
     ElasticSearchDocument,
 } from '@pepperi-addons/papi-sdk';
-import GeneralService from '../../../potentialQA_SDK/server_side/general.service';
+
+// import GeneralService from '../../../potentialQA_SDK/server_side/general.service';
+import {GeneralService} from 'test_infra'
 import { v4 as uuid } from 'uuid';
 
 type PartialScheme = Omit<AddonDataScheme, "Name" | "Type" | "DataSourceData">;
