@@ -3,6 +3,8 @@ import { SyncService } from "../services/sync-tests-service";
 import { SyncAdalService } from "../services/sync-adal-service";
 import { Client } from "@pepperi-addons/debug-server/dist";
 import { SyncDataResult } from "../sync-data-result";
+import { PapiClient } from "@pepperi-addons/papi-sdk";
+import { ResourceManagerService } from "../../resource_management/resource_manager.service";
 
 // TestCommand interface defines the common methods that should be implemented by all test commands
 export interface TestCommand {
@@ -23,12 +25,18 @@ export class BaseCommand implements TestCommand {
     protected TIME_TO_SLEEP_FOR_NEBULA: number
     //syncDataResult is an instance of the SyncDataResult class, which is used to store the data result of the sync.
     protected syncDataResult: SyncDataResult
+
+    protected papiClient: PapiClient
+
+    protected resourceManager: ResourceManagerService
   
-    constructor(syncAdalService:SyncAdalService, client: Client) {
+    constructor(syncAdalService:SyncAdalService, client: Client, papiClient:PapiClient, resourceManager: ResourceManagerService) {
         this.syncService = new SyncService(client)
         this.syncAdalService = syncAdalService;
         this.TIME_TO_SLEEP_FOR_NEBULA = 10000;
         this.syncDataResult = new SyncDataResult()
+        this.papiClient = papiClient
+        this.resourceManager = resourceManager
     }
     // setupSchemes should be implemented by child classes and should setup the necessary ADAL schemes
     setupSchemes(): Promise<any> {

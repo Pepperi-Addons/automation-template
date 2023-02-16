@@ -1,18 +1,17 @@
-import { PapiClient } from '@pepperi-addons/papi-sdk';
+import { PapiClient, Relation } from '@pepperi-addons/papi-sdk';
 import { ResourceManagerService } from '../../resource_management/resource_manager.service';
 
 export class SyncDimxService{
     private addonUUID = '02754342-e0b5-4300-b728-a94ea5e0e8f4'
 
-    async createRelation(schemaName:string, papiClient:PapiClient){
-        const resourcaManager = new ResourceManagerService(papiClient,this.addonUUID)
-        let relation = {
+    async createRelation(resourcaManager: ResourceManagerService, schemaName:string, papiClient:PapiClient){
+        let relation: Relation = {
             RelationName: "DataImportResource",
             AddonUUID: this.addonUUID,
             Name: schemaName,
             Description: "Sync Test Import Relation",
             Type: "AddonAPI",
-            AddonRelativeURL: "/api/import_relation_function"
+            AddonRelativeURL: "/dimx_sync_tests/import_dimx_object_do_nothing"
         }
         try{
             await resourcaManager.createRelation(relation)
@@ -22,8 +21,8 @@ export class SyncDimxService{
         }
     }
 
-    async uploadDataToDIMX(bodyToUpload:any,schemaName:string,papiClient:PapiClient) : Promise<any>{
-        const ansFromImport = await papiClient.addons.data.import.uuid(this.addonUUID).table(schemaName).upsert(bodyToUpload)
+    async uploadDataToDIMX(fileUrl:any,schemaName:string,papiClient:PapiClient) : Promise<any>{
+        const ansFromImport = await papiClient.addons.data.import.file.uuid(this.addonUUID).table(schemaName).upsert({URI:fileUrl})
         console.log(ansFromImport)
         return ansFromImport
     }

@@ -1,37 +1,49 @@
 import { Client } from "@pepperi-addons/debug-server/dist";
 import { AddonData, PapiClient } from "@pepperi-addons/papi-sdk";
 import { ADALTableService } from "../../resource_management/adal_table.service";
+import { ResourceManagerService } from "../../resource_management/resource_manager.service";
 import { GlobalSyncService } from "../services/global-sync-service";
 import { SyncAdalService } from "../services/sync-adal-service";
 import { SyncDimxService } from "../services/sync-dimx-service";
+import { SyncFileService } from "../services/sync-file-service";
 import { BaseCommand as BaseCommand } from "./base-command";
 
 
 export class NumberOfRecordsCommand extends BaseCommand {
     papiClient: PapiClient;    
     syncDimxService: SyncDimxService
-    constructor(syncAdalService:SyncAdalService, client:Client, papiClient:PapiClient){
-        super(syncAdalService, client)
+    syncFileService: SyncFileService
+    constructor(syncAdalService:SyncAdalService, client:Client, papiClient:PapiClient,resourceManager: ResourceManagerService){
+        super(syncAdalService, client,papiClient,resourceManager)
         this.papiClient = papiClient
         this.syncDimxService = new SyncDimxService()
+        this.syncFileService = new SyncFileService(this.papiClient)
     }
+    private schemesCreated:{} = {}
 
-    async setupSchemes(): Promise<ADALTableService> {
+    async setupSchemes(): Promise<any> {
         // generate schema with fields
-        const schema = this.syncAdalService.generateSchemeWithFields(1)
-        const adalService = await this.syncAdalService.getAdalService(schema)
-        return adalService;    
+        for (let fieldNumber = 5; fieldNumber <= 5000; fieldNumber *= 10) {
+            const schema = this.syncAdalService.generateSchemeWithFields(1)
+            const adalService = await this.syncAdalService.getAdalService(schema)
+            this.schemesCreated[fieldNumber] = adalService
+        }
+        
+        return Promise.resolve(undefined)    
     }
 
     async pushData(adalService: ADALTableService): Promise<any> {
         // initializing adal schema with data, first property is number of fields
         // second propety is number of characters in each field
-        await this.syncDimxService.createRelation(adalService.schemaName,this.papiClient)
-        let objectForDimx: AddonData[] = []
-        for (let fieldNumber = 1; fieldNumber <= 100000; fieldNumber*=10) {
-            objectForDimx.push(this.syncAdalService.generateFieldsData(fieldNumber,1))
+        
+        let objectForDimx: any
+        await this.syncFileService.createPFSSchema()
+        for (let recordNumber = 5; recordNumber <= 5000; recordNumber *= 10) {
+            await this.syncDimxService.createRelation(this.resourceManager,this.schemesCreated[recordNumber].schemaName,this.papiClient)
+            objectForDimx = this.syncAdalService.generateFieldsData(1, 1, recordNumber)
+            await this.syncFileService.uploadFilesAndImport(objectForDimx,this.schemesCreated[recordNumber].schemaName)
         }
-        await this.syncDimxService.uploadDataToDIMX({Objects:objectForDimx},adalService.schemaName,this.papiClient)
+        
         await GlobalSyncService.sleep(this.TIME_TO_SLEEP_FOR_NEBULA)
     }
 
@@ -46,16 +58,20 @@ export class NumberOfRecordsCommand extends BaseCommand {
     }
 
     async processSyncResponse(syncRes: any): Promise<any> {
-        this.syncDataResult.data =  await this.syncService.handleSyncData(syncRes)
+        this.syncDataResult.data =  await this.syncService.handleSyncData(syncRes,true)
         return this.syncDataResult.data;
     }
     
     async  test(syncRes: any, syncData:any, expect: Chai.ExpectStatic): Promise<any> {
         // tests
+
         expect(syncRes).to.have.property('UpToDate').that.is.a('Boolean').and.is.equal(false)
         expect(syncRes).to.have.property('ExecutionURI').that.is.a('String').and.is.not.undefined
+
         let schemes = await this.syncDataResult.getSchemes()
-        expect(schemes).to.contain(this.syncAdalService.schemeName)
+
+        let schemesCreated = this.syncAdalService.getSchemeNamesFromObject(this.schemesCreated)
+        expect(schemes).to.include.members(schemesCreated)
     }
     
   }

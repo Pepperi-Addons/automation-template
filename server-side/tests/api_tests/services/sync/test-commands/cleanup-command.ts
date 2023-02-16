@@ -14,6 +14,7 @@ export class CleanupCommand extends BaseCommand{
         return Promise.resolve(undefined);
     }
     async test(syncRes: any,syncData:any,expect: Chai.ExpectStatic): Promise<any> {
+        await this.resourceManager.cleanup()
         return await this.syncAdalService.cleanup();
     }
 }

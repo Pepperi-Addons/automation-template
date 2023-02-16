@@ -1,20 +1,23 @@
-import { SyncService } from "../../services/sync-tests-service";
-import { SchemaExistsCommand } from "../schema-exists-command";
-import { TestCommand } from "../base-command";
-import { FutureDateCommand } from "../future-date-command";
-import { SyncAdalService } from "../../services/sync-adal-service";
-import { ReturnURLCommand } from "../return-url-command";
-import { CleanupCommand } from "../cleanup-command";
-import { CleanRebuild } from "../clean-rebuild-command";
 import { Client } from "@pepperi-addons/debug-server/dist";
-import { DeltaTestCommand } from "../delta-test-command";
-import { SystemFilterAccount } from "../system-filter-account-command";
-import { SystemFilterNone } from "../system-filter-none-command";
-import { SystemFilterUser } from "../system-filter-user-command";
-import { ResyncCommand } from "../resync-command";
-import { WACDCommand } from "../wacd-command";
+import { SyncAdalService } from "../../services/sync-adal-service";
+import { 
+  CleanRebuild,
+  CleanupCommand,
+  DeltaTestCommand,
+  FutureDateCommand,
+  PapiConnectAccountCommand,
+  ResyncCommand,
+  ReturnURLCommand,
+  SchemaExistsCommand,
+  SystemFilterAccount,
+  SystemFilterNone,
+  SystemFilterUser,
+  TestCommand,
+  WACDCommand,
+  NumberOfRecordsCommand,
+} from "..";
 import { PapiClient } from "@pepperi-addons/papi-sdk";
-import { NumberOfRecordsCommand } from "../number-of-records-command";
+import { ResourceManagerService } from "../../../resource_management/resource_manager.service";
 
 export class CommandFactory {
   // a map of command types to command classes
@@ -23,6 +26,7 @@ export class CommandFactory {
     SchemaExistsTest: SchemaExistsCommand,
     FutureDateCommand: FutureDateCommand,
     ReturnURLCommand: ReturnURLCommand,
+    PapiConnectAccountCommand: PapiConnectAccountCommand,
     SystemFilterNone: SystemFilterNone,
     SystemFilterAccount: SystemFilterAccount,
     SystemFilterUser: SystemFilterUser,
@@ -33,11 +37,11 @@ export class CommandFactory {
     CleanupCommand: CleanupCommand
   };
 
-  static createCommand(type: string, syncAdalService: SyncAdalService, client: Client,papiClient?:PapiClient): TestCommand {
+  static createCommand(type: string, syncAdalService: SyncAdalService, client: Client,papiClient?:PapiClient,resourcaManager?: ResourceManagerService): TestCommand {
     const CommandClass = CommandFactory.commandMap[type];
     if (!CommandClass) {
       throw new Error('Unknown command type');
     }
-    return new CommandClass(syncAdalService, client,papiClient);
+    return new CommandClass(syncAdalService, client,papiClient,resourcaManager);
   }
 }
