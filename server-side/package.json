@@ -51,7 +51,7 @@
         "lorem-ipsum": "^2.0.4",
         "mocha": "^7.2.0",
         "mochawesome": "^7.0.1",
-        "node-fetch": "^2.6.7",
+        "node-fetch": "^2.6.9",
         "ts-mocha": "^8.0.0",
         "uuid": "^8.3.2"
     }

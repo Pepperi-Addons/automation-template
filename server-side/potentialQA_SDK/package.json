@@ -12,7 +12,7 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "compile": "tsc",
-        "build": "rollup -c rollup.config.js",
+        "build": "cd .. && rollup -c rollup.config.js",
         "start": "tsc -w app.local.ts",
         "jenkins-ui-test": "ts-mocha --delay --reporter mochawesome --reporter-options reportDir=mochawesome-report,reportFilename=UI_Test --timeout 1200000 ../server-side/tests/ui_tests/test.index.ts --server='' --chrome_headless='' --user_email='' --user_pass='' --var_pass=''",
         "ui-show-report": "ts-mocha --delay --reporter mochawesome --reporter-options reportDir=mochawesome-report,reportFilename=UI_Test,timestamp=yyyy.mm.dd'T'HH_MM_ss,autoOpen --timeout 1200000 ../server-side/tests/ui_tests/test.index.ts --server='' --chrome_headless='' --user_email='' --user_pass='' --var_pass=''"
