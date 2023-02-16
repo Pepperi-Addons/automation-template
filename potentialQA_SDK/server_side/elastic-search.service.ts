@@ -1,5 +1,5 @@
 import { PapiClient } from '@pepperi-addons/papi-sdk';
-import GeneralService from './general.service';
+import {GeneralService} from './general.service';
 
 interface QueryOptions {
     select?: string[];

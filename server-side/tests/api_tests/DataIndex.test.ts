@@ -3,7 +3,9 @@ import { Connector, validateOrderOfResponseBySpecificField } from './services/Da
 import { PapiClient } from '@pepperi-addons/papi-sdk';
 //00000000-0000-0000-0000-00000e1a571c
 import { DataIndexService } from "./services/DataIndex.service";
-import GeneralService, { TesterFunctions } from "../../potentialQA_SDK/server_side/general.service";
+import { GeneralService, TesterFunctions } from 'tests';
+// import GeneralService, { TesterFunctions } from "../../potentialQA_SDK/server_side/general.service";
+// import {GeneralSer} from 'tests';
 
 
 export async function DataIndex(generalService: GeneralService, addonService: GeneralService, request, tester: TesterFunctions) {

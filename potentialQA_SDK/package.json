@@ -2,7 +2,7 @@
     "name": "test",
     "version": "0.0.0",
     "description": "",
-    "main": "api.ts",
+    "main": "./build/potentialQA_SDK/index.js",
     "types": "",
     "files": [
         "build"
@@ -12,13 +12,14 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "compile": "tsc",
-        "build": "cd .. && rollup -c rollup.config.js",
+        "build": "tsc",
         "start": "tsc -w app.local.ts",
-        "jenkins-ui-test": "ts-mocha --delay --reporter mochawesome --reporter-options reportDir=mochawesome-report,reportFilename=UI_Test --timeout 1200000 ../server-side/tests/ui_tests/test.index.ts --server='' --chrome_headless='' --user_email='' --user_pass='' --var_pass=''",
-        "ui-show-report": "ts-mocha --delay --reporter mochawesome --reporter-options reportDir=mochawesome-report,reportFilename=UI_Test,timestamp=yyyy.mm.dd'T'HH_MM_ss,autoOpen --timeout 1200000 ../server-side/tests/ui_tests/test.index.ts --server='' --chrome_headless='' --user_email='' --user_pass='' --var_pass=''"
+        "jenkins-ui-test": "ts-mocha --delay --reporter mochawesome --reporter-options reportDir=mochawesome-report,reportFilename=UI_Test --timeout 1200000  ../server-side/tests/ui_tests/test.index.ts --server='' --chrome_headless='' --user_email='' --user_pass='' --var_pass=''",
+        "ui-show-report": "ts-mocha --delay --reporter mochawesome --reporter-options reportDir=mochawesome-report,reportFilename=UI_Test,timestamp=yyyy.mm.dd'T'HH_MM_ss,autoOpen --timeout 1200000  ../server-side/tests/ui_tests/test.index.ts --server='' --chrome_headless='' --user_email='' --user_pass='' --var_pass=''",
+        "create-test": "node ../script/create.js"
     },
     "devDependencies": {
-        "@rollup/plugin-commonjs": "^12.0.0",
+        "@rollup/plugin-commonjs": "^21.0.0",
         "@rollup/plugin-node-resolve": "^8.0.0",
         "@types/chai": "^4.2.21",
         "@types/chai-as-promised": "^7.1.2",
@@ -42,14 +43,15 @@
     },
     "dependencies": {
         "@pepperi-addons/debug-server": "^0.0.32",
-        "@pepperi-addons/papi-sdk": "^1.45.0",
+        "@pepperi-addons/papi-sdk": "^1.47.1",
         "@rollup/plugin-json": "^4.1.0",
+        "bluebird": "^3.7.2",
         "chai": "^4.2.0",
         "chai-as-promised": "^7.1.1",
         "lorem-ipsum": "^2.0.4",
         "mocha": "^7.2.0",
         "mochawesome": "^7.0.1",
-        "node-fetch": "^2.6.9",
+        "node-fetch": "^2.6.0",
         "ts-mocha": "^8.0.0",
         "uuid": "^8.3.2"
     }

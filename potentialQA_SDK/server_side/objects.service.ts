@@ -15,7 +15,7 @@ import {
     BatchApiResponse,
     ArchiveBody,
 } from '@pepperi-addons/papi-sdk';
-import GeneralService from './general.service';
+import {GeneralService} from './general.service';
 
 const apiCallsInterval = 4000;
 

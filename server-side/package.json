@@ -19,7 +19,7 @@
         "create-test": "node ../script/create.js"
     },
     "devDependencies": {
-        "@rollup/plugin-commonjs": "^12.0.0",
+        "@rollup/plugin-commonjs": "^21.0.0",
         "@rollup/plugin-node-resolve": "^8.0.0",
         "@types/chai": "^4.2.21",
         "@types/chai-as-promised": "^7.1.2",
@@ -43,7 +43,7 @@
     },
     "dependencies": {
         "@pepperi-addons/debug-server": "^0.0.32",
-        "@pepperi-addons/papi-sdk": "^1.45.0",
+        "@pepperi-addons/papi-sdk": "^1.47.1",
         "@rollup/plugin-json": "^4.1.0",
         "bluebird": "^3.7.2",
         "chai": "^4.2.0",
@@ -51,8 +51,9 @@
         "lorem-ipsum": "^2.0.4",
         "mocha": "^7.2.0",
         "mochawesome": "^7.0.1",
-        "node-fetch": "^2.6.9",
+        "node-fetch": "^2.6.0",
         "ts-mocha": "^8.0.0",
-        "uuid": "^8.3.2"
+        "uuid": "^8.3.2",
+        "tests": "file:../potentialQA_SDK/"
     }
 }

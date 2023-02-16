@@ -175,7 +175,7 @@ export interface FilterAttributes {
     UserUUID?: string[]; //Tests only support one UserUUID but FilterAttributes interface keep the format of ADAL
 }
 
-export default class GeneralService {
+export class GeneralService {
     papiClient: PapiClient;
     adalService: ADALService;
     assetsBaseUrl: string;

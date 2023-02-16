@@ -1,29 +1,29 @@
-import { DataIndex } from '../tests/api_tests/DataIndex.test';
-import { NebulaTest } from '../tests/api_tests/NebulaTest.test';
+import { DataIndex } from './tests/api_tests/DataIndex.test';
+import { NebulaTest } from './tests/api_tests/NebulaTest.test';
 
-import { SchemaExtensions } from '../tests/api_tests/SchemaExtensions.test';
-import GeneralService, { TesterFunctions } from '../potentialQA_SDK/server_side/general.service';
+import { SchemaExtensions } from './tests/api_tests/SchemaExtensions.test';
 import { Client, Request } from '@pepperi-addons/debug-server';
-import {JsonMapper} from './mapper';
+import {JsonMapper} from '../potentialQA_SDK/mapper';
 import { TestDataTests } from '../potentialQA_SDK/server_side/serverInfra.index';
-import { UsersTests } from '../tests/api_tests/Users.example.test';
-import { DimxTests } from '../tests/api_tests/DimxTests.test';
+import { UsersTests } from './tests/api_tests/Users.example.test';
+import { DimxTests } from './tests/api_tests/DimxTests.test';
 
-import { AddonUUID as AddonUUIDFromAddonConfig } from '../../addon.config.json'; // TODO: remove, part of a temporarily fix
+import { AddonUUID as AddonUUIDFromAddonConfig } from '../addon.config.json'; // TODO: remove, part of a temporarily fix
+import { GeneralService, TesterFunctions } from 'tests';
 
 let testName = '';
 let context = {};
 
 export async function runTest(addonUUID: string, client: Client, request, testerFunctions: TesterFunctions) {
     if (addonUUID.length !== 36) {
-        throw Error(`Error: ${addonUUID} Is Not A Valid Addon UUID`);
+        throw new Error(`Error: ${addonUUID} Is Not A Valid Addon UUID`);
     }
     const functionNames = mapUuidToTestName(addonUUID);
     if (functionNames.length === 0) {
-        throw Error(`Error: No Test For Addon UUID ${addonUUID} Is Existing`);
+        throw new Error(`Error: No Test For Addon UUID ${addonUUID} Is Existing`);
     }
     if (request.body.isLocal === undefined) {
-        throw Error("Error: isLocal is Mandatory Field Inside Test Request Body");
+        throw new Error("Error: isLocal is Mandatory Field Inside Test Request Body");
     }
     // copy client object to avoid changing the original client object
     const addonService = Object.assign({}, client)
@@ -33,7 +33,7 @@ export async function runTest(addonUUID: string, client: Client, request, tester
     for (let index = 0; index < functionNames.length; index++) {
         await context[functionNames[index]].apply(this, [client, addonService, request, testerFunctions]);
     }
-    return;
+    return addonUUID;
 }
 
 function mapUuidToTestName(addonUUID: string): string[] {
@@ -51,7 +51,7 @@ function camelToSnakeCase(str) {
     return (str.split(/(?=[A-Z])/).join('_').toLowerCase());
 }
 
-//this function is infra function to print addon versions - DO NOT TOUCH
+// this function is infra function to print addon versions - DO NOT TOUCH
 export async function test_data(client: Client, testerFunctions: TesterFunctions) {
     const service = new GeneralService(client);
     if (testName == '') {
@@ -136,7 +136,7 @@ export async function nebula_test(client: Client, addonClient: Client, request: 
     service.PrintMemoryUseToLog('Start', testName);
     testerFunctions = service.initiateTesterFunctions(client, testName);
     await NebulaTest(service, serviceAddon, request, testerFunctions);//this is the call to YOUR test function
-    // await test_data(client, testerFunctions);//this is done to print versions at the end of test - can be deleted
+    await test_data(client, testerFunctions);//this is done to print versions at the end of test - can be deleted
     return (await testerFunctions.run());
 };
 context["nebula_test"] = nebula_test;

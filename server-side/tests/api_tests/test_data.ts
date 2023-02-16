@@ -1,4 +1,5 @@
-import GeneralService, { TesterFunctions } from './general.service';
+import { GeneralService, TesterFunctions } from "tests";
+
 
 const installedAddons = {
     'API Testing Framework': '' as any,
