@@ -4,9 +4,8 @@ import { NebulaTest } from '../tests/api_tests/NebulaTest.test';
 import { SchemaExtensions } from '../tests/api_tests/SchemaExtensions.test';
 import GeneralService, { TesterFunctions } from '../potentialQA_SDK/server_side/general.service';
 import { Client, Request } from '@pepperi-addons/debug-server';
-
+import {JsonMapper} from './mapper';
 import { TestDataTests } from '../potentialQA_SDK/server_side/serverInfra.index';
-import fs from 'fs';
 import { UsersTests } from '../tests/api_tests/Users.example.test';
 import { DimxTests } from '../tests/api_tests/DimxTests.test';
 
@@ -39,7 +38,7 @@ export async function runTest(addonUUID: string, client: Client, request, tester
 
 function mapUuidToTestName(addonUUID: string): string[] {
     let allAddonMatchingNames: string[] = [];
-    let addonUUIDMapper = JSON.parse(fs.readFileSync('./potentialQA_SDK/mapper.json', 'utf-8'));
+    let addonUUIDMapper = JsonMapper;
     for (let [key, value] of Object.entries(addonUUIDMapper)) {
         if (value === addonUUID) {
             allAddonMatchingNames.push(camelToSnakeCase(key) as string);
