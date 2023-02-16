@@ -58,7 +58,7 @@ function baseTester(it: any, expect, connector: Connector, generalService: Gener
                     "Type": "String",
                     "Indexed": false
                 },
-                "name.key": {
+                "name.Key": {
                     "Type": "String",
                     "Indexed": true
                 },
@@ -84,7 +84,7 @@ function baseTester(it: any, expect, connector: Connector, generalService: Gener
                 double_field: 9.5,
                 date_field: "2022-11-24T12:43:32.166Z",
                 unindexed_field: "shouldn't be indexed",
-                "name.key": "10",
+                "name.Key": "10",
                 "name.first": "Susann",
                 "name.last": "Renato"
             },
@@ -96,7 +96,7 @@ function baseTester(it: any, expect, connector: Connector, generalService: Gener
                 double_field: 6.2,
                 date_field: "2022-11-24T12:45:32.166Z",
                 unindexed_field: "shouldn't be indexed",
-                "name.key": "20",
+                "name.Key": "20",
                 "name.first": "Jessika",
                 "name.last": "Renato"
             },
@@ -108,7 +108,7 @@ function baseTester(it: any, expect, connector: Connector, generalService: Gener
                 double_field: 1.5,
                 date_field: "2022-11-24T12:47:32.166Z",
                 unindexed_field: "shouldn't be indexed",
-                "name.key": "30",
+                "name.Key": "30",
                 "name.first": "Jessika",
                 "name.last": "Silvano"
             },
@@ -120,7 +120,7 @@ function baseTester(it: any, expect, connector: Connector, generalService: Gener
                 double_field: 2.3,
                 date_field: "2022-11-24T12:46:32.166Z",
                 unindexed_field: "shouldn't be indexed",
-                "name.key": "40",
+                "name.Key": "40",
                 "name.first": "Shani",
                 "name.last": "Silvano"
             },
@@ -132,7 +132,7 @@ function baseTester(it: any, expect, connector: Connector, generalService: Gener
                 double_field: 8.4,
                 date_field: "2022-11-24T12:44:32.166Z",
                 unindexed_field: "shouldn't be indexed",
-                "name.key": "50",
+                "name.Key": "50",
                 "name.first": "Susann",
                 "name.last": "Kimbell"
             },
@@ -144,7 +144,7 @@ function baseTester(it: any, expect, connector: Connector, generalService: Gener
                 double_field: 10.0,
                 date_field: "2022-11-24T12:42:32.166Z",
                 unindexed_field: "shouldn't be indexed",
-                "name.key": "60",
+                "name.Key": "60",
                 "name.first": "Shani",
                 "name.last": "Kimbell"
             }
