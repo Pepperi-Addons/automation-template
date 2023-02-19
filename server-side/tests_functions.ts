@@ -4,7 +4,6 @@ import { NebulaTest } from './tests/api_tests/NebulaTest.test';
 import { SchemaExtensions } from './tests/api_tests/SchemaExtensions.test';
 import { Client, Request } from '@pepperi-addons/debug-server';
 import { JsonMapper } from 'test_infra';
-// import { TestDataTests } from '../potentialQA_SDK/server_side/serverInfra.index';
 import { UsersTests } from './tests/api_tests/Users.example.test';
 import { DimxTests } from './tests/api_tests/DimxTests.test';
 
@@ -31,10 +30,11 @@ export async function runTest(addonUUID: string, client: Client, request, tester
     if (request.body.isLocal === "true") {
         addonService.BaseURL = "http://localhost:4500";
     }
+    const testsResult: any[] = [];
     for (let index = 0; index < functionNames.length; index++) {
-        await context[functionNames[index]].apply(this, [client, addonService, request, testerFunctions]);
+        testsResult.push(await context[functionNames[index]].apply(this, [client, addonService, request, testerFunctions]));
     }
-    return addonUUID;
+    return testsResult;
 }
 
 function mapUuidToTestName(addonUUID: string): string[] {

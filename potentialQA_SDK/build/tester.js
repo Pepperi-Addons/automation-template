@@ -17,12 +17,8 @@ const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const mochawesome_1 = __importDefault(require("mochawesome"));
 const general_service_1 = require("./server_side/general.service");
-//SYS REPORTING
-// import GeneralService from './services/general.service';
-// import jwt_decode from 'jwt-decode';
 chai_1.default.use(chai_as_promised_1.default);
 function Tester(client, testName, environment) {
-    // debugger;
     const failedTestsNames = [];
     let suitName = '';
     let wholeTestName = '';
@@ -119,52 +115,6 @@ function Tester(client, testName, environment) {
                                 }
                                 //Test results report might be to big for the addon, so remove some data from response
                                 let outpot = JSON.stringify(res);
-                                //SYS REPORTING
-                                // console.log(
-                                //     `%cStarting To Report Test Results To Monitoring Addon`,
-                                //     ConsoleColors.SystemInformation,
-                                // );
-                                // const parsedToken = jwt_decode(client!.OAuthAccessToken);
-                                // const userName = parsedToken.email;
-                                // //TODO:
-                                // const generalService = new GeneralService(client!);
-                                // //2. are all tests passed?
-                                // const testResults = res.stats.failures === 0 ? 'SUCCESS' : 'ERROR';
-                                //2.1 if so - send as "SUCSESS"  with only suit name
-                                // if (failedTestsNames && failedTestsNames.length) {
-                                //     for (let index = 0; index < failedTestsNames.length; index++) {
-                                //         const element = failedTestsNames[index];
-                                //         const monitoringResult = await generalService.sendResultsToMonitoringAddon(
-                                //             userName,
-                                //             `API Test: ${testName!} ` + element,
-                                //             'ERROR',
-                                //             environment!,
-                                //         );
-                                // if (monitoringResult.Ok !== true || monitoringResult.Status !== 200) {
-                                //     //monitoringResult.Body.fault.faultstring
-                                //     console.log(
-                                //         `%cFAILED TO SEND REPORT TO MONITORING ADDON, with the exception:${monitoringResult.Body.fault.faultstring}`,
-                                //         ConsoleColors.Error,
-                                //     );
-                                // }
-                                // }
-                                // } else {
-                                //     //2.2 if not - iterate on all failed tests and send test by test
-                                //     const monitoringResult = await generalService.sendResultsToMonitoringAddon(
-                                //         userName,
-                                //         'API Test: ' + testName!,
-                                //         testResults,
-                                //         environment!,
-                                //     );
-                                // if (monitoringResult.Ok !== true || monitoringResult.Status !== 200) {
-                                //     console.log(
-                                //         `%cFAILED TO SEND REPORT TO MONITORING ADDON, with the exception:${monitoringResult.Body.fault.faultstring}`,
-                                //         ConsoleColors.Error,
-                                //     );
-                                // }
-                                // }
-                                // console.log(`%cReporting ended`, ConsoleColors.SystemInformation);
-                                // debugger;
                                 //------------------------------------------------------------------------------------
                                 //Check response length to remove the code parts if needed
                                 //Changed from 200000 to 100000 since KB limitation is set to 128KB (16/11/2021 by Nofar)
@@ -245,5 +195,5 @@ function Tester(client, testName, environment) {
         },
     };
 }
-exports.default = Tester;
+exports.Tester = Tester;
 //# sourceMappingURL=tester.js.map

@@ -17,7 +17,7 @@ import { performance } from 'perf_hooks';
 import { ADALService } from './adal.service';
 import fs from 'fs';
 import { execFileSync } from 'child_process';
-import tester from '../tester';
+import {Tester} from '../tester';
 
 export const testData = {
     'API Testing Framework': ['eb26afcd-3cf2-482e-9ab1-b53c41a6adbe', ''], //OUR TESTING ADDON
@@ -229,7 +229,7 @@ export class GeneralService {
                 ? 'Production-EU'
                 : 'Production';
         const { describe, expect, assert, it, run, setNewTestHeadline, addTestResultUnderHeadline, printTestResults } =
-            tester(client, testName, testEnvironment);
+            Tester(client, testName, testEnvironment);
         return {
             describe,
             expect,

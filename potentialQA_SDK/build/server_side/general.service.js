@@ -10,7 +10,7 @@ const perf_hooks_1 = require("perf_hooks");
 const adal_service_1 = require("./adal.service");
 const fs_1 = __importDefault(require("fs"));
 const child_process_1 = require("child_process");
-const tester_1 = __importDefault(require("../tester"));
+const tester_1 = require("../tester");
 exports.testData = {
     'API Testing Framework': ['eb26afcd-3cf2-482e-9ab1-b53c41a6adbe', ''],
     'Services Framework': ['00000000-0000-0000-0000-000000000a91', '9.5.%'],
@@ -153,7 +153,7 @@ class GeneralService {
             : client.BaseURL.includes('papi-eu')
                 ? 'Production-EU'
                 : 'Production';
-        const { describe, expect, assert, it, run, setNewTestHeadline, addTestResultUnderHeadline, printTestResults } = tester_1.default(client, testName, testEnvironment);
+        const { describe, expect, assert, it, run, setNewTestHeadline, addTestResultUnderHeadline, printTestResults } = tester_1.Tester(client, testName, testEnvironment);
         return {
             describe,
             expect,
