@@ -19,7 +19,7 @@ export class NumberOfRecordsCommand extends BaseCommand {
         this.syncDimxService = new SyncDimxService()
         this.syncFileService = new SyncFileService(this.papiClient)
     }
-    private schemesCreated:{} = {}
+    protected schemesCreated:{} = {}
     private MAX_RECORDS_TO_UPLOAD = 40000
     private MIN_RECORDS_TO_UPLOAD = 4
 

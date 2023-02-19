@@ -15,6 +15,7 @@ import {
   TestCommand,
   WACDCommand,
   NumberOfRecordsCommand,
+  RecordSizeCommand,
 } from "..";
 import { PapiClient } from "@pepperi-addons/papi-sdk";
 import { ResourceManagerService } from "../../../resource_management/resource_manager.service";
@@ -34,6 +35,7 @@ export class CommandFactory {
     ResyncCommand: ResyncCommand,
     WACDCommand: WACDCommand,
     NumberOfRecordsCommand: NumberOfRecordsCommand,
+    RecordSizeCommand:RecordSizeCommand,
     CleanupCommand: CleanupCommand
   };
 

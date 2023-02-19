@@ -12,4 +12,5 @@ export * from './wacd-command';
 export * from './resync-command';
 export * from './delta-test-command';
 export * from './number-of-records-command';
+export * from './record-size-command'
 
