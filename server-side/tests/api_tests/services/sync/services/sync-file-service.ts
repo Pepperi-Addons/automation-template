@@ -57,7 +57,7 @@ export class SyncFileService {
                 "Version": "1.0.3"
             }
             const ansFromImport = await this.papiClient.addons.data.import.file.uuid(this.addonUUID).table(schemaName).upsert(file)
-            const ansFromAuditLog = await this.pollExecution(this.papiClient, ansFromImport.ExecutionUUID!, 2000 + body.length*0.01, 6000);
+            const ansFromAuditLog = await this.pollExecution(this.papiClient, ansFromImport.ExecutionUUID!, 5000 + body.length*0.01, 6000);
             if (ansFromAuditLog.success === true) {
                 const downloadURL = JSON.parse(ansFromAuditLog.resultObject).URI;
                 console.log('successfully imported file')
@@ -103,7 +103,7 @@ export class SyncFileService {
         }
         return res;
     }
-    async pollExecution(papiClient: PapiClient, ExecutionUUID: string, interval = 1000, maxAttempts = 60, validate = (res) => {
+    async pollExecution(papiClient: PapiClient, ExecutionUUID: string, interval = 5000, maxAttempts = 60, validate = (res) => {
         return res != null && (res.Status.Name === 'Failure' || res.Status.Name === 'Success');
     }) {
         let attempts = 0;

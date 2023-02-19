@@ -20,10 +20,12 @@ export class NumberOfRecordsCommand extends BaseCommand {
         this.syncFileService = new SyncFileService(this.papiClient)
     }
     private schemesCreated:{} = {}
+    private MAX_RECORDS_TO_UPLOAD = 40000
+    private MIN_RECORDS_TO_UPLOAD = 4
 
     async setupSchemes(): Promise<any> {
         // generate schema with fields
-        for (let fieldNumber = 5; fieldNumber <= 5000; fieldNumber *= 10) {
+        for (let fieldNumber = this.MIN_RECORDS_TO_UPLOAD; fieldNumber <= this.MAX_RECORDS_TO_UPLOAD; fieldNumber *= 10) {
             const schema = this.syncAdalService.generateSchemeWithFields(1)
             const adalService = await this.syncAdalService.getAdalService(schema)
             this.schemesCreated[fieldNumber] = adalService
@@ -38,7 +40,7 @@ export class NumberOfRecordsCommand extends BaseCommand {
         
         let objectForDimx: any
         await this.syncFileService.createPFSSchema()
-        for (let recordNumber = 5; recordNumber <= 5000; recordNumber *= 10) {
+        for (let recordNumber = this.MIN_RECORDS_TO_UPLOAD; recordNumber <= this.MAX_RECORDS_TO_UPLOAD; recordNumber *= 10) {
             await this.syncDimxService.createRelation(this.resourceManager,this.schemesCreated[recordNumber].schemaName,this.papiClient)
             objectForDimx = this.syncAdalService.generateFieldsData(1, 1, recordNumber)
             await this.syncFileService.uploadFilesAndImport(objectForDimx,this.schemesCreated[recordNumber].schemaName)
@@ -72,6 +74,11 @@ export class NumberOfRecordsCommand extends BaseCommand {
 
         let schemesCreated = this.syncAdalService.getSchemeNamesFromObject(this.schemesCreated)
         expect(schemes).to.include.members(schemesCreated)
+
+        for (let recordNumber = this.MIN_RECORDS_TO_UPLOAD; recordNumber <= this.MAX_RECORDS_TO_UPLOAD; recordNumber *= 10) {
+            const recordsObjects = this.syncDataResult.getObjects(this.schemesCreated![recordNumber].schemaName)
+            expect(recordsObjects.length).to.equal(recordNumber)
+        }
     }
     
   }
