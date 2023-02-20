@@ -8,8 +8,8 @@ import { SyncDimxService } from "../services/sync-dimx-service";
 import { SyncFileService } from "../services/sync-file-service";
 import { BaseCommand as BaseCommand } from "./base-command";
 
-
-export class TenThousandRecordsCommand extends BaseCommand {
+// this class should not be executed, only inherited
+export class NumberOfRecordsCommand extends BaseCommand {
     papiClient: PapiClient;
     client: Client    
     syncDimxService: SyncDimxService
@@ -21,7 +21,7 @@ export class TenThousandRecordsCommand extends BaseCommand {
         this.syncDimxService = new SyncDimxService()
         this.syncFileService = new SyncFileService(this.client, this.papiClient)
     }
-    protected MAX_RECORDS_TO_UPLOAD = 40000
+    protected MAX_RECORDS_TO_UPLOAD = -1
     private schemeCreated: any = undefined
     private automationUUID = "02754342-e0b5-4300-b728-a94ea5e0e8f4"
     protected resourceManager = new ResourceManagerService(this.papiClient,this.automationUUID) 

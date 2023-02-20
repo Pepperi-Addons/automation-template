@@ -11,7 +11,7 @@ export * from './system-filter-user-command';
 export * from './wacd-command';
 export * from './resync-command';
 export * from './delta-test-command';
-export * from './number-of-records-ten-thousand-command';
+export * from './number-of-records-10k-command';
 export * from './number-of-records-thousand-command';
 export * from './number-of-records-hundred-command';
 
