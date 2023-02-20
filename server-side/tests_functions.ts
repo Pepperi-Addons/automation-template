@@ -30,9 +30,9 @@ export async function runTest(addonUUID: string, client: Client, request, tester
     if (request.body.isLocal === "true") {
         addonService.BaseURL = "http://localhost:4500";
     }
-    const testsResult: any[] = [];
+    let testsResult: any;
     for (let index = 0; index < functionNames.length; index++) {
-        testsResult.push(await context[functionNames[index]].apply(this, [client, addonService, request, testerFunctions]));
+        testsResult = (await context[functionNames[index]].apply(this, [client, addonService, request, testerFunctions]));
     }
     return testsResult;
 }
@@ -117,7 +117,6 @@ export async function data_index_where_clause(client: Client, addonClient: Clien
     client.AddonUUID = AddonUUIDFromAddonConfig;
     let tempService = new GeneralService(client);
     client.AddonSecretKey = tempService.getSecret()[1];
-
 
     const service = new GeneralService(client);
     const serviceAddon = new GeneralService(addonClient);
