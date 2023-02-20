@@ -20,7 +20,6 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
     const automationUUID = "02754342-e0b5-4300-b728-a94ea5e0e8f4"
 
     const syncAdalService = new SyncAdalService(client)
-    const papiClient = addonService.papiClient;
     
   
     // Note: CleanRebuild and CleanupCommand are not part of the tests
@@ -84,7 +83,7 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
       },
       {
         name: 'CleanupCommand',
-        command: CommandFactory.createCommand('CleanupCommand', syncAdalService, client, papiClient)
+        command: CommandFactory.createCommand('CleanupCommand', syncAdalService, client)
       }
     ];
   

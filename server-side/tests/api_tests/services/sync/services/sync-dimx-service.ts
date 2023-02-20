@@ -4,7 +4,7 @@ import { ResourceManagerService } from '../../resource_management/resource_manag
 export class SyncDimxService{
     private addonUUID = '02754342-e0b5-4300-b728-a94ea5e0e8f4'
 
-    async createRelation(resourcaManager: ResourceManagerService, schemaName:string){
+    async createRelation(resourcaManager: ResourceManagerService, schemaName: string){
         let relation: Relation = {
             RelationName: "DataImportResource",
             AddonUUID: this.addonUUID,
@@ -21,7 +21,7 @@ export class SyncDimxService{
         }
     }
 
-    async uploadFileToDIMX(file:any,schemaName:string,papiClient:PapiClient) : Promise<any>{
+    async uploadFileToDIMX(file:any, schemaName:string, papiClient: PapiClient) : Promise<any>{
         const ansFromImport = await papiClient.addons.data.import.file.uuid(this.addonUUID).table(schemaName).upsert(file)
         console.log(ansFromImport)
         return ansFromImport

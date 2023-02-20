@@ -42,11 +42,11 @@ export class CommandFactory {
     CleanupCommand: CleanupCommand
   };
 
-  static createCommand(type: string, syncAdalService: SyncAdalService, client: Client,papiClient?:PapiClient,resourcaManager?: ResourceManagerService): TestCommand {
+  static createCommand(type: string, syncAdalService: SyncAdalService, client: Client): TestCommand {
     const CommandClass = CommandFactory.commandMap[type];
     if (!CommandClass) {
       throw new Error('Unknown command type');
     }
-    return new CommandClass(syncAdalService, client, papiClient, resourcaManager);
+    return new CommandClass(syncAdalService, client);
   }
 }

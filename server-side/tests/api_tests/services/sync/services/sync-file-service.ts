@@ -16,16 +16,16 @@ export class SyncFileService {
     client: Client
     syncDimxService: SyncDimxService
     auditLogService: AuditLogService
-
+    isPFSSchemaCreated: Promise<any>
     constructor(client: Client, papiClient: PapiClient){
         this.papiClient = papiClient
         this.client = client
         this.syncDimxService = new SyncDimxService()
         this.auditLogService = new AuditLogService(this.client)
+        this.isPFSSchemaCreated = this.createPFSSchema();
     }
     private urlsToDownload: string[] = []
     private addonUUID = '02754342-e0b5-4300-b728-a94ea5e0e8f4'
-
 
     createPFSSchema() {
         return this.papiClient.addons.data.schemes.post({
@@ -39,6 +39,7 @@ export class SyncFileService {
         return [header, ...rows].join('\n')
     }
     async uploadFilesAndImport(body: any, schemaName: string) {
+        await this.isPFSSchemaCreated; // wait for the pfs schema to be created.
         const rowLimit = 300000;
         const chucks = Math.ceil(body.length / rowLimit);
         for (let i = 0; i < chucks; i++) {
@@ -49,10 +50,10 @@ export class SyncFileService {
             await this.uploadFileAndImport(chunk, schemaName);
         }
     }
-    async uploadFileAndImport(body: any[], schemaName: string) {
+    private async uploadFileAndImport(body: any[], schemaName: string) {
         // convert to csv
         const csv = this.convertToCSV(body);
-        let fileURL = await this.uploadObject();
+        let fileURL = await this.getFileToUpload();
         //upload Object To S3
         await this.apiCall('PUT', fileURL.PresignedURL, csv).then((res) => res.text());
         console.log('successfully uploaded file')
@@ -64,7 +65,7 @@ export class SyncFileService {
                 'Delimiter': ',',
                 "Version": "1.0.3"
             }
-            const ansFromImport = await this.syncDimxService.uploadFileToDIMX(file,schemaName,this.papiClient)
+            const ansFromImport = await this.syncDimxService.uploadFileToDIMX(file,schemaName, this.papiClient)
             const ansFromAuditLog = await this.auditLogService.pollExecution(ansFromImport.ExecutionUUID!, 5000 + body.length*0.01, 6000);
             if (ansFromAuditLog.success === true) {
                 const downloadURL = JSON.parse(ansFromAuditLog.resultObject).URI;
@@ -77,7 +78,7 @@ export class SyncFileService {
             }
         }
     }
-    async uploadObject() {
+    async getFileToUpload() {
         const url = `/addons/pfs/${this.addonUUID}/${PFS_TABLE_NAME}`
         let expirationDateTime = new Date();
         expirationDateTime.setDate(expirationDateTime.getDate() + 1);

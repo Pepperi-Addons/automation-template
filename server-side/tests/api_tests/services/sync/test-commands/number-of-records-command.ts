@@ -34,17 +34,16 @@ export class NumberOfRecordsCommand extends BaseCommand {
         const schema = this.syncAdalService.generateSchemeWithFields(1)
         const adalService = await this.syncAdalService.getAdalService(schema)
         this.schemeCreated = adalService
-        return Promise.resolve(adalService)    
+        return adalService  
     }
 
-    async pushData(adalService: ADALTableService): Promise<any> {
-        // initializing adal schema with data, first property is number of fields
-        // second propety is number of characters in each field
-        
-        let objectForDimx: any
-        await this.syncFileService.createPFSSchema()
-        await this.syncDimxService.createRelation(this.resourceManager, adalService.schemaName)
-        objectForDimx = this.syncAdalService.generateFieldsData(1, 1, this.MAX_RECORDS_TO_UPLOAD)
+    async pushData(adalService: ADALTableService): Promise<any> {    
+
+        // create relation between DIMX and the created shchema
+        await this.syncDimxService.createRelation(this.resourceManager, adalService.schemaName)    
+        // generate data    
+        const objectForDimx = this.syncAdalService.generateFieldsData(1, 1, this.MAX_RECORDS_TO_UPLOAD)
+        // upload data
         await this.syncFileService.uploadFilesAndImport(objectForDimx, adalService.schemaName)
         
         await GlobalSyncService.sleep(this.TIME_TO_SLEEP_FOR_NEBULA)
@@ -61,13 +60,12 @@ export class NumberOfRecordsCommand extends BaseCommand {
     }
 
     async processSyncResponse(syncRes: any): Promise<any> {
-        this.syncDataResult.data =  await this.syncService.handleSyncData(syncRes,true)
+        this.syncDataResult.data =  await this.syncService.handleSyncData(syncRes, true)
         return this.syncDataResult.data;
     }
     
     async  test(syncRes: any, syncData:any, expect: Chai.ExpectStatic): Promise<any> {
         // tests
-
         expect(syncRes).to.have.property('UpToDate').that.is.a('Boolean').and.is.equal(false)
         expect(syncRes).to.have.property('ExecutionURI').that.is.a('String').and.is.not.undefined
 
@@ -77,6 +75,8 @@ export class NumberOfRecordsCommand extends BaseCommand {
         const recordsObjects = this.syncDataResult.getObjects(this.schemeCreated.schemaName)
         expect(recordsObjects.length).to.equal(this.MAX_RECORDS_TO_UPLOAD)
 
+        //getting all of the keys to sync from nebula, creating set which contains only the unique keys (without reoccurence)
+        //  validating that the unique keys is in the same ength - validating that each key is exactly one time in the sync
         const uniqueKeys = new Set(recordsObjects.map(record => {return record.Key}))
         expect(uniqueKeys.size).to.equal(this.MAX_RECORDS_TO_UPLOAD)
 

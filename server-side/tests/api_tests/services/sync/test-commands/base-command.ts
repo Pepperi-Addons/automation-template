@@ -3,8 +3,6 @@ import { SyncService } from "../services/sync-tests-service";
 import { SyncAdalService } from "../services/sync-adal-service";
 import { Client } from "@pepperi-addons/debug-server/dist";
 import { SyncDataResult } from "../sync-data-result";
-import { PapiClient } from "@pepperi-addons/papi-sdk";
-import { ResourceManagerService } from "../../resource_management/resource_manager.service";
 
 // TestCommand interface defines the common methods that should be implemented by all test commands
 export interface TestCommand {
@@ -27,7 +25,7 @@ export class BaseCommand implements TestCommand {
     protected syncDataResult: SyncDataResult
 
   
-    constructor(syncAdalService:SyncAdalService, client: Client) {
+    constructor(syncAdalService: SyncAdalService, client: Client) {
         this.syncService = new SyncService(client)
         this.syncAdalService = syncAdalService;
         this.TIME_TO_SLEEP_FOR_NEBULA = 10000;
