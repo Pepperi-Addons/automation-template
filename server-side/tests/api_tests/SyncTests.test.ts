@@ -3,6 +3,7 @@ import { Client } from "@pepperi-addons/debug-server/dist";
 import { CommandFactory } from "./services/sync/test-commands/factory/commands-factory";
 import { TestCommand } from "./services/sync/test-commands/base-command";
 import { SyncAdalService } from "./services/sync/services/sync-adal-service";
+import { ResourceManagerService } from "./services/resource_management/resource_manager.service";
 
 
 // create ADAL Object
@@ -16,9 +17,10 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
   describe("SyncTests Suites",() => {
     const client: Client = generalService['client']
     const addonUUID = "5122dc6d-745b-4f46-bb8e-bd25225d350a";
+    const automationUUID = "02754342-e0b5-4300-b728-a94ea5e0e8f4"
 
     const syncAdalService = new SyncAdalService(client)
-    const papiClient = addonService.papiClient; 
+    
   
     // Note: CleanRebuild and CleanupCommand are not part of the tests
     // just an hack to make sure that nebula will work
@@ -66,6 +68,18 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
       {
         name: 'ResyncCommand',
         command: CommandFactory.createCommand('ResyncCommand', syncAdalService, client)
+      },
+      {
+        name: 'HundredRecordsCommand',
+        command: CommandFactory.createCommand('HundredRecordsCommand', syncAdalService, client)
+      },
+      {
+        name: 'ThousandRecordsCommand',
+        command: CommandFactory.createCommand('ThousandRecordsCommand', syncAdalService, client)
+      },
+      {
+        name: 'TenThousandRecordsCommand',
+        command: CommandFactory.createCommand('TenThousandRecordsCommand', syncAdalService, client)
       },
       {
         name: 'CleanupCommand',

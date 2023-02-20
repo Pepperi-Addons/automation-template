@@ -45,7 +45,7 @@ export class SyncAdalService {
         return await this.papiClient.addons.data.schemes.post(schema)
     }
 
-    generateSchemeWithFields(fieldNumber:number): AddonDataScheme {
+    generateSchemeWithFields(fieldNumber: number, schemaNameSuffix: string): AddonDataScheme {
         let fieldNames: AddonDataScheme['Fields'] = {}
         for(let i=1;i<fieldNumber+1;i++) {
             let fieldName = "Field"+i
@@ -53,7 +53,7 @@ export class SyncAdalService {
         }
 
         const syncSchema:AddonDataScheme = {
-            Name: this.generateScehmaName(),
+            Name: this.generateScehmaName(schemaNameSuffix),
             Type: "data",
             SyncData: {
                 Sync: true
@@ -70,17 +70,29 @@ export class SyncAdalService {
         return adalService
     }
 
-    generateFieldsData(numberOfFields:number, numberOfCharacters: number): AddonData[]{
+    generateFieldsData(numberOfFields:number, numberOfCharacters: number,numberOfRecords:number=1): AddonData[]{
         let fieldData=''
         for( let i=0; i<numberOfCharacters; i++){
             fieldData+='.'
         }
         let data: AddonData[] = []
+        let fields:{} = {}
         for(let i=1;i<numberOfFields+1;i++){
-            data.push({Key: i.toString(),["Field"+i]: fieldData})
+            fields["Field"+i]= fieldData
+        }
+        for(let i=1;i<numberOfRecords+1;i++){
+            data.push({Key: i.toString(), ...fields})
         }
         return data
     }
+
+    getSchemeNamesFromObject(objWithAdalServices:any){
+        const services:any= Object.values(objWithAdalServices)
+        return services.map(service => {
+            return service.schemaName
+        })
+    }
+    
     get schemeName(){
         return this.schemaName
     }

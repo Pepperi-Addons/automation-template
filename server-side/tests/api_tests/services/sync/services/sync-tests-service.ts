@@ -34,7 +34,13 @@ export class SyncService {
     async nebulaCleanRebuild(){
         const baseUrl = `/addons/api/00000000-0000-0000-0000-000000006a91/api/clean_rebuild`
         let res = await this.papiClient.post(baseUrl)
-        return res
+        let ansFromAuditLog =  await this.auditLogService.pollExecution(res.ExecutionUUID!)
+        if (ansFromAuditLog.success === true) {
+            console.log('successfully did clean rebuild in nebula')
+        }
+        else {
+            throw new Error(`Failed to clean rebuild nebula`);
+        }
     }
 
     async pull(options: PullOptions, returnUrl: boolean, wacd: boolean) {

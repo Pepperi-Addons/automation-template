@@ -1,5 +1,8 @@
 import { Client } from "@pepperi-addons/debug-server/dist";
+import { PapiClient } from "@pepperi-addons/papi-sdk";
+import { time } from "console";
 import { ADALTableService } from "../../resource_management/adal_table.service";
+import { ResourceManagerService } from "../../resource_management/resource_manager.service";
 import { GlobalSyncService } from "../services/global-sync-service";
 import { SyncAdalService } from "../services/sync-adal-service";
 import { TIME_TO_SLEEP_FOR_NEBULA } from "../services/sync-tests-service";
@@ -12,7 +15,7 @@ export class SystemFilterNone extends BaseCommand {
     protected adalTableServices? : {account:ADALTableService,user:ADALTableService,none:ADALTableService}
     auditLogService: any;
     
-    constructor(adalTableService: SyncAdalService,client:Client){
+    constructor(adalTableService: SyncAdalService, client: Client){
         super(adalTableService, client)
         this.systemFilterService = new SystemFilterService(client)
     } 
@@ -43,7 +46,7 @@ export class SystemFilterNone extends BaseCommand {
         const userData = await this.systemFilterService.generateUserData();
         await adalService.user.upsertBatch(userData)
         
-        const noneData = await this.syncAdalService.generateFieldsData(2, 1)
+        const noneData = await this.syncAdalService.generateFieldsData(1, 1, 2)
         await adalService.none.upsertBatch(noneData)
         
         await GlobalSyncService.sleep(TIME_TO_SLEEP_FOR_NEBULA)

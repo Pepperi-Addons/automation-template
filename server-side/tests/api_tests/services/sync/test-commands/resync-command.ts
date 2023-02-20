@@ -14,18 +14,18 @@ export class ResyncCommand extends BaseCommand {
         // generate three scehmes
         
         // generate hidden scheme, which should not returned in resync
-        const hiddenSchema = this.syncAdalService.generateSchemeWithFields(1)
+        const hiddenSchema = this.syncAdalService.generateSchemeWithFields(1, this.constructor.name + "_hiddenSchema")
         const hiddenAdalService = await this.syncAdalService.getAdalService(hiddenSchema)
         this.adalSchemes.hiddenScheme = hiddenAdalService
         await this.syncAdalService.changeSchemaToHidden(hiddenAdalService)
 
         // generate new scheme with data
-        const newSchema = this.syncAdalService.generateSchemeWithFields(1)
+        const newSchema = this.syncAdalService.generateSchemeWithFields(1, this.constructor.name + "_newSchema")
         const newAdalService = await this.syncAdalService.getAdalService(newSchema)
         this.adalSchemes.newScheme = newAdalService
 
         // generate new scheme without data, which shoukd be returned in resync
-        const noDataSchema = this.syncAdalService.generateSchemeWithFields(1)
+        const noDataSchema = this.syncAdalService.generateSchemeWithFields(1, this.constructor.name + "_noDataSchema")
         const noDataAdalService = await this.syncAdalService.getAdalService(noDataSchema)
         this.adalSchemes.noDataScheme = noDataAdalService
         

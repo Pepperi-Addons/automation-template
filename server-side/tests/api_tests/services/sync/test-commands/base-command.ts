@@ -23,8 +23,9 @@ export class BaseCommand implements TestCommand {
     protected TIME_TO_SLEEP_FOR_NEBULA: number
     //syncDataResult is an instance of the SyncDataResult class, which is used to store the data result of the sync.
     protected syncDataResult: SyncDataResult
+
   
-    constructor(syncAdalService:SyncAdalService, client: Client) {
+    constructor(syncAdalService: SyncAdalService, client: Client) {
         this.syncService = new SyncService(client)
         this.syncAdalService = syncAdalService;
         this.TIME_TO_SLEEP_FOR_NEBULA = 10000;

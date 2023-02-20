@@ -14,7 +14,13 @@ import {
   SystemFilterUser,
   TestCommand,
   WACDCommand,
+  TenThousandRecordsCommand,
+  ThousandRecordsCommand,
+  HundredRecordsCommand
+
 } from "..";
+import { PapiClient } from "@pepperi-addons/papi-sdk";
+import { ResourceManagerService } from "../../../resource_management/resource_manager.service";
 
 export class CommandFactory {
   // a map of command types to command classes
@@ -26,9 +32,13 @@ export class CommandFactory {
     PapiConnectAccountCommand: PapiConnectAccountCommand,
     SystemFilterNone: SystemFilterNone,
     SystemFilterAccount: SystemFilterAccount,
-    SystemFilterUser:SystemFilterUser,
-    ResyncCommand:ResyncCommand,
+    SystemFilterUser: SystemFilterUser,
+    DeltaTestCommand: DeltaTestCommand,
+    ResyncCommand: ResyncCommand,
     WACDCommand: WACDCommand,
+    TenThousandRecordsCommand: TenThousandRecordsCommand,
+    ThousandRecordsCommand: ThousandRecordsCommand,
+    HundredRecordsCommand: HundredRecordsCommand,
     CleanupCommand: CleanupCommand
   };
 

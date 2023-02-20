@@ -1,5 +1,7 @@
 import { Client } from "@pepperi-addons/debug-server/dist";
+import { PapiClient } from "@pepperi-addons/papi-sdk";
 import { ADALTableService } from "../../resource_management/adal_table.service";
+import { ResourceManagerService } from "../../resource_management/resource_manager.service";
 import { SyncAdalService } from "../services/sync-adal-service";
 import { SystemFilterService } from "../services/system-filter-service";
 import { SystemFilterNone } from "./system-filter-none-command";
@@ -7,9 +9,9 @@ import { SystemFilterNone } from "./system-filter-none-command";
 
 export class SystemFilterUser extends SystemFilterNone {
     protected systemFilterService: SystemFilterService; 
-    protected adalTableServices? : {account:ADALTableService,user:ADALTableService,none:ADALTableService}
+    protected adalTableServices? : {account: ADALTableService, user: ADALTableService, none: ADALTableService}
     auditLogService: any;
-    constructor(adalTableService: SyncAdalService,client:Client){
+    constructor(adalTableService: SyncAdalService, client: Client){
         super(adalTableService, client)
         this.systemFilterService = new SystemFilterService(client)
     } 

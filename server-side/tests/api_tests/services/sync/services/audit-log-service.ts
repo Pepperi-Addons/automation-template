@@ -29,4 +29,24 @@ export class AuditLogService {
         }
         return JSON.parse(res.AuditInfo.ResultObject)
     }
+
+    async pollExecution(ExecutionUUID: string, interval = 5000, maxAttempts = 60, validate = (res) => {
+        return res != null && (res.Status.Name === 'Failure' || res.Status.Name === 'Success');
+    }) {
+        let attempts = 0;
+        const executePoll = async (resolve, reject) => {
+            const result = await this.papiClient.get(`/audit_logs/${ExecutionUUID}`);
+            attempts++;
+            if (validate(result)) {
+                return resolve({ "success": result.Status.Name === 'Success', "errorCode": 0, 'resultObject': result.AuditInfo.ResultObject });
+            }
+            else if (maxAttempts && attempts === maxAttempts) {
+                return resolve({ "success": false, "errorCode": 1 });
+            }
+            else {
+                setTimeout(executePoll, interval, resolve, reject);
+            }
+        };
+        return new Promise<any>(executePoll);
+    }
 }

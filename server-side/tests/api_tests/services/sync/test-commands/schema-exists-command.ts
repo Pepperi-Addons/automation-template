@@ -7,7 +7,7 @@ export class SchemaExistsCommand extends BaseCommand {
   
     async setupSchemes(): Promise<ADALTableService> {
         // generate schema with fields
-        const schema = this.syncAdalService.generateSchemeWithFields(1)
+        const schema = this.syncAdalService.generateSchemeWithFields(1, this.constructor.name)
         const adalService = await this.syncAdalService.getAdalService(schema)
         return adalService;    
     }
