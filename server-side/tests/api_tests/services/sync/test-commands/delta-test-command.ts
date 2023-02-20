@@ -52,7 +52,7 @@ export class DeltaTestCommand extends BaseCommand {
     }
 
     async processSyncResponse(syncRes: any): Promise<any> {
-        this.syncDataResult.data =  await this.syncService.handleSyncData(syncRes.syncResult)
+        this.syncDataResult.data =  await this.syncService.handleSyncData(syncRes.syncResult, false)
         return this.syncDataResult.data;
     }
     

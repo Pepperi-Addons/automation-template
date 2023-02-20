@@ -86,6 +86,10 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
         command: CommandFactory.createCommand('PushDataCommand', syncAdalService, client)
       },
       {
+        name: 'PushBigDataCommand',
+        command: CommandFactory.createCommand('PushBigDataCommand', syncAdalService, client)
+      },
+      {
         name: 'WACDPushDataCommand',
         command: CommandFactory.createCommand('WACDPushDataCommand', syncAdalService, client)
       },

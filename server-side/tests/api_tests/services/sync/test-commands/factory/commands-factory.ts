@@ -19,6 +19,7 @@ import {
   HundredRecordsCommand,
   PushDataCommand,
   WACDPushDataCommand,
+  PushBigDataCommand,
 
 } from "..";
 
@@ -40,6 +41,7 @@ export class CommandFactory {
     ThousandRecordsCommand: ThousandRecordsCommand,
     HundredRecordsCommand: HundredRecordsCommand,
     PushDataCommand: PushDataCommand,
+    PushBigDataCommand: PushBigDataCommand,
     WACDPushDataCommand: WACDPushDataCommand,
     CleanupCommand: CleanupCommand
   };
