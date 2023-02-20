@@ -13,8 +13,8 @@ export class SystemFilterAccount extends SystemFilterNone {
     auditLogService: any;
 
     connectedAccountUUID: string = "";
-    constructor(adalTableService: SyncAdalService,client: Client,papiClient: PapiClient, resourceManager: ResourceManagerService){
-        super(adalTableService, client, papiClient, resourceManager)
+    constructor(adalTableService: SyncAdalService, client: Client) {
+        super(adalTableService, client)
         this.systemFilterService = new SystemFilterService(client)
     } 
   

@@ -14,17 +14,20 @@ export class NumberOfRecordsCommand extends BaseCommand {
     client: Client    
     syncDimxService: SyncDimxService
     syncFileService: SyncFileService
-    constructor(syncAdalService: SyncAdalService, client: Client , papiClient: PapiClient, resourceManager: ResourceManagerService){
-        super(syncAdalService, client, papiClient, resourceManager)
-        this.papiClient = papiClient
+    private resourceManager: ResourceManagerService
+
+    constructor(syncAdalService: SyncAdalService, client: Client){
+        super(syncAdalService, client)
         this.client = client
         this.syncDimxService = new SyncDimxService()
+        this.papiClient = syncAdalService.papiClient
         this.syncFileService = new SyncFileService(this.client, this.papiClient)
+        this.resourceManager = new ResourceManagerService(this.papiClient, this.automationUUID) 
+        
     }
     protected MAX_RECORDS_TO_UPLOAD = -1
     private schemeCreated: any = undefined
     private automationUUID = "02754342-e0b5-4300-b728-a94ea5e0e8f4"
-    protected resourceManager = new ResourceManagerService(this.papiClient,this.automationUUID) 
 
     async setupSchemes(): Promise<any> {
         // generate schema with fields

@@ -1,7 +1,7 @@
 import { Client } from "@pepperi-addons/debug-server/dist";
 import { PapiClient } from "@pepperi-addons/papi-sdk";
 import { Agent } from "https";
-import fetch, { HttpMethod } from "node-fetch";
+import fetch from "node-fetch";
 
 import { v4 as uuid } from 'uuid';
 import { AuditLogService } from "./audit-log-service";
@@ -88,7 +88,7 @@ export class SyncFileService {
         }
         return await this.papiClient.post(url, body);
     }
-    async apiCall(method: HttpMethod, url: string, body: any = undefined) {
+    async apiCall(method: any, url: string, body: any = undefined) {
         const agent = new Agent({
             rejectUnauthorized: false,
         })

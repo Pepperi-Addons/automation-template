@@ -9,10 +9,10 @@ import { SystemFilterNone } from "./system-filter-none-command";
 
 export class SystemFilterUser extends SystemFilterNone {
     protected systemFilterService: SystemFilterService; 
-    protected adalTableServices? : {account:ADALTableService,user:ADALTableService,none:ADALTableService}
+    protected adalTableServices? : {account: ADALTableService, user: ADALTableService, none: ADALTableService}
     auditLogService: any;
-    constructor(adalTableService: SyncAdalService,client:Client,papiClient:PapiClient, resourceManager: ResourceManagerService){
-        super(adalTableService, client, papiClient, resourceManager)
+    constructor(adalTableService: SyncAdalService, client: Client){
+        super(adalTableService, client)
         this.systemFilterService = new SystemFilterService(client)
     } 
   
