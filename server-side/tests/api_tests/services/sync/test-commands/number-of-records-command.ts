@@ -31,7 +31,7 @@ export class NumberOfRecordsCommand extends BaseCommand {
 
     async setupSchemes(): Promise<any> {
         // generate schema with fields
-        const schema = this.syncAdalService.generateSchemeWithFields(1, this.constructor.name + "_" + this.MAX_RECORDS_TO_UPLOAD)
+        const schema = this.syncAdalService.generateSchemeWithFields(1, `_${this.constructor.name}_${this.MAX_RECORDS_TO_UPLOAD}`)
         const adalService = await this.syncAdalService.getAdalService(schema)
         this.schemeCreated = adalService
         return adalService  
