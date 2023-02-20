@@ -14,7 +14,10 @@ import {
   SystemFilterUser,
   TestCommand,
   WACDCommand,
-  NumberOfRecordsCommand,
+  TenThousandRecordsCommand,
+  ThousandRecordsCommand,
+  HundredRecordsCommand
+
 } from "..";
 import { PapiClient } from "@pepperi-addons/papi-sdk";
 import { ResourceManagerService } from "../../../resource_management/resource_manager.service";
@@ -33,7 +36,9 @@ export class CommandFactory {
     DeltaTestCommand: DeltaTestCommand,
     ResyncCommand: ResyncCommand,
     WACDCommand: WACDCommand,
-    NumberOfRecordsCommand: NumberOfRecordsCommand,
+    TenThousandRecordsCommand: TenThousandRecordsCommand,
+    ThousandRecordsCommand: ThousandRecordsCommand,
+    HundredRecordsCommand: HundredRecordsCommand,
     CleanupCommand: CleanupCommand
   };
 
@@ -42,6 +47,6 @@ export class CommandFactory {
     if (!CommandClass) {
       throw new Error('Unknown command type');
     }
-    return new CommandClass(syncAdalService, client,papiClient,resourcaManager);
+    return new CommandClass(syncAdalService, client, papiClient, resourcaManager);
   }
 }

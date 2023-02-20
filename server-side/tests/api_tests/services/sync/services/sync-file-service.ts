@@ -4,6 +4,8 @@ import { Agent } from "https";
 import fetch, { HttpMethod } from "node-fetch";
 
 import { v4 as uuid } from 'uuid';
+import { AuditLogService } from "./audit-log-service";
+import { SyncDimxService } from "./sync-dimx-service";
 const PFS_TABLE_NAME = "integration_test_file_of_sync";
  
 export const KB = 1024;
@@ -11,9 +13,15 @@ export const UPLOAD_SYNC_FILE_PATH = "/synctests/get"
 
 export class SyncFileService {
     papiClient: PapiClient 
+    client: Client
+    syncDimxService: SyncDimxService
+    auditLogService: AuditLogService
 
-    constructor(papiClient: PapiClient){
+    constructor(client: Client, papiClient: PapiClient){
         this.papiClient = papiClient
+        this.client = client
+        this.syncDimxService = new SyncDimxService()
+        this.auditLogService = new AuditLogService(this.client)
     }
     private urlsToDownload: string[] = []
     private addonUUID = '02754342-e0b5-4300-b728-a94ea5e0e8f4'
@@ -56,8 +64,8 @@ export class SyncFileService {
                 'Delimiter': ',',
                 "Version": "1.0.3"
             }
-            const ansFromImport = await this.papiClient.addons.data.import.file.uuid(this.addonUUID).table(schemaName).upsert(file)
-            const ansFromAuditLog = await this.pollExecution(this.papiClient, ansFromImport.ExecutionUUID!, 5000 + body.length*0.01, 6000);
+            const ansFromImport = await this.syncDimxService.uploadFileToDIMX(file,schemaName,this.papiClient)
+            const ansFromAuditLog = await this.auditLogService.pollExecution(ansFromImport.ExecutionUUID!, 5000 + body.length*0.01, 6000);
             if (ansFromAuditLog.success === true) {
                 const downloadURL = JSON.parse(ansFromAuditLog.resultObject).URI;
                 console.log('successfully imported file')
@@ -102,25 +110,6 @@ export class SyncFileService {
             throw new Error(`${url} failed with status: ${res.status} - ${res.statusText} error: ${error}`);
         }
         return res;
-    }
-    async pollExecution(papiClient: PapiClient, ExecutionUUID: string, interval = 5000, maxAttempts = 60, validate = (res) => {
-        return res != null && (res.Status.Name === 'Failure' || res.Status.Name === 'Success');
-    }) {
-        let attempts = 0;
-        const executePoll = async (resolve, reject) => {
-            const result = await papiClient.get(`/audit_logs/${ExecutionUUID}`);
-            attempts++;
-            if (validate(result)) {
-                return resolve({ "success": result.Status.Name === 'Success', "errorCode": 0, 'resultObject': result.AuditInfo.ResultObject });
-            }
-            else if (maxAttempts && attempts === maxAttempts) {
-                return resolve({ "success": false, "errorCode": 1 });
-            }
-            else {
-                setTimeout(executePoll, interval, resolve, reject);
-            }
-        };
-        return new Promise<any>(executePoll);
     }
 
     get filesToDownload(){

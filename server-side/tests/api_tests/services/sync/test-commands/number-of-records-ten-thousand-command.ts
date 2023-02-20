@@ -9,29 +9,29 @@ import { SyncFileService } from "../services/sync-file-service";
 import { BaseCommand as BaseCommand } from "./base-command";
 
 
-export class NumberOfRecordsCommand extends BaseCommand {
-    papiClient: PapiClient;    
+export class TenThousandRecordsCommand extends BaseCommand {
+    papiClient: PapiClient;
+    client: Client    
     syncDimxService: SyncDimxService
     syncFileService: SyncFileService
-    constructor(syncAdalService:SyncAdalService, client:Client, papiClient:PapiClient,resourceManager: ResourceManagerService){
-        super(syncAdalService, client,papiClient,resourceManager)
+    constructor(syncAdalService: SyncAdalService, client: Client , papiClient: PapiClient, resourceManager: ResourceManagerService){
+        super(syncAdalService, client, papiClient, resourceManager)
         this.papiClient = papiClient
+        this.client = client
         this.syncDimxService = new SyncDimxService()
-        this.syncFileService = new SyncFileService(this.papiClient)
+        this.syncFileService = new SyncFileService(this.client, this.papiClient)
     }
-    private schemesCreated:{} = {}
-    private MAX_RECORDS_TO_UPLOAD = 40000
-    private MIN_RECORDS_TO_UPLOAD = 4
+    protected MAX_RECORDS_TO_UPLOAD = 40000
+    private schemeCreated: any = undefined
+    private automationUUID = "02754342-e0b5-4300-b728-a94ea5e0e8f4"
+    protected resourceManager = new ResourceManagerService(this.papiClient,this.automationUUID) 
 
     async setupSchemes(): Promise<any> {
         // generate schema with fields
-        for (let fieldNumber = this.MIN_RECORDS_TO_UPLOAD; fieldNumber <= this.MAX_RECORDS_TO_UPLOAD; fieldNumber *= 10) {
-            const schema = this.syncAdalService.generateSchemeWithFields(1)
-            const adalService = await this.syncAdalService.getAdalService(schema)
-            this.schemesCreated[fieldNumber] = adalService
-        }
-        
-        return Promise.resolve(undefined)    
+        const schema = this.syncAdalService.generateSchemeWithFields(1)
+        const adalService = await this.syncAdalService.getAdalService(schema)
+        this.schemeCreated = adalService
+        return Promise.resolve(adalService)    
     }
 
     async pushData(adalService: ADALTableService): Promise<any> {
@@ -40,11 +40,9 @@ export class NumberOfRecordsCommand extends BaseCommand {
         
         let objectForDimx: any
         await this.syncFileService.createPFSSchema()
-        for (let recordNumber = this.MIN_RECORDS_TO_UPLOAD; recordNumber <= this.MAX_RECORDS_TO_UPLOAD; recordNumber *= 10) {
-            await this.syncDimxService.createRelation(this.resourceManager,this.schemesCreated[recordNumber].schemaName,this.papiClient)
-            objectForDimx = this.syncAdalService.generateFieldsData(1, 1, recordNumber)
-            await this.syncFileService.uploadFilesAndImport(objectForDimx,this.schemesCreated[recordNumber].schemaName)
-        }
+        await this.syncDimxService.createRelation(this.resourceManager, adalService.schemaName)
+        objectForDimx = this.syncAdalService.generateFieldsData(1, 1, this.MAX_RECORDS_TO_UPLOAD)
+        await this.syncFileService.uploadFilesAndImport(objectForDimx, adalService.schemaName)
         
         await GlobalSyncService.sleep(this.TIME_TO_SLEEP_FOR_NEBULA)
     }
@@ -72,13 +70,14 @@ export class NumberOfRecordsCommand extends BaseCommand {
 
         let schemes = await this.syncDataResult.getSchemes()
 
-        let schemesCreated = this.syncAdalService.getSchemeNamesFromObject(this.schemesCreated)
-        expect(schemes).to.include.members(schemesCreated)
+        expect(schemes).to.contain(this.schemeCreated.schemaName)
+        const recordsObjects = this.syncDataResult.getObjects(this.schemeCreated.schemaName)
+        expect(recordsObjects.length).to.equal(this.MAX_RECORDS_TO_UPLOAD)
 
-        for (let recordNumber = this.MIN_RECORDS_TO_UPLOAD; recordNumber <= this.MAX_RECORDS_TO_UPLOAD; recordNumber *= 10) {
-            const recordsObjects = this.syncDataResult.getObjects(this.schemesCreated![recordNumber].schemaName)
-            expect(recordsObjects.length).to.equal(recordNumber)
-        }
+        const uniqueKeys = new Set(recordsObjects.map(record => {return record.Key}))
+        expect(uniqueKeys.size).to.equal(this.MAX_RECORDS_TO_UPLOAD)
+
+        await this.resourceManager.cleanup()
     }
     
   }
