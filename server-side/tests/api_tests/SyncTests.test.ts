@@ -82,6 +82,14 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
         command: CommandFactory.createCommand('TenThousandRecordsCommand', syncAdalService, client)
       },
       {
+        name: 'PushDataCommand',
+        command: CommandFactory.createCommand('PushDataCommand', syncAdalService, client)
+      },
+      {
+        name: 'WACDPushDataCommand',
+        command: CommandFactory.createCommand('WACDPushDataCommand', syncAdalService, client)
+      },
+      {
         name: 'CleanupCommand',
         command: CommandFactory.createCommand('CleanupCommand', syncAdalService, client)
       }

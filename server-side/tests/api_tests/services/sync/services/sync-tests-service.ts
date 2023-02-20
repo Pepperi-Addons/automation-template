@@ -49,6 +49,12 @@ export class SyncService {
         return res
     }
 
+    async push(data: any, wacd: boolean) {
+        const baseUrl = `/addons/api/5122dc6d-745b-4f46-bb8e-bd25225d350a/api/${wacd ? 'push_wacd' : 'push'}`
+        let res = await this.papiClient.post(baseUrl, data)
+        return res
+    }
+
     async pullConnectAccount(options: PullOptions, accountUUID: string) {
         const baseUrl = `/addons/data/pull?connect_account=true&account_uuid=${accountUUID}`
         let res = await this.papiClient.post(baseUrl, options)

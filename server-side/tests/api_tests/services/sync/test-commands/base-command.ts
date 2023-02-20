@@ -10,6 +10,7 @@ export interface TestCommand {
     pushData(adalService: ADALTableService): Promise<any>;
     sync(): Promise<any>;
     test(objToTest: any, syncData: any, expect: Chai.ExpectStatic): Promise<any>;
+    cleanup(): Promise<any>;
     execute(expect: Chai.ExpectStatic): Promise<void>;
 }
 
@@ -57,6 +58,13 @@ export class BaseCommand implements TestCommand {
         throw new Error("Method not implemented.");
     }
 
+    cleanup(): Promise<any> {
+        // do nothing
+        return Promise.resolve()
+    }
+
+
+
     // execute is the main method of the test command.
     // it executes the following steps:
     // 1. setup schemes
@@ -69,6 +77,11 @@ export class BaseCommand implements TestCommand {
       await this.pushData(adalService)
       const syncRes =  await this.sync()
       const syncData = await this.processSyncResponse(syncRes)
-      await this.test(syncRes, syncData, expect)       
+      try {
+          await this.test(syncRes, syncData, expect)
+      } finally {
+          await this.cleanup()
+        
+      }
   }
 }

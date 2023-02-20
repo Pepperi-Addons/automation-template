@@ -16,11 +16,11 @@ import {
   WACDCommand,
   TenThousandRecordsCommand,
   ThousandRecordsCommand,
-  HundredRecordsCommand
+  HundredRecordsCommand,
+  PushDataCommand,
+  WACDPushDataCommand,
 
 } from "..";
-import { PapiClient } from "@pepperi-addons/papi-sdk";
-import { ResourceManagerService } from "../../../resource_management/resource_manager.service";
 
 export class CommandFactory {
   // a map of command types to command classes
@@ -39,6 +39,8 @@ export class CommandFactory {
     TenThousandRecordsCommand: TenThousandRecordsCommand,
     ThousandRecordsCommand: ThousandRecordsCommand,
     HundredRecordsCommand: HundredRecordsCommand,
+    PushDataCommand: PushDataCommand,
+    WACDPushDataCommand: WACDPushDataCommand,
     CleanupCommand: CleanupCommand
   };
 
