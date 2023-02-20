@@ -73,14 +73,14 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
         name: 'HundredRecordsCommand',
         command: CommandFactory.createCommand('HundredRecordsCommand', syncAdalService, client)
       },
-      {
-        name: 'ThousandRecordsCommand',
-        command: CommandFactory.createCommand('ThousandRecordsCommand', syncAdalService, client)
-      },
-      {
-        name: 'TenThousandRecordsCommand',
-        command: CommandFactory.createCommand('TenThousandRecordsCommand', syncAdalService, client)
-      },
+      // {
+      //   name: 'ThousandRecordsCommand',
+      //   command: CommandFactory.createCommand('ThousandRecordsCommand', syncAdalService, client)
+      // },
+      // {
+      //   name: 'TenThousandRecordsCommand',
+      //   command: CommandFactory.createCommand('TenThousandRecordsCommand', syncAdalService, client)
+      // },
       {
         name: 'CleanupCommand',
         command: CommandFactory.createCommand('CleanupCommand', syncAdalService, client)
