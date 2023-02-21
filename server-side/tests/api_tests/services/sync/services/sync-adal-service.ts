@@ -45,7 +45,7 @@ export class SyncAdalService {
         return await this.papiClient.addons.data.schemes.post(schema)
     }
 
-    generateSchemeWithFields(fieldNumber:number): AddonDataScheme {
+    generateSchemeWithFields(fieldNumber: number, schemaNameSuffix: string): AddonDataScheme {
         let fieldNames: AddonDataScheme['Fields'] = {}
         for(let i=1;i<fieldNumber+1;i++) {
             let fieldName = "Field"+i
@@ -53,7 +53,7 @@ export class SyncAdalService {
         }
 
         const syncSchema:AddonDataScheme = {
-            Name: this.generateScehmaName(),
+            Name: this.generateScehmaName(schemaNameSuffix),
             Type: "data",
             SyncData: {
                 Sync: true

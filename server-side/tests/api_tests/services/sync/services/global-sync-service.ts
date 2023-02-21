@@ -42,5 +42,27 @@ export class GlobalSyncService {
         }
         return true;
     }
+   
+    // copied from GlobalService in sync addon
+    // this function is used to generate the internal ID of the ADAL table
+    public static hashCode(str) { // java String#hashCode //TODO think about that, this is uesd in the MapData table internal ID.
+        let hash = 0, i, chr;
+        if (str.length === 0) return hash;
+        for (i = 0; i < str.length; i++) {
+          chr   = str.charCodeAt(i);
+          hash  = ((hash << 5) - hash) + chr;
+          hash |= 0; // Convert to 32bit integer
+        }        
+        return this.validateHashCode(hash);
+    }
+
+    public static validateHashCode(hashCode: number) {
+        // check if hashCode is positive number
+        if (hashCode < 0) {
+            // make it positive number
+            hashCode = hashCode * -1;
+        }
+        return hashCode;
+    }
 
 }

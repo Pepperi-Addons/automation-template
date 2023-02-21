@@ -14,11 +14,15 @@ import {
   SystemFilterUser,
   TestCommand,
   WACDCommand,
-  NumberOfRecordsCommand,
   RecordSizeCommand,
+  TenThousandRecordsCommand,
+  ThousandRecordsCommand,
+  HundredRecordsCommand,
+  PushDataCommand,
+  WACDPushDataCommand,
+  PushBigDataCommand,
+
 } from "..";
-import { PapiClient } from "@pepperi-addons/papi-sdk";
-import { ResourceManagerService } from "../../../resource_management/resource_manager.service";
 
 export class CommandFactory {
   // a map of command types to command classes
@@ -34,16 +38,21 @@ export class CommandFactory {
     DeltaTestCommand: DeltaTestCommand,
     ResyncCommand: ResyncCommand,
     WACDCommand: WACDCommand,
-    NumberOfRecordsCommand: NumberOfRecordsCommand,
     RecordSizeCommand:RecordSizeCommand,
+    TenThousandRecordsCommand: TenThousandRecordsCommand,
+    ThousandRecordsCommand: ThousandRecordsCommand,
+    HundredRecordsCommand: HundredRecordsCommand,
+    PushDataCommand: PushDataCommand,
+    PushBigDataCommand: PushBigDataCommand,
+    WACDPushDataCommand: WACDPushDataCommand,
     CleanupCommand: CleanupCommand
   };
 
-  static createCommand(type: string, syncAdalService: SyncAdalService, client: Client,papiClient?:PapiClient,resourcaManager?: ResourceManagerService): TestCommand {
+  static createCommand(type: string, syncAdalService: SyncAdalService, client: Client): TestCommand {
     const CommandClass = CommandFactory.commandMap[type];
     if (!CommandClass) {
       throw new Error('Unknown command type');
     }
-    return new CommandClass(syncAdalService, client,papiClient,resourcaManager);
+    return new CommandClass(syncAdalService, client);
   }
 }

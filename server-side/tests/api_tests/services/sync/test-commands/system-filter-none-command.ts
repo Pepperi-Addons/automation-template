@@ -15,8 +15,8 @@ export class SystemFilterNone extends BaseCommand {
     protected adalTableServices? : {account:ADALTableService,user:ADALTableService,none:ADALTableService}
     auditLogService: any;
     
-    constructor(adalTableService: SyncAdalService,client:Client,papiClient:PapiClient, resourceManager: ResourceManagerService){
-        super(adalTableService, client,papiClient,resourceManager)
+    constructor(adalTableService: SyncAdalService, client: Client){
+        super(adalTableService, client)
         this.systemFilterService = new SystemFilterService(client)
     } 
   
@@ -67,7 +67,7 @@ export class SystemFilterNone extends BaseCommand {
     }
 
     async processSyncResponse(syncRes: any): Promise<any> {
-        this.syncDataResult.data =  await this.syncService.handleSyncData(syncRes)
+        this.syncDataResult.data =  await this.syncService.handleSyncData(syncRes, false)
         return this.syncDataResult.data;
     }
     

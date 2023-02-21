@@ -12,11 +12,11 @@ export class DeltaTestCommand extends BaseCommand {
     async setupSchemes(): Promise<ADALTableService> {
         // generate schema with fields - first and second schemes, and saving the time befor creating second scheme 
         // and after creating first scheme for delta tests
-        const firstSchema = this.syncAdalService.generateSchemeWithFields(1)
+        const firstSchema = this.syncAdalService.generateSchemeWithFields(1, `_${ this.constructor.name}_firstSchema`)
         const firstAdalService = await this.syncAdalService.getAdalService(firstSchema)
         this.firstSchemeADALTable = firstAdalService
 
-        const secondSchema = this.syncAdalService.generateSchemeWithFields(1)
+        const secondSchema = this.syncAdalService.generateSchemeWithFields(1, `_${ this.constructor.name}_secondSchema`)
         const secondAdalService = await this.syncAdalService.getAdalService(secondSchema)
         this.secondSchemeADALTable = secondAdalService
         
@@ -52,7 +52,7 @@ export class DeltaTestCommand extends BaseCommand {
     }
 
     async processSyncResponse(syncRes: any): Promise<any> {
-        this.syncDataResult.data =  await this.syncService.handleSyncData(syncRes.syncResult)
+        this.syncDataResult.data =  await this.syncService.handleSyncData(syncRes.syncResult, false)
         return this.syncDataResult.data;
     }
     

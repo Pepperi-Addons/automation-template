@@ -20,8 +20,7 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
     const automationUUID = "02754342-e0b5-4300-b728-a94ea5e0e8f4"
 
     const syncAdalService = new SyncAdalService(client)
-    const papiClient = addonService.papiClient;
-    const resourcaManager = new ResourceManagerService(papiClient,this.automationUUID) 
+    
   
     // Note: CleanRebuild and CleanupCommand are not part of the tests
     // just an hack to make sure that nebula will work
@@ -41,6 +40,14 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
       {
         name: 'ReturnURLCommand',
         command: CommandFactory.createCommand('ReturnURLCommand', syncAdalService, client)
+      },
+      {
+        name: 'WACDCommand',
+        command: CommandFactory.createCommand('WACDCommand', syncAdalService, client)
+      },
+      {
+        name: 'PapiConnectAccountCommand',
+        command: CommandFactory.createCommand('PapiConnectAccountCommand', syncAdalService, client)
       },
       {
         name: 'SystemFilterNone',
@@ -63,16 +70,32 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
         command: CommandFactory.createCommand('ResyncCommand', syncAdalService, client)
       },
       {
-        name: 'WACDCommand',
-        command: CommandFactory.createCommand('WACDCommand', syncAdalService, client)
+        name: 'HundredRecordsCommand',
+        command: CommandFactory.createCommand('HundredRecordsCommand', syncAdalService, client)
       },
       {
-        name: 'NumberOfRecordsCommand',
-        command: CommandFactory.createCommand('NumberOfRecordsCommand', syncAdalService, client, papiClient,resourcaManager)
+        name: 'ThousandRecordsCommand',
+        command: CommandFactory.createCommand('ThousandRecordsCommand', syncAdalService, client)
+      },
+      {
+        name: 'TenThousandRecordsCommand',
+        command: CommandFactory.createCommand('TenThousandRecordsCommand', syncAdalService, client)
+      },
+      {
+        name: 'PushDataCommand',
+        command: CommandFactory.createCommand('PushDataCommand', syncAdalService, client)
+      },
+      {
+        name: 'PushBigDataCommand',
+        command: CommandFactory.createCommand('PushBigDataCommand', syncAdalService, client)
+      },
+      {
+        name: 'WACDPushDataCommand',
+        command: CommandFactory.createCommand('WACDPushDataCommand', syncAdalService, client)
       },
       {
         name: 'CleanupCommand',
-        command: CommandFactory.createCommand('CleanupCommand', syncAdalService, client,papiClient,resourcaManager)
+        command: CommandFactory.createCommand('CleanupCommand', syncAdalService, client)
       }
     ];
   
