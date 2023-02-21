@@ -8,42 +8,40 @@ import { SyncDimxService } from "../services/sync-dimx-service";
 import { SyncFileService } from "../services/sync-file-service";
 import { BaseCommand as BaseCommand } from "./base-command";
 
-// this class should not be executed, only inherited
-export class NumberOfRecordsCommand extends BaseCommand {
+
+export class TenThousandRecordsCommand extends BaseCommand {
     papiClient: PapiClient;
     client: Client    
     syncDimxService: SyncDimxService
     syncFileService: SyncFileService
-    private resourceManager: ResourceManagerService
-
-    constructor(syncAdalService: SyncAdalService, client: Client){
-        super(syncAdalService, client)
+    constructor(syncAdalService: SyncAdalService, client: Client , papiClient: PapiClient, resourceManager: ResourceManagerService){
+        super(syncAdalService, client, papiClient, resourceManager)
+        this.papiClient = papiClient
         this.client = client
         this.syncDimxService = new SyncDimxService()
-        this.papiClient = syncAdalService.papiClient
         this.syncFileService = new SyncFileService(this.client, this.papiClient)
-        this.resourceManager = new ResourceManagerService(this.papiClient, this.automationUUID) 
-        
     }
-    protected MAX_RECORDS_TO_UPLOAD = -1
+    protected MAX_RECORDS_TO_UPLOAD = 40000
     private schemeCreated: any = undefined
     private automationUUID = "02754342-e0b5-4300-b728-a94ea5e0e8f4"
+    protected resourceManager = new ResourceManagerService(this.papiClient,this.automationUUID) 
 
     async setupSchemes(): Promise<any> {
         // generate schema with fields
-        const schema = this.syncAdalService.generateSchemeWithFields(1, `_${this.constructor.name}_${this.MAX_RECORDS_TO_UPLOAD}`)
+        const schema = this.syncAdalService.generateSchemeWithFields(1)
         const adalService = await this.syncAdalService.getAdalService(schema)
         this.schemeCreated = adalService
-        return adalService  
+        return Promise.resolve(adalService)    
     }
 
-    async pushData(adalService: ADALTableService): Promise<any> {    
-
-        // create relation between DIMX and the created shchema
-        await this.syncDimxService.createRelation(this.resourceManager, adalService.schemaName)    
-        // generate data    
-        const objectForDimx = this.syncAdalService.generateFieldsData(1, 1, this.MAX_RECORDS_TO_UPLOAD)
-        // upload data
+    async pushData(adalService: ADALTableService): Promise<any> {
+        // initializing adal schema with data, first property is number of fields
+        // second propety is number of characters in each field
+        
+        let objectForDimx: any
+        await this.syncFileService.createPFSSchema()
+        await this.syncDimxService.createRelation(this.resourceManager, adalService.schemaName)
+        objectForDimx = this.syncAdalService.generateFieldsData(1, 1, this.MAX_RECORDS_TO_UPLOAD)
         await this.syncFileService.uploadFilesAndImport(objectForDimx, adalService.schemaName)
         
         await GlobalSyncService.sleep(this.TIME_TO_SLEEP_FOR_NEBULA)
@@ -66,6 +64,7 @@ export class NumberOfRecordsCommand extends BaseCommand {
     
     async  test(syncRes: any, syncData:any, expect: Chai.ExpectStatic): Promise<any> {
         // tests
+
         expect(syncRes).to.have.property('UpToDate').that.is.a('Boolean').and.is.equal(false)
         expect(syncRes).to.have.property('ExecutionURI').that.is.a('String').and.is.not.undefined
 
@@ -75,15 +74,10 @@ export class NumberOfRecordsCommand extends BaseCommand {
         const recordsObjects = this.syncDataResult.getObjects(this.schemeCreated.schemaName)
         expect(recordsObjects.length).to.equal(this.MAX_RECORDS_TO_UPLOAD)
 
-        //getting all of the keys to sync from nebula, creating set which contains only the unique keys (without reoccurence)
-        //  validating that the unique keys is in the same ength - validating that each key is exactly one time in the sync
         const uniqueKeys = new Set(recordsObjects.map(record => {return record.Key}))
         expect(uniqueKeys.size).to.equal(this.MAX_RECORDS_TO_UPLOAD)
 
-    }
-    
-    async cleanup(): Promise<any> {
-        await this.resourceManager.cleanup();
+        await this.resourceManager.cleanup()
     }
     
   }

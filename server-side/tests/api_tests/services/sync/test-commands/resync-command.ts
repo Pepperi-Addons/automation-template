@@ -55,7 +55,7 @@ export class ResyncCommand extends BaseCommand {
     }
 
     async processSyncResponse(syncRes: any): Promise<any> {
-        this.syncDataResult.data =  await this.syncService.handleSyncData(syncRes)
+        this.syncDataResult.data =  await this.syncService.handleSyncData(syncRes, false)
         return this.syncDataResult.data;
     }
     

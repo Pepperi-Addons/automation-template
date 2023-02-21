@@ -22,10 +22,19 @@ export class SyncService {
         return await GlobalSyncService.httpGet(url)
     }
 
-    async handleSyncData(syncRes:any,return_url: boolean = false){
+    async handleSyncData(syncRes: any, return_url: boolean){
         let data = await this.auditLogService.getSyncDataFromAudit(syncRes)
         let res = data
         if(return_url){
+            res = await this.getSyncDataFromUrl(data.ResourcesURL)
+        }
+        return res
+    }
+
+    async getSyncData(syncRes: any){
+        let data = await this.auditLogService.getSyncDataFromAudit(syncRes)
+        let res = data
+        if(data.ResourcesURL){
             res = await this.getSyncDataFromUrl(data.ResourcesURL)
         }
         return res
@@ -46,6 +55,12 @@ export class SyncService {
     async pull(options: PullOptions, returnUrl: boolean, wacd: boolean) {
         const baseUrl = `/addons/data/pull?return_url=${!!returnUrl}&wacd=${!!wacd}`
         let res = await this.papiClient.post(baseUrl, options)
+        return res
+    }
+
+    async push(data: any, wacd: boolean) {
+        const baseUrl = `/addons/api/5122dc6d-745b-4f46-bb8e-bd25225d350a/api/${wacd ? 'push_wacd' : 'push'}`
+        let res = await this.papiClient.post(baseUrl, data)
         return res
     }
 
