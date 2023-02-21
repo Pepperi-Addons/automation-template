@@ -80,7 +80,10 @@ export class NumberOfRecordsCommand extends BaseCommand {
         const uniqueKeys = new Set(recordsObjects.map(record => {return record.Key}))
         expect(uniqueKeys.size).to.equal(this.MAX_RECORDS_TO_UPLOAD)
 
-        await this.resourceManager.cleanup()
+    }
+    
+    async cleanup(): Promise<any> {
+        await this.resourceManager.cleanup();
     }
     
   }

@@ -58,6 +58,7 @@ export class BaseCommand implements TestCommand {
         throw new Error("Method not implemented.");
     }
 
+    // clean up the data that was pushed to ADAL
     cleanup(): Promise<any> {
         // do nothing
         return Promise.resolve()
