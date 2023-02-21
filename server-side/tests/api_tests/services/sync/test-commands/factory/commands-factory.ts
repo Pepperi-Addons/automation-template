@@ -14,13 +14,16 @@ import {
   SystemFilterUser,
   TestCommand,
   WACDCommand,
-  RecordSizeCommand,
   TenThousandRecordsCommand,
   ThousandRecordsCommand,
   HundredRecordsCommand,
   PushDataCommand,
   WACDPushDataCommand,
   PushBigDataCommand,
+  RecordSizeHundredCommand,
+  RecordSizeThousandCommand,
+  RecordSizeTenThousandCommand,
+  RecordSizeHundredThousandCommand,
 
 } from "..";
 
@@ -38,13 +41,16 @@ export class CommandFactory {
     DeltaTestCommand: DeltaTestCommand,
     ResyncCommand: ResyncCommand,
     WACDCommand: WACDCommand,
-    RecordSizeCommand:RecordSizeCommand,
     TenThousandRecordsCommand: TenThousandRecordsCommand,
     ThousandRecordsCommand: ThousandRecordsCommand,
     HundredRecordsCommand: HundredRecordsCommand,
     PushDataCommand: PushDataCommand,
     PushBigDataCommand: PushBigDataCommand,
     WACDPushDataCommand: WACDPushDataCommand,
+    RecordSizeHundredCommand: RecordSizeHundredCommand,
+    RecordSizeThousandCommand: RecordSizeThousandCommand,
+    RecordSizeTenThousandCommand: RecordSizeTenThousandCommand,
+    RecordSizeHundredThousandCommand: RecordSizeHundredThousandCommand,
     CleanupCommand: CleanupCommand
   };
 
