@@ -27,7 +27,7 @@ export class NumberOfRecordsCommand extends BaseCommand {
     }
     protected MAX_RECORDS_TO_UPLOAD = -1
     protected schemeCreated: any = undefined
-    protected automationUUID = "02754342-e0b5-4300-b728-a94ea5e0e8f4"
+    private automationUUID = "02754342-e0b5-4300-b728-a94ea5e0e8f4"
 
     async setupSchemes(): Promise<any> {
         // generate schema with fields
