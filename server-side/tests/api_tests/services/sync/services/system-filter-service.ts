@@ -1,28 +1,21 @@
 import { AddonDataScheme,AddonData, Account } from "@pepperi-addons/papi-sdk"
-import { ADALTableService } from "../../resource_management/adal_table.service";
+import { AccountsService, CORE_RESOURCES_ADDON_UUID } from "./accounts-service";
 import { SyncAdalService } from "./sync-adal-service";
+import { UsersService } from "./users-service";
 import { v4 as uuid } from 'uuid';
-import { GlobalSyncService } from "./global-sync-service";
 
-export class SystemFilterService extends SyncAdalService {    
-    private accountUUIDS: any = this.papiClient.accounts.iter({
-        fields: ['UUID']
-    }).toArray().then(accounts => { 
-        this.accountUUIDS = accounts.map(uuid => {
-            return uuid.UUID
-        })
-    });
-    private userUUIDS: any = this.papiClient.users.iter({
-        fields: ['UUID']
-    }).toArray().then(users => { 
-        this.userUUIDS = users.map(uuid => {
-            return uuid.UUID
-        })
-    });
-    private CORE_RESOURCES_ADDON_UUID = 'fc5a5974-3b30-4430-8feb-7d5b9699bc9f'
-    private accoutsCreated: Account[] = []
+export class SystemFilterService extends SyncAdalService {  
+    accountsService: AccountsService;
+    usersService: UsersService;
 
-    generateSystemFilterScheme(type: 'User' | 'Account' | 'None'){
+    constructor(client) {
+        super(client);
+        this.accountsService = new AccountsService(this.papiClient);
+        this.usersService = new UsersService(this.papiClient);
+    }
+    private accountsCreated:Account[] =[]
+  
+    generateScheme(type: 'User' | 'Account' | 'None'){
         const syncSchema:AddonDataScheme = {
             Name: this.generateScehmaName(`_${type.toLowerCase()}`),
             Type: "data",
@@ -34,31 +27,50 @@ export class SystemFilterService extends SyncAdalService {
         return syncSchema
     }
 
-    generateSystemFilterData(account: boolean, user: boolean){
-        if(this.userUUIDS.length < 3 || this.accountUUIDS.length < 3 ){
-            throw new Error(`User uuid count is ${ this.userUUIDS.length }, Account uuid count is ${ this.accountUUIDS.length },
-            both need to be at least 3`)
-        }
-        let baseData:AddonData[] = [
-            {   Key: "1",
+    async generateUserData() {
+        const currentUserUUID = this.usersService.getCurrentUserUUID();
+        const notCurrentUserUUID = await this.usersService.getNotCurrentUserUUID();
+        let fieldsData:AddonData[] = [
+            {   Key:"1",
                 Name : "1",
+                User_Field: currentUserUUID
             },
             {
-                Key: "2",
-                Name : "2"
-            },{
-                Key: "3",
-                Name : "3"
-            }]
-        baseData.map((field,index) =>{
-            field.User_Field = user ?  this.userUUIDS[index] : undefined
-            field.Account_Field = account ?  this.accountUUIDS[index] : undefined
-        })
-        return baseData
-    }
+                Key:"2",
+                Name : "2",
+                User_Field: notCurrentUserUUID
+            }
+        ]        
+        return fieldsData
 
-    getSystemFilter(account:boolean,webapp:boolean,accountUUID?:string){
-        let Type = account ? 'Account' : webapp ? 'User' : 'None'
+    }
+    async generateAccountsData(accountsUUID?: Account[]): Promise<AddonData[]> {
+        const connectedAccounts = await this.accountsService.getConnectedAccounts();
+        const notConnectedAccounts = await this.accountsService.getNotConnectedAccounts();
+        
+        const connectedAccount = connectedAccounts[0];
+        const notConnectedAccount =  notConnectedAccounts[0];
+
+        if(accountsUUID && accountsUUID.length<2){
+            throw new Error('need to receive at least 2 accounts!')
+        }
+        
+        let fieldsData:AddonData[] = [
+            {   Key:"1",
+                Name : "1",
+                Account_Field: accountsUUID? accountsUUID[0] : connectedAccount.UUID
+            },
+            {
+                Key:"2",
+                Name : "2",
+                Account_Field: accountsUUID? accountsUUID[1] : notConnectedAccount.UUID
+            }
+        ]        
+        return fieldsData
+    }        
+
+    generateSystemFilter(account:boolean,webapp:boolean,accountUUID?:string){
+        let Type = account ? 'Account' : webapp? 'User' : 'None'
         let SystemFilter = {
             SystemFilter: {
                 Type: Type 
@@ -83,29 +95,54 @@ export class SystemFilterService extends SyncAdalService {
                 Type: "Resource", 
                 Resource: resource, 
                 ApplySystemFilter: true,
-                AddonUUID: this.CORE_RESOURCES_ADDON_UUID
+                AddonUUID: CORE_RESOURCES_ADDON_UUID
             }
         }
         return type != 'None' ? resourceField : nameField
     }
 
-    async createAccount(is_hidden: boolean = false){
+    async createAccount(){
         let account = await this.papiClient.accounts.upsert({
             Key: 'account_for_sync_tests'+uuid().split('-').join('_'), 
             ExternalID: Math.round(Math.random() * 10000 + 1).toString(),
-            Hidden: is_hidden,
-            Users: {
-                Data: {
-                    UUID: GlobalSyncService.getCurrentUserUUID(this.papiClient)
-                }
-            } 
+            Hidden: false,
         })
-        this.accoutsCreated.push(account)
+        this.accountsCreated.push(account)
         return account
     }
 
+    async connectAccountToCurrentUser(accountToConnect: Account){
+        const accountUsersUrl = `/addons/data/${CORE_RESOURCES_ADDON_UUID}/account_users`;
+        const body = {
+            Account: accountToConnect.UUID,
+            User: this.usersService.getCurrentUserUUID(),
+            Hidden: false
+        };
+        try {
+            return await this.papiClient.post(accountUsersUrl, body);
+        }
+        catch (error) {
+            throw new Error(`Failed connecting accounts users, error: ${(error as Error).message}`);
+        }
+    }
+
+    async hideAccountFromCurrentUser(accountToConnect: Account){
+        const accountUsersUrl = `/addons/data/${CORE_RESOURCES_ADDON_UUID}/account_users`;
+        const body = {
+            Account: accountToConnect.UUID,
+            User: this.usersService.getCurrentUserUUID(),
+            Hidden: true
+        };
+        try {
+            return await this.papiClient.post(accountUsersUrl, body);
+        }
+        catch (error) {
+            throw new Error(`Failed hiding accounts users, error: ${(error as Error).message}`);
+        }
+    }
+
     async cleanupAccounts(){
-        this.accoutsCreated.map(account => {
+        this.accountsCreated.map(account => {
             this.papiClient.accounts.delete(account.InternalID!)
         })
     }

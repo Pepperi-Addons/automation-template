@@ -22,24 +22,50 @@ export class SyncService {
         return await GlobalSyncService.httpGet(url)
     }
 
-    async handleSyncData(syncRes:any,return_url: boolean = false){
-        let data =await this.auditLogService.getSyncDataFromAudit(syncRes)
+    async handleSyncData(syncRes: any, return_url: boolean){
+        let data = await this.auditLogService.getSyncDataFromAudit(syncRes)
+        let res = data
         if(return_url){
-            return  await this.getSyncDataFromUrl(data.ResourcesURL)
+            res = await this.getSyncDataFromUrl(data.ResourcesURL)
         }
-        else{
-            return data
+        return res
+    }
+
+    async getSyncData(syncRes: any){
+        let data = await this.auditLogService.getSyncDataFromAudit(syncRes)
+        let res = data
+        if(data.ResourcesURL){
+            res = await this.getSyncDataFromUrl(data.ResourcesURL)
         }
+        return res
     }
     
     async nebulaCleanRebuild(){
         const baseUrl = `/addons/api/00000000-0000-0000-0000-000000006a91/api/clean_rebuild`
         let res = await this.papiClient.post(baseUrl)
-        return res
+        let ansFromAuditLog =  await this.auditLogService.pollExecution(res.ExecutionUUID!)
+        if (ansFromAuditLog.success === true) {
+            console.log('successfully did clean rebuild in nebula')
+        }
+        else {
+            throw new Error(`Failed to clean rebuild nebula`);
+        }
     }
 
     async pull(options: PullOptions, returnUrl: boolean, wacd: boolean) {
-        const baseUrl = `/addons/data/pull?return_url=${returnUrl}&wacd=${wacd}`
+        const baseUrl = `/addons/data/pull?return_url=${!!returnUrl}&wacd=${!!wacd}`
+        let res = await this.papiClient.post(baseUrl, options)
+        return res
+    }
+
+    async push(data: any, wacd: boolean) {
+        const baseUrl = `/addons/api/5122dc6d-745b-4f46-bb8e-bd25225d350a/api/${wacd ? 'push_wacd' : 'push'}`
+        let res = await this.papiClient.post(baseUrl, data)
+        return res
+    }
+
+    async pullConnectAccount(options: PullOptions, accountUUID: string) {
+        const baseUrl = `/addons/data/pull?connect_account=true&account_uuid=${accountUUID}`
         let res = await this.papiClient.post(baseUrl, options)
         return res
     }
@@ -49,11 +75,4 @@ export class SyncService {
 export interface PullOptions {
     ModificationDateTime: string;
     SystemFilter?: object;
-}
-
-
-export interface FieldsData{
-    account:any[];
-    user:any[];
-    none:any[];
 }

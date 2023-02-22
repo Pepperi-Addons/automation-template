@@ -7,7 +7,7 @@ export class SchemaExistsCommand extends BaseCommand {
   
     async setupSchemes(): Promise<ADALTableService> {
         // generate schema with fields
-        const schema = this.syncAdalService.generateSchemeWithFields(1)
+        const schema = this.syncAdalService.generateSchemeWithFields(1, `_${this.constructor.name}`)
         const adalService = await this.syncAdalService.getAdalService(schema)
         return adalService;    
     }
@@ -16,7 +16,7 @@ export class SchemaExistsCommand extends BaseCommand {
         // initializing adal schema with data, first property is number of fields
         // second propety is number of characters in each field
         const data = this.syncAdalService.generateFieldsData(1,1)
-        await adalService.upsertRecord(data)
+        await adalService.upsertBatch(data)
         await GlobalSyncService.sleep(this.TIME_TO_SLEEP_FOR_NEBULA)
     }
 
@@ -31,7 +31,7 @@ export class SchemaExistsCommand extends BaseCommand {
     }
 
     async processSyncResponse(syncRes: any): Promise<any> {
-        this.syncDataResult.data =  await this.syncService.handleSyncData(syncRes)
+        this.syncDataResult.data =  await this.syncService.handleSyncData(syncRes, false)
         return this.syncDataResult.data;
     }
     

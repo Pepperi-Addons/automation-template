@@ -1,3 +1,4 @@
+import { SystemFilterService } from "../services/system-filter-service";
 import { BaseCommand } from "./base-command";
 
 export class CleanupCommand extends BaseCommand{
@@ -14,7 +15,6 @@ export class CleanupCommand extends BaseCommand{
         return Promise.resolve(undefined);
     }
     async test(syncRes: any,syncData:any,expect: Chai.ExpectStatic): Promise<any> {
-        await this.systemFilterService.cleanupAccounts()
         return await this.syncAdalService.cleanup();
     }
 }
