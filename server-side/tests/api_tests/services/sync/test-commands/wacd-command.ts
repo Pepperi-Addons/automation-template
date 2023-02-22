@@ -10,7 +10,7 @@ export class WACDCommand extends SchemaExistsCommand {
         // start sync
         let auditLog = await this.syncService.pull({
             ModificationDateTime: dateTime.toISOString(),
-        }, false, true)
+        }, false, true, false)
         return auditLog
     }
 

@@ -58,7 +58,7 @@ export class SystemFilterNone extends BaseCommand {
         let auditLog = await this.syncService.pull({
             ModificationDateTime: dateTime.toISOString(),
             ...systemFilter
-        }, false, false)
+        }, false, false, false)
 
         return auditLog
     }

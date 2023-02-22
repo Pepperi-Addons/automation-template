@@ -5,7 +5,7 @@ export class ReturnURLCommand extends SchemaExistsCommand {
         dateTime.setHours(dateTime.getHours()-1)
         let auditLog = await this.syncService.pull({
             ModificationDateTime: dateTime.toISOString(),
-        },true, false)
+        },true, false, false)
         return auditLog
     }
     async processSyncResponse(syncRes: any): Promise<any> {

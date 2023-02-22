@@ -45,7 +45,7 @@ export class DeltaTestCommand extends BaseCommand {
         
         let auditLog = await this.syncService.pull({
             ModificationDateTime: this.timeOfNewScheme!.toISOString(),
-        }, false, false)
+        }, false, false, false)
         const t2 = performance.now()
         
         return {syncResult: auditLog, syncTime: t2-t1}
