@@ -71,10 +71,8 @@ export class SyncAdalService {
     }
 
     generateFieldsData(numberOfFields:number, numberOfCharacters: number,numberOfRecords:number=1): AddonData[]{
-        let fieldData=''
-        for( let i=0; i<numberOfCharacters; i++){
-            fieldData+='.'
-        }
+        const fieldData='.'.repeat(numberOfCharacters)
+        
         let data: AddonData[] = []
         let fields:{} = {}
         for(let i=1;i<numberOfFields+1;i++){

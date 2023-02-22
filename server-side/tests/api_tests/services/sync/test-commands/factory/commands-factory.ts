@@ -20,7 +20,11 @@ import {
   PushDataCommand,
   WACDPushDataCommand,
   PushBigDataCommand,
-  ConnectAccountDelta
+  RecordSizeHundredCommand,
+  RecordSizeThousandCommand,
+  RecordSizeTenThousandCommand,
+  RecordSizeHundredThousandCommand,
+  ConnectAccountDelta,
 
 } from "..";
 
@@ -44,6 +48,10 @@ export class CommandFactory {
     PushDataCommand: PushDataCommand,
     PushBigDataCommand: PushBigDataCommand,
     WACDPushDataCommand: WACDPushDataCommand,
+    RecordSizeHundredCommand: RecordSizeHundredCommand,
+    RecordSizeThousandCommand: RecordSizeThousandCommand,
+    RecordSizeTenThousandCommand: RecordSizeTenThousandCommand,
+    RecordSizeHundredThousandCommand: RecordSizeHundredThousandCommand,
     ConnectAccountDelta: ConnectAccountDelta,
     CleanupCommand: CleanupCommand
   };

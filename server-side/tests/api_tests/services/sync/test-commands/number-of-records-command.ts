@@ -14,7 +14,7 @@ export class NumberOfRecordsCommand extends BaseCommand {
     client: Client    
     syncDimxService: SyncDimxService
     syncFileService: SyncFileService
-    private resourceManager: ResourceManagerService
+    protected resourceManager: ResourceManagerService
 
     constructor(syncAdalService: SyncAdalService, client: Client){
         super(syncAdalService, client)
@@ -26,8 +26,8 @@ export class NumberOfRecordsCommand extends BaseCommand {
         
     }
     protected MAX_RECORDS_TO_UPLOAD = -1
-    private schemeCreated: any = undefined
-    private automationUUID = "02754342-e0b5-4300-b728-a94ea5e0e8f4"
+    protected schemeCreated: any = undefined
+    protected automationUUID = "02754342-e0b5-4300-b728-a94ea5e0e8f4"
 
     async setupSchemes(): Promise<any> {
         // generate schema with fields
@@ -60,7 +60,7 @@ export class NumberOfRecordsCommand extends BaseCommand {
     }
 
     async processSyncResponse(syncRes: any): Promise<any> {
-        this.syncDataResult.data =  await this.syncService.handleSyncData(syncRes, true)
+        this.syncDataResult.data =  await this.syncService.getSyncData(syncRes)
         return this.syncDataResult.data;
     }
     
