@@ -1,4 +1,3 @@
-import { SystemFilterService } from "../services/system-filter-service";
 import { BaseCommand } from "./base-command";
 
 export class CleanupCommand extends BaseCommand{

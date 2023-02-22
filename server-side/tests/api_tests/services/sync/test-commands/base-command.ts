@@ -3,7 +3,6 @@ import { SyncService } from "../services/sync-tests-service";
 import { SyncAdalService } from "../services/sync-adal-service";
 import { Client } from "@pepperi-addons/debug-server/dist";
 import { SyncDataResult } from "../sync-data-result";
-import { SystemFilterService } from "../services/system-filter-service";
 
 // TestCommand interface defines the common methods that should be implemented by all test commands
 export interface TestCommand {

@@ -1,8 +1,5 @@
 import { Client } from "@pepperi-addons/debug-server/dist";
-import { PapiClient } from "@pepperi-addons/papi-sdk";
-import { time } from "console";
 import { ADALTableService } from "../../resource_management/adal_table.service";
-import { ResourceManagerService } from "../../resource_management/resource_manager.service";
 import { GlobalSyncService } from "../services/global-sync-service";
 import { SyncAdalService } from "../services/sync-adal-service";
 import { TIME_TO_SLEEP_FOR_NEBULA } from "../services/sync-tests-service";

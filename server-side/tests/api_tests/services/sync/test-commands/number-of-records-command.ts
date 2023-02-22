@@ -1,5 +1,5 @@
 import { Client } from "@pepperi-addons/debug-server/dist";
-import { AddonData, PapiClient } from "@pepperi-addons/papi-sdk";
+import { PapiClient } from "@pepperi-addons/papi-sdk";
 import { ADALTableService } from "../../resource_management/adal_table.service";
 import { ResourceManagerService } from "../../resource_management/resource_manager.service";
 import { GlobalSyncService } from "../services/global-sync-service";
