@@ -17,4 +17,8 @@ export * from './number-of-records-hundred-command';
 export * from './push/push-data-command';
 export * from './push/wacd-push-data-command';
 export * from './push/push-big-data-command';
+export * from './record-size-hundred-command';
+export * from './record-size-thousand-command';
+export * from './record-size-ten-thousand-command';
+export * from './record-size-hundred-thousand-command';
 
