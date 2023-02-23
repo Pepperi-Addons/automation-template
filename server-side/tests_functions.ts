@@ -30,9 +30,9 @@ export async function runTest(addonUUID: string, client: Client, request, tester
     if (request.body.isLocal === "true") {
         addonService.BaseURL = "http://localhost:4500";
     }
-    let testsResult: any;
+    let testsResult: any[] = [];
     for (let index = 0; index < functionNames.length; index++) {
-        testsResult = (await context[functionNames[index]].apply(this, [client, addonService, request, testerFunctions]));
+        testsResult.push(await context[functionNames[index]].apply(this, [client, addonService, request, testerFunctions]));
     }
     return testsResult;
 }
@@ -140,3 +140,4 @@ export async function nebula_test(client: Client, addonClient: Client, request: 
     return (await testerFunctions.run());
 };
 context["nebula_test"] = nebula_test;
+

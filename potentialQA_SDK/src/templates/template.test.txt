@@ -1,4 +1,4 @@
-import GeneralService, { TesterFunctions } from "../../potentialQA_SDK/server_side/general.service";
+import GeneralService, { TesterFunctions } from "test_infra";
 
 
 export async function TemplateTests(generalService: GeneralService, addonService: GeneralService, request, tester: TesterFunctions) {
