@@ -1,5 +1,5 @@
 //00000000-0000-0000-0000-000000006a91
-import { GetRecordsRequiringSyncResponse, unitTestsResult } from "./services/nebulatest.service";
+import { GetRecordsRequiringSyncResponse, unitTestsResult } from "./services/NebulaTest.service";
 import { PerformanceManager } from "./services/performance_management/performance_manager";
 import { ResourceManagerService } from "./services/resource_management/resource_manager.service";
 import { Account, AddonData, AddonDataScheme, PapiClient, User } from "@pepperi-addons/papi-sdk";
