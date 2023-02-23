@@ -6,3 +6,4 @@ server-side/node_modules
 client-side/node_modules
 /node_modules
 server-side/.rpt2_cache
+potentialQA_SDK/build
