@@ -1,6 +1,6 @@
 import { AddonDataScheme, PapiClient, AddonData, FindOptions } from '@pepperi-addons/papi-sdk';
-import { ADALService } from "../../../../potentialQA_SDK/server_side/adal.service"
 import { RemovableResource } from './removable_resource.service';
+import {ADALService} from 'test_infra'
 
 export class ADALTableService extends RemovableResource {
     adalService: ADALService;

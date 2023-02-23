@@ -15,20 +15,17 @@ import {
     BatchApiResponse,
     ArchiveBody,
 } from '@pepperi-addons/papi-sdk';
-import { GeneralService } from 'test_infra';
-// import GeneralService from '../../../potentialQA_SDK/server_side/general.service';
+import {GeneralService} from './general.service';
 
 const apiCallsInterval = 4000;
 
 export class ObjectsService {
     papiClient: PapiClient;
     generalService: GeneralService;
-    dataObject: any; // the 'Data' object passsed inside the http request sent to start the test -- put all the data you need here
 
-    constructor(public service: GeneralService, dataObject:any) {
+    constructor(public service: GeneralService) {
         this.papiClient = service.papiClient;
         this.generalService = service;
-        this.dataObject = dataObject;
     }
 
     getItems(options?: FindOptions): Promise<Item[]> {

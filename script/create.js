@@ -7,8 +7,8 @@ const { exit } = require('process');
 const cwd = process.cwd();
 
 
-const templateTestPath = "../server-side/potentialQA_SDK/templates/template.test.txt";//../server-side/tests/api_tests/template.test.ts
-const templateServicePath = "../server-side/potentialQA_SDK/templates/template.service.txt";//../server-side/tests/api_tests/services/template.service.ts
+const templateTestPath = "../potentialQA_SDK/src/templates/template.test.txt";
+const templateServicePath = "../potentialQA_SDK/src/templates/template.service.txt";
 const serviceLoaction = "../server-side/tests/api_tests/services";
 const endpointToAddTemplate = `
 export async function template_test_endpoint(client: Client, addonClient: Client, request: Request, testerFunctions: TesterFunctions) {
@@ -23,13 +23,13 @@ export async function template_test_endpoint(client: Client, addonClient: Client
 };
 context["template_test_endpoint"] = template_test_endpoint;
 `;
-const templateTestImport = `import { Template } from '../../server-side/tests/api_tests/Template.test';`;
+const templateTestImport = `import { Template } from '../server-side/tests/api_tests/Template.test';`;
 const templateServiceImport = `import { ServiceName } from "Path";`;
 //const templateCtorLineToReplace = `//ctor replacment line`;
 const abc = `const service = new serviceClass(generalService, addonService.papiClient, dataObj);`;
 
-const addonUUIDMapper = '../server-side/potentialQA_SDK/mapper.json';
-const serverSideTestsEndpointsLocation = '../server-side/potentialQA_SDK/tests_functions.ts';
+const addonUUIDMapper = '../potentialQA_SDK/src/mapper.ts';
+const serverSideTestsEndpointsLocation = '../server-side/tests_functions.ts';
 program
     .name('test-creator')
     .description('CLI to create tests templates')
@@ -146,7 +146,8 @@ function camelize(str) {
 }
 
 function isAddonAlreadyTested(addonUUID, testName) {
-    let addonUUIDMapper = JSON.parse(fs.readFileSync("../server-side/potentialQA_SDK/mapper.json", 'utf-8'));
+    let mapper = fs.readFileSync("../potentialQA_SDK/src/mapper.ts", 'utf-8');
+    let addonUUIDMapper = JSON.parse((mapper.split('=')[1]).replace(';',''));
     for (let [nameOfTest, uuid] of Object.entries(addonUUIDMapper)) {
         if (nameOfTest.toLowerCase() === testName.toLowerCase()) {
             if (uuid === addonUUID) {

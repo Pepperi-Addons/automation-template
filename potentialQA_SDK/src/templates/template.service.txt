@@ -1,0 +1,51 @@
+import {
+    FindOptions,
+    User,
+    PapiClient,
+} from '@pepperi-addons/papi-sdk';
+import GeneralService from 'test_infra';
+
+export class TemplateService {
+    papiClient: PapiClient;
+    routerClient: PapiClient;
+    generalService: GeneralService;
+    dataObject: any; // the 'Data' object passsed inside the http request sent to start the test -- put all the data you need here
+
+   constructor(public systemService: GeneralService, public addonService: PapiClient, dataObject:any) {
+        this.papiClient = systemService.papiClient; // client which will ALWAYS go OUT
+        this.generalService = systemService;
+        this.routerClient = addonService; // will run according to passed 'isLocal' flag
+        this.dataObject = dataObject;
+    }
+
+    //this function will ALWAYS call REAL AWS papi
+    getUsers(options?: FindOptions): Promise<User[]> {
+        return this.papiClient.users.find(options);
+    }
+
+    //this function will call the server by 'isLocal' flag passed to 'run' endpoint
+    createUser(body: User): Promise<User> {
+        return this.routerClient.post('/CreateUser', body);
+    }
+
+    //this function will ALWAYS call REAL AWS papi -- just another example of cleaning up
+    deleteUser(type, ID) {
+        switch (type) {
+            case 'UUID':
+                return this.papiClient
+                    .delete('/users/uuid/' + ID)
+                    .then((res) => res.text())
+                    .then((res) => (res ? JSON.parse(res) : ''));
+            case 'ExternalID':
+                return this.papiClient
+                    .delete('/users/externalid/' + ID)
+                    .then((res) => res.text())
+                    .then((res) => (res ? JSON.parse(res) : ''));
+            case 'InternalID':
+                return this.papiClient
+                    .delete('/users/' + ID)
+                    .then((res) => res.text())
+                    .then((res) => (res ? JSON.parse(res) : ''));
+        }
+    }
+}
