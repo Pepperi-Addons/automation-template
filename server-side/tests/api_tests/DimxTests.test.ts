@@ -226,7 +226,7 @@ export async function DimxTests(generalService: GeneralService, addonService: Ge
 
         // services
         const dimxService = new DimxTestsService(generalService, addonService.papiClient, dataObj);
-        const client: Client = generalService['client'];
+        const client: any = generalService['client'];
         const dimxPapiClient = new PapiClient({
             baseURL: client.BaseURL,
             token: client.OAuthAccessToken,
