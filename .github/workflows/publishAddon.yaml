@@ -1,5 +1,5 @@
 name: PublishAddon
-# Simcha's comment
+
 on:
   push:
     branches:
@@ -7,6 +7,6 @@ on:
 
 jobs:
   publish-addon:
-    uses:  Pepperi-Addons/training-saar.g/.github/workflows/publish.yml@main
+    uses:  Pepperi-Addons/development-guidelines/.github/workflows/publish.yml@master
     secrets:
       PEPPERI_ADDON_PUBLISH_KEY: ${{ secrets.PEPPERI_ADDON_PUBLISH_KEY }}
