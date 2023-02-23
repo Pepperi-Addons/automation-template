@@ -14,6 +14,7 @@
     "noImplicitThis": false,
     "preserveSymlinks":true
   },
+  "include":["../potentialQA_SDK/build/*.js","./tests/*.ts","./tests/**/api_tests/*.ts","./tests/**/api_tests/services/*.ts"],
   "exclude": [
     "./build/**",
     "./dest/**"
