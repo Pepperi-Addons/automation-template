@@ -1,5 +1,5 @@
 //44c97115-6d14-4626-91dc-83f176e9a0fc
-import { DimxTestsService } from "./services/dimxtests.service";
+import { DimxTestsService } from "./services/DimxTests.service";
 // import GeneralService, { TesterFunctions } from "../../potentialQA_SDK/server_side/general.service";
 import { Relation, AddonDataScheme, DataImportInput, DIMXObject, AddonData, RecursiveImportInput, PapiClient } from "@pepperi-addons/papi-sdk";
 import Promise from 'bluebird';
