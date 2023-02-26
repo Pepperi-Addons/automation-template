@@ -1,4 +1,4 @@
-import { Account, PapiClient } from "@pepperi-addons/papi-sdk";
+import { Account, AddonData, PapiClient } from "@pepperi-addons/papi-sdk";
 import { UsersService } from "./users-service";
 export const CORE_RESOURCES_ADDON_UUID = 'fc5a5974-3b30-4430-8feb-7d5b9699bc9f'
 import { v4 as uuid } from 'uuid';
@@ -101,4 +101,23 @@ export class AccountsService {
             this.papiClient.accounts.delete(account.InternalID!)
         })
     }
+
+    generateConnectAccountData(accountUUID:string, hiddenAccountUUID: string){
+        if(!accountUUID || !hiddenAccountUUID){
+            throw new Error('Accounts UUIDs must exist')
+        }
+        let fieldsData:AddonData[] = [
+            {   Key:"1",
+                Name : "1",
+                Account_Field: accountUUID
+            },
+            {
+                Key:"2",
+                Name : "2",
+                Account_Field: hiddenAccountUUID
+            }
+        ]        
+        return fieldsData
+    }
+
 }
