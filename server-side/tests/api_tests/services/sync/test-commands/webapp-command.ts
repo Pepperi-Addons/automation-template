@@ -18,20 +18,15 @@ export class WebappCommand extends SystemFilterUser {
         expect(syncData.ResourcesData).to.be.an('Array').that.is.not.empty
         let schemes = this.syncDataResult.getSchemesFromWACD()
 
-        // getting scheme names according to WACD 
-        const noneSchemaName = 'CPI_Data_'+this.syncAdalService.addonUUID+'_'+this.adalTableServices?.none.schemaName
-        const userSchemaName = 'CPI_Data_'+this.syncAdalService.addonUUID+'_'+this.adalTableServices?.user.schemaName
-        const accountSchemaName = 'CPI_Data_'+this.syncAdalService.addonUUID+'_'+this.adalTableServices?.account.schemaName
-
         // validating that all of the schemes exists
-        expect(schemes).to.contain(noneSchemaName)
-        expect(schemes).to.contain(userSchemaName)
-        expect(schemes).to.contain(accountSchemaName)
+        expect(schemes).to.contain(this.adalTableServices?.none.schemaName)
+        expect(schemes).to.contain(this.adalTableServices?.user.schemaName)
+        expect(schemes).to.contain(this.adalTableServices?.account.schemaName)
 
         // getting data of each scheme
-        const noneData = this.syncDataResult.getObjectsFromWACD(noneSchemaName)
-        const userData = this.syncDataResult.getObjectsFromWACD(userSchemaName)
-        const accountData = this.syncDataResult.getObjectsFromWACD(accountSchemaName)
+        const noneData = this.syncDataResult.getObjectsFromWACD(this.adalTableServices!.none.schemaName)
+        const userData = this.syncDataResult.getObjectsFromWACD(this.adalTableServices!.user.schemaName)
+        const accountData = this.syncDataResult.getObjectsFromWACD(this.adalTableServices!.account.schemaName)
 
         // validating that no account would return and that only one user will return
         expect(Object.keys(noneData)).to.have.a.lengthOf(2)
