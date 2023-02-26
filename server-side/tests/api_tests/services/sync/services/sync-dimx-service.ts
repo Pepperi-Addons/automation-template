@@ -23,7 +23,6 @@ export class SyncDimxService{
 
     async uploadFileToDIMX(file:any, schemaName:string, papiClient: PapiClient) : Promise<any>{
         const ansFromImport = await papiClient.addons.data.import.file.uuid(this.addonUUID).table(schemaName).upsert(file)
-        console.log(ansFromImport)
         return ansFromImport
     }
 

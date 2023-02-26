@@ -1,4 +1,5 @@
 import { ADALTableService } from "../../resource_management/adal_table.service";
+import { AccountsService } from "../services/accounts-service";
 import { GlobalSyncService } from "../services/global-sync-service";
 import { SystemFilterNone } from "./system-filter-none-command";
 
@@ -15,11 +16,11 @@ export class ConnectAccountDelta extends SystemFilterNone{
         const adalService = await this.syncAdalService.getAdalService(accountSchema)
         this.accountsCreated.adalScheme = adalService
 
-        let newAccount = await this.systemFilterService.createAccount()
+        let newAccount = await this.accountService.createAccount()
         this.accountsCreated!.newAccount = newAccount
-        await this.systemFilterService.hideAccountFromCurrentUser(newAccount)
+        await this.accountService.hideAccountFromCurrentUser(newAccount)
 
-        let hiddenAccount = await this.systemFilterService.createAccount()
+        let hiddenAccount = await this.accountService.createAccount()
         this.accountsCreated!.hiddenAccount = hiddenAccount
         return adalService
     }
@@ -30,8 +31,8 @@ export class ConnectAccountDelta extends SystemFilterNone{
 
         this.accountsCreated!.timeAfterCreation = new Date()
 
-        await this.systemFilterService.hideAccountFromCurrentUser(this.accountsCreated!.hiddenAccount)
-        await this.systemFilterService.connectAccountToCurrentUser(this.accountsCreated!.newAccount)
+        await this.accountService.hideAccountFromCurrentUser(this.accountsCreated!.hiddenAccount)
+        await this.accountService.connectAccountToCurrentUser(this.accountsCreated!.newAccount)
 
         await GlobalSyncService.sleep(this.TIME_TO_SLEEP_FOR_NEBULA)
         return Promise.resolve(undefined)
@@ -74,7 +75,7 @@ export class ConnectAccountDelta extends SystemFilterNone{
     }
 
     async cleanup(): Promise<any> {
-        await this.systemFilterService.cleanupAccounts()
+        await this.accountService.cleanupAccounts()
     }
 }
 
