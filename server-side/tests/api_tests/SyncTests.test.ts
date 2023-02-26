@@ -108,7 +108,11 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
       {
         name: 'RecordSizeHundredThousandCommand',
         command: CommandFactory.createCommand('RecordSizeHundredThousandCommand', syncAdalService, client)
-      },      
+      }, 
+      {
+        name: 'ConnectAccountDelta',
+        command: CommandFactory.createCommand('ConnectAccountDelta', syncAdalService, client)
+      },     
       {
         name: 'CleanupCommand',
         command: CommandFactory.createCommand('CleanupCommand', syncAdalService, client)

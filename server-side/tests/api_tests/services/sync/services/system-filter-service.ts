@@ -4,14 +4,15 @@ import { SyncAdalService } from "./sync-adal-service";
 import { UsersService } from "./users-service";
 
 export class SystemFilterService extends SyncAdalService {  
-    accountsService: AccountsService;
     usersService: UsersService;
+    accountsService: AccountsService;
 
     constructor(client) {
         super(client);
-        this.accountsService = new AccountsService(this.papiClient);
         this.usersService = new UsersService(this.papiClient);
+        this.accountsService = new AccountsService(this.papiClient);
     }
+    
   
     generateScheme(type: 'User' | 'Account' | 'None'){
         const syncSchema:AddonDataScheme = {
@@ -42,25 +43,18 @@ export class SystemFilterService extends SyncAdalService {
         return fieldsData
 
     }
-    async generateAccountsData(): Promise<AddonData[]> {
+    async generateAccountsData(accountsUUID?: Account[]): Promise<AddonData[]> {
         const connectedAccounts = await this.accountsService.getConnectedAccounts();
         const notConnectedAccounts = await this.accountsService.getNotConnectedAccounts();
         
         const connectedAccount = connectedAccounts[0];
         const notConnectedAccount =  notConnectedAccounts[0];
+
+        if(accountsUUID && accountsUUID.length<2){
+            throw new Error('need to receive at least 2 accounts!')
+        }
         
-        let fieldsData:AddonData[] = [
-            {   Key:"1",
-                Name : "1",
-                Account_Field: connectedAccount.UUID
-            },
-            {
-                Key:"2",
-                Name : "2",
-                Account_Field: notConnectedAccount.UUID
-            }
-        ]        
-        return fieldsData
+        return this.accountsService.generateAccountData([connectedAccount.UUID,notConnectedAccount.UUID])
     }        
 
     generateSystemFilter(account:boolean,webapp:boolean,accountUUID?:string){
@@ -84,7 +78,7 @@ export class SystemFilterService extends SyncAdalService {
                 Type: "String"
             }
         }
-        const resourceField:AddonDataScheme['Fields'] = {
+        const resourceField: AddonDataScheme['Fields'] = {
             [`${type}_Field`]: {
                 Type: "Resource", 
                 Resource: resource, 
@@ -94,4 +88,5 @@ export class SystemFilterService extends SyncAdalService {
         }
         return type != 'None' ? resourceField : nameField
     }
+
 }

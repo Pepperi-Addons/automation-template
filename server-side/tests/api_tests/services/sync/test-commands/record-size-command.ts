@@ -1,11 +1,5 @@
-import { Client } from "@pepperi-addons/debug-server/dist";
 import { ADALTableService } from "../../resource_management/adal_table.service";
-import { ResourceManagerService } from "../../resource_management/resource_manager.service";
 import { GlobalSyncService } from "../services/global-sync-service";
-import { SyncAdalService } from "../services/sync-adal-service";
-import { SyncDimxService } from "../services/sync-dimx-service";
-import { SyncFileService } from "../services/sync-file-service";
-import { BaseCommand } from "./base-command";
 import { NumberOfRecordsCommand } from "./number-of-records-command";
 
 export class RecordSizeCommand extends NumberOfRecordsCommand {

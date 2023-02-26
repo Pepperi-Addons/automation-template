@@ -1,8 +1,7 @@
 import { Client } from "@pepperi-addons/debug-server/dist";
 import { PapiClient } from "@pepperi-addons/papi-sdk";
-import { time } from "console";
 import { ADALTableService } from "../../resource_management/adal_table.service";
-import { ResourceManagerService } from "../../resource_management/resource_manager.service";
+import { AccountsService } from "../services/accounts-service";
 import { GlobalSyncService } from "../services/global-sync-service";
 import { SyncAdalService } from "../services/sync-adal-service";
 import { TIME_TO_SLEEP_FOR_NEBULA } from "../services/sync-tests-service";
@@ -14,11 +13,16 @@ export class SystemFilterNone extends BaseCommand {
     protected systemFilterService: SystemFilterService; 
     protected adalTableServices? : {account:ADALTableService,user:ADALTableService,none:ADALTableService}
     auditLogService: any;
+    private papiClient:PapiClient
+    protected accountService: AccountsService
     
     constructor(adalTableService: SyncAdalService, client: Client){
         super(adalTableService, client)
+        this.papiClient = this.syncAdalService.papiClient
         this.systemFilterService = new SystemFilterService(client)
+        this.accountService = new AccountsService(this.papiClient)
     } 
+    
   
     async setupSchemes(): Promise<any> {
         // generate schema with fields

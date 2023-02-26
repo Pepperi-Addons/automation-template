@@ -24,6 +24,7 @@ import {
   RecordSizeThousandCommand,
   RecordSizeTenThousandCommand,
   RecordSizeHundredThousandCommand,
+  ConnectAccountDelta,
 
 } from "..";
 
@@ -51,6 +52,7 @@ export class CommandFactory {
     RecordSizeThousandCommand: RecordSizeThousandCommand,
     RecordSizeTenThousandCommand: RecordSizeTenThousandCommand,
     RecordSizeHundredThousandCommand: RecordSizeHundredThousandCommand,
+    ConnectAccountDelta: ConnectAccountDelta,
     CleanupCommand: CleanupCommand
   };
 
