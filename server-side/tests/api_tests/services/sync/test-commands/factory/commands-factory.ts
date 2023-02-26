@@ -25,7 +25,8 @@ import {
   RecordSizeTenThousandCommand,
   RecordSizeHundredThousandCommand,
   ConnectAccountDelta,
-  WebappCommand
+  WebappCommand,
+  PushDataTimeCommand
 
 } from "..";
 
@@ -55,6 +56,7 @@ export class CommandFactory {
     RecordSizeHundredThousandCommand: RecordSizeHundredThousandCommand,
     ConnectAccountDelta: ConnectAccountDelta,
     WebappCommand: WebappCommand,
+    PushDataTimeCommand: PushDataTimeCommand,
     CleanupCommand: CleanupCommand
   };
 

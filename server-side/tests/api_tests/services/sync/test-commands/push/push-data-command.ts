@@ -9,6 +9,7 @@ export class PushDataCommand extends SchemaExistsCommand{
     syncDimxService: SyncDimxService
     resourceManagerService: ResourceManagerService
     numberOfRecords = 5
+    pushTime: number = 0;
 
     firstSchemaName = `_${this.constructor.name}_first`
     secondSchemaName = `_${this.constructor.name}_second`
@@ -49,8 +50,11 @@ export class PushDataCommand extends SchemaExistsCommand{
                 }            
             ]
         }
+        const t1 = performance.now()
         await this.syncService.push(dataToPush, false)
+        const t2 = performance.now()
 
+        this.pushTime = t2 - t1
         await GlobalSyncService.sleep(this.TIME_TO_SLEEP_FOR_NEBULA)
     }
 
