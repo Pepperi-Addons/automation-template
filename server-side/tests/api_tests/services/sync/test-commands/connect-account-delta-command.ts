@@ -1,37 +1,36 @@
 import { ADALTableService } from "../../resource_management/adal_table.service";
+import { AccountsService } from "../services/accounts-service";
 import { GlobalSyncService } from "../services/global-sync-service";
 import { SystemFilterNone } from "./system-filter-none-command";
 
 export class ConnectAccountDelta extends SystemFilterNone{
-    private accountsCreated: accountsCreated = {
-        adalScheme: undefined,
-        newAccount: undefined,
-        hiddenAccount: undefined,
-        timeAfterCreation: undefined
-    }
+    private adalScheme
+    private connectedAccount
+    private hiddenAccount
+    private timeAfterCreation
 
     async setupSchemes(): Promise<any> {
         const accountSchema = this.systemFilterService.generateScheme(`Account`)
         const adalService = await this.syncAdalService.getAdalService(accountSchema)
-        this.accountsCreated.adalScheme = adalService
+        this.adalScheme = adalService
 
-        let newAccount = await this.systemFilterService.createAccount()
-        this.accountsCreated!.newAccount = newAccount
-        await this.systemFilterService.hideAccountFromCurrentUser(newAccount)
+        let connectedAccount = await this.accountService.createAccount()
+        this.connectedAccount = connectedAccount
+        await this.accountService.hideAccountFromCurrentUser(connectedAccount)
 
-        let hiddenAccount = await this.systemFilterService.createAccount()
-        this.accountsCreated!.hiddenAccount = hiddenAccount
+        let hiddenAccount = await this.accountService.createAccount()
+        this.hiddenAccount = hiddenAccount
         return adalService
     }
 
     async pushData(adalService: ADALTableService): Promise<any> {
-        const accountData = await this.systemFilterService.generateAccountsData([this.accountsCreated?.hiddenAccount.UUID,this.accountsCreated?.newAccount.UUID])
+        const accountData = await this.accountService.generateAccountData([this.hiddenAccount.UUID,this.connectedAccount.UUID])
         await adalService.upsertBatch(accountData)
 
-        this.accountsCreated!.timeAfterCreation = new Date()
+        this.timeAfterCreation = new Date()
 
-        await this.systemFilterService.hideAccountFromCurrentUser(this.accountsCreated!.hiddenAccount)
-        await this.systemFilterService.connectAccountToCurrentUser(this.accountsCreated!.newAccount)
+        await this.accountService.hideAccountFromCurrentUser(this.hiddenAccount)
+        await this.accountService.connectAccountToCurrentUser(this.connectedAccount)
 
         await GlobalSyncService.sleep(this.TIME_TO_SLEEP_FOR_NEBULA)
         return Promise.resolve(undefined)
@@ -41,7 +40,7 @@ export class ConnectAccountDelta extends SystemFilterNone{
         // start sync
         const systemFilter = this.systemFilterService.generateSystemFilter(false,false)
         let auditLog = await this.syncService.pull({
-            ModificationDateTime:this.accountsCreated?.timeAfterCreation.toISOString(),
+            ModificationDateTime:this.timeAfterCreation.toISOString(),
             ...systemFilter
         },false, false, false)
         return auditLog
@@ -52,35 +51,27 @@ export class ConnectAccountDelta extends SystemFilterNone{
         expect(auditLog).to.have.property('ExecutionURI').that.is.a('String').and.is.not.undefined
 
         let schemes = await this.syncDataResult.getSchemes()
-        expect(schemes).to.contain(this.accountsCreated.adalScheme.schemaName)
+        expect(schemes).to.contain(this.adalScheme.schemaName)
 
-        const recordsObjects = this.syncDataResult.getObjects(this.accountsCreated.adalScheme.schemaName)
+        const recordsObjects = this.syncDataResult.getObjects(this.adalScheme.schemaName)
         expect(recordsObjects).to.be.lengthOf.least(2)
 
+        // creating an object with account uuid as key and if is hidden as value
         const accounts = recordsObjects.map(record =>{
-             return record.Account_Field
-        })
-        const hidden = recordsObjects.map(record => {
-            if(record.Account_Field == this.accountsCreated.newAccount.UUID || record.Account_Field == this.accountsCreated.hiddenAccount.UUID ){
-                return record.Hidden
-            }
+            const accountUUID = record.Account_Field
+            const isHidden = record.Hidden
+             return { [accountUUID]:isHidden}
         })
 
-        expect(accounts).to.contain(this.accountsCreated.newAccount.UUID)
-        expect(accounts).to.contain(this.accountsCreated.hiddenAccount.UUID)
-        expect(hidden).to.contain(true).and.to.contain(false)
         // add check that account field contains both account uuids
         // add check to hidden account is hidden in objects
+        // validating this as a key-value pairs of account uuid and is hidden
+        expect(accounts).to.include.deep.members([{[this.connectedAccount.UUID]: false}])
+        expect(accounts).to.include.deep.members([{[this.hiddenAccount.UUID]:true}])
+        
     }
 
     async cleanup(): Promise<any> {
-        await this.systemFilterService.cleanupAccounts()
+        await this.accountService.cleanupAccounts()
     }
-}
-
-export interface accountsCreated{
-    adalScheme: any;
-    newAccount: any;
-    hiddenAccount:any;
-    timeAfterCreation: any;
 }
