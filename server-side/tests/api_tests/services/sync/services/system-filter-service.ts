@@ -2,18 +2,17 @@ import { AddonDataScheme,AddonData, Account } from "@pepperi-addons/papi-sdk"
 import { AccountsService, CORE_RESOURCES_ADDON_UUID } from "./accounts-service";
 import { SyncAdalService } from "./sync-adal-service";
 import { UsersService } from "./users-service";
-import { v4 as uuid } from 'uuid';
 
 export class SystemFilterService extends SyncAdalService {  
-    accountsService: AccountsService;
     usersService: UsersService;
+    accountsService: AccountsService;
 
     constructor(client) {
         super(client);
-        this.accountsService = new AccountsService(this.papiClient);
         this.usersService = new UsersService(this.papiClient);
+        this.accountsService = new AccountsService(this.papiClient);
     }
-    private accountsCreated:Account[] =[]
+    
   
     generateScheme(type: 'User' | 'Account' | 'None'){
         const syncSchema:AddonDataScheme = {
@@ -101,49 +100,4 @@ export class SystemFilterService extends SyncAdalService {
         return type != 'None' ? resourceField : nameField
     }
 
-    async createAccount(){
-        let account = await this.papiClient.accounts.upsert({
-            Key: 'account_for_sync_tests'+uuid().split('-').join('_'), 
-            ExternalID: Math.round(Math.random() * 10000 + 1).toString(),
-            Hidden: false,
-        })
-        this.accountsCreated.push(account)
-        return account
-    }
-
-    async connectAccountToCurrentUser(accountToConnect: Account){
-        const accountUsersUrl = `/addons/data/${CORE_RESOURCES_ADDON_UUID}/account_users`;
-        const body = {
-            Account: accountToConnect.UUID,
-            User: this.usersService.getCurrentUserUUID(),
-            Hidden: false
-        };
-        try {
-            return await this.papiClient.post(accountUsersUrl, body);
-        }
-        catch (error) {
-            throw new Error(`Failed connecting accounts users, error: ${(error as Error).message}`);
-        }
-    }
-
-    async hideAccountFromCurrentUser(accountToConnect: Account){
-        const accountUsersUrl = `/addons/data/${CORE_RESOURCES_ADDON_UUID}/account_users`;
-        const body = {
-            Account: accountToConnect.UUID,
-            User: this.usersService.getCurrentUserUUID(),
-            Hidden: true
-        };
-        try {
-            return await this.papiClient.post(accountUsersUrl, body);
-        }
-        catch (error) {
-            throw new Error(`Failed hiding accounts users, error: ${(error as Error).message}`);
-        }
-    }
-
-    async cleanupAccounts(){
-        this.accountsCreated.map(account => {
-            this.papiClient.accounts.delete(account.InternalID!)
-        })
-    }
 }
