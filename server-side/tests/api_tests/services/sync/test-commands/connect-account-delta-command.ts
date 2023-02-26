@@ -42,7 +42,7 @@ export class ConnectAccountDelta extends SystemFilterNone{
         let auditLog = await this.syncService.pull({
             ModificationDateTime:this.timeAfterCreation.toISOString(),
             ...systemFilter
-        },false,false)
+        },false, false, false)
         return auditLog
     }
 

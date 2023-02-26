@@ -3,7 +3,6 @@ import { Client } from "@pepperi-addons/debug-server/dist";
 import { CommandFactory } from "./services/sync/test-commands/factory/commands-factory";
 import { TestCommand } from "./services/sync/test-commands/base-command";
 import { SyncAdalService } from "./services/sync/services/sync-adal-service";
-import { ResourceManagerService } from "./services/resource_management/resource_manager.service";
 
 
 // create ADAL Object
@@ -112,7 +111,11 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
       {
         name: 'ConnectAccountDelta',
         command: CommandFactory.createCommand('ConnectAccountDelta', syncAdalService, client)
-      },     
+      }, 
+      {
+        name: 'WebappCommand',
+        command: CommandFactory.createCommand('WebappCommand', syncAdalService, client)
+      },    
       {
         name: 'CleanupCommand',
         command: CommandFactory.createCommand('CleanupCommand', syncAdalService, client)

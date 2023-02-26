@@ -55,7 +55,7 @@ export class NumberOfRecordsCommand extends BaseCommand {
         // start sync
         let auditLog = await this.syncService.pull({
             ModificationDateTime: dateTime.toISOString(),
-        }, false, false)
+        }, false, false, false)
         return auditLog
     }
 

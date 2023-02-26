@@ -24,7 +24,7 @@ export class SystemFilterUser extends SystemFilterNone {
         let auditLog = await this.syncService.pull({
             ModificationDateTime:dateTime.toISOString(),
             ...systemFilter
-        },false, false)
+        },false, false, false)
         return auditLog
     }
     

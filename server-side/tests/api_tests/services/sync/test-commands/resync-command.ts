@@ -50,7 +50,7 @@ export class ResyncCommand extends BaseCommand {
         let resyncDate = new Date(1999,1).toISOString()
         let auditLog = await this.syncService.pull({
             ModificationDateTime: resyncDate,
-        }, false, false)
+        }, false, false, false)
         return auditLog
     }
 
