@@ -54,18 +54,7 @@ export class SystemFilterService extends SyncAdalService {
             throw new Error('need to receive at least 2 accounts!')
         }
         
-        let fieldsData:AddonData[] = [
-            {   Key:"1",
-                Name : "1",
-                Account_Field: accountsUUID? accountsUUID[0] : connectedAccount.UUID
-            },
-            {
-                Key:"2",
-                Name : "2",
-                Account_Field: accountsUUID? accountsUUID[1] : notConnectedAccount.UUID
-            }
-        ]        
-        return fieldsData
+        return this.accountsService.generateAccountData([connectedAccount.UUID,notConnectedAccount.UUID])
     }        
 
     generateSystemFilter(account:boolean,webapp:boolean,accountUUID?:string){

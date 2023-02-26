@@ -24,7 +24,7 @@ export class ConnectAccountDelta extends SystemFilterNone{
     }
 
     async pushData(adalService: ADALTableService): Promise<any> {
-        const accountData = await this.accountService.generateConnectAccountData(this.hiddenAccount.UUID,this.connectedAccount.UUID)
+        const accountData = await this.accountService.generateAccountData([this.hiddenAccount.UUID,this.connectedAccount.UUID])
         await adalService.upsertBatch(accountData)
 
         this.timeAfterCreation = new Date()

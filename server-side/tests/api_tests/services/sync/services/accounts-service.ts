@@ -102,21 +102,10 @@ export class AccountsService {
         })
     }
 
-    generateConnectAccountData(accountUUID:string, hiddenAccountUUID: string){
-        if(!accountUUID || !hiddenAccountUUID){
-            throw new Error('Accounts UUIDs must exist')
-        }
-        let fieldsData:AddonData[] = [
-            {   Key:"1",
-                Name : "1",
-                Account_Field: accountUUID
-            },
-            {
-                Key:"2",
-                Name : "2",
-                Account_Field: hiddenAccountUUID
-            }
-        ]        
+    generateAccountData(uuids: string[]){
+        const fieldsData:AddonData[] = uuids.map(function (uuid,index){
+            return {Key: index.toString(), Name: index.toString(),Account_Field:uuid}
+        })      
         return fieldsData
     }
 
