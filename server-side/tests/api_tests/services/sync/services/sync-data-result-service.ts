@@ -18,13 +18,13 @@ export class SyncDataResult {
 
     getSchemesFromWACD(){
         let schemes = this.data.ResourcesData.map(resource =>{
-            return resource.MetaData[0].ExternalID.replace('CPI_Data_'+config.AddonUUID+'_','')
+            return resource.MetaData[0].ExternalID.replace('CPI_Data_' + config.AddonUUID + '_', '')
         })
         return schemes
     }
 
     getObjectsFromWACD(schemaName: string): any[] {
-        return this.data.ResourcesData.find(resource => resource.MetaData[0].ExternalID.replace('CPI_Data_'+config.AddonUUID+'_','') == schemaName).Data;
+        return this.data.ResourcesData.find(resource => resource.MetaData[0].ExternalID.replace('CPI_Data_' + config.AddonUUID + '_', '') == schemaName).Data;
     }
     
 }
