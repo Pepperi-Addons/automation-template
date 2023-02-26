@@ -24,7 +24,7 @@ export class SyncDataResult {
     }
 
     getObjectsFromWACD(schemaName: string): any[] {
-        return this.data.ResourcesData.find(resource => resource.MetaData[0].ExternalID.replace('CPI_Data_'+this.addonUUID+'_','') == schemaName).Data;
+        return this.data.ResourcesData.find(resource => resource.MetaData[0].ExternalID.replace('CPI_Data_'+config.AddonUUID+'_','') == schemaName).Data;
     }
     
 }
