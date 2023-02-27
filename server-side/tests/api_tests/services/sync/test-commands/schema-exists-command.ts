@@ -4,11 +4,19 @@ import { BaseCommand as BaseCommand } from "./base-command";
 
 
 export class SchemaExistsCommand extends BaseCommand {    
-  
+    private existAdalSchema
+    private hiddenAdalSchema
+
     async setupSchemes(): Promise<ADALTableService> {
         // generate schema with fields
         const schema = this.syncAdalService.generateSchemeWithFields(1, `_${this.constructor.name}`)
         const adalService = await this.syncAdalService.getAdalService(schema)
+        this.existAdalSchema = adalService
+
+        const hiddenSchema = this.syncAdalService.generateSchemeWithFields(1, `_${this.constructor.name}_hidden`)
+        const hiddenAdalService = await this.syncAdalService.getAdalService(hiddenSchema)
+        this.hiddenAdalSchema = hiddenAdalService
+
         return adalService;    
     }
 
@@ -16,7 +24,11 @@ export class SchemaExistsCommand extends BaseCommand {
         // initializing adal schema with data, first property is number of fields
         // second propety is number of characters in each field
         const data = this.syncAdalService.generateFieldsData(1,1)
-        await adalService.upsertBatch(data)
+        await this.existAdalSchema.upsertBatch(data)
+        await this.hiddenAdalSchema.upsertBatch(data)
+
+        await this.syncAdalService.changeSchemaToHidden(this.hiddenAdalSchema)
+
         await GlobalSyncService.sleep(this.TIME_TO_SLEEP_FOR_NEBULA)
     }
 
@@ -40,7 +52,8 @@ export class SchemaExistsCommand extends BaseCommand {
         expect(syncRes).to.have.property('UpToDate').that.is.a('Boolean').and.is.equal(false)
         expect(syncRes).to.have.property('ExecutionURI').that.is.a('String').and.is.not.undefined
         let schemes = await this.syncDataResult.getSchemes()
-        expect(schemes).to.contain(this.syncAdalService.schemeName)
+        expect(schemes).to.contain(this.existAdalSchema.schemeName)
+        expect(schemes).to.contain(this.hiddenAdalSchema.schemeName)
     }
     
   }
