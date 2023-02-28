@@ -2,7 +2,7 @@
     "name": "test_infra",
     "version": "0.0.0",
     "description": "",
-    "main": "./src/index.js",
+    "main": "./build/index.js",
     "types": "",
     "files": [
         "./src/**"
