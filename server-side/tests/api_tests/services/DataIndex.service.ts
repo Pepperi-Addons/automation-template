@@ -6,8 +6,10 @@ import {
     AddonDataScheme,
     ElasticSearchDocument,
 } from '@pepperi-addons/papi-sdk';
-import GeneralService from '../../../potentialQA_SDK/server_side/general.service';
-import { v4 as uuid } from 'uuid';
+
+// import GeneralService from '../../../potentialQA_SDK/server_side/general.service';
+import {GeneralService} from 'test_infra'
+import { v4 as uuidv4 } from 'uuid';
 
 type PartialScheme = Omit<AddonDataScheme, "Name" | "Type" | "DataSourceData">;
 
@@ -40,14 +42,14 @@ export class DataIndexService {
         this.routerClient = addonService; // will run according to passed 'isLocal' flag
         this.dataObject = dataObject;
         this.addonUUID = "02754342-e0b5-4300-b728-a94ea5e0e8f4";
-        this.sharedIndexName = "integration-test-shared-index-" + uuid();
+        this.sharedIndexName = "integration-test-shared-index-" + uuidv4();
         this.indexSchema = {
-            Name: "integration-test-regular-index-" + uuid(),
+            Name: "integration-test-regular-index-" + uuidv4(),
             Type: "index"
         }
         console.log("Regular index schema will be called: " + this.indexSchema.Name);
         this.sharedIndexSchema = {
-            Name: "integration-test-schema-of-shared-index-" + uuid(),
+            Name: "integration-test-schema-of-shared-index-" + uuidv4(),
             Type: "shared_index",
             DataSourceData: {
                 IndexName: this.sharedIndexName
@@ -55,14 +57,14 @@ export class DataIndexService {
         }
         console.log("Shared index schema will be called: " + this.sharedIndexSchema.Name);
         this.inheritingSchema1 = {
-            Name: "integration-test-schema-of-inheriting-schema-1-" + uuid(),
+            Name: "integration-test-schema-of-inheriting-schema-1-" + uuidv4(),
             Type: "shared_index",
             DataSourceData: {
                 IndexName: this.sharedIndexName
             }
         }
         this.inheritingSchema2 = {
-            Name: "integration-test-schema-of-inheriting-schema-2-" + uuid(),
+            Name: "integration-test-schema-of-inheriting-schema-2-" + uuidv4(),
             Type: "shared_index",
             DataSourceData: {
                 IndexName: this.sharedIndexName

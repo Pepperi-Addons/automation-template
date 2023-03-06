@@ -5,4 +5,5 @@ var_sk
 server-side/node_modules
 client-side/node_modules
 /node_modules
+potentialQA_SDK/build
 server-side/.rpt2_cache

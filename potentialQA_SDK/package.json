@@ -1,49 +1,44 @@
 {
-    "name": "test",
+    "name": "test_infra",
     "version": "0.0.0",
     "description": "",
-    "main": "api.ts",
+    "main": "./src/index.js",
     "types": "",
     "files": [
-        "build"
+        "./src/**"
     ],
     "license": "Apache-2.0",
     "keywords": [],
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "compile": "tsc",
-        "build": "rollup -c rollup.config.js",
+        "build": "tsc",
         "start": "tsc -w app.local.ts",
         "jenkins-ui-test": "ts-mocha --delay --reporter mochawesome --reporter-options reportDir=mochawesome-report,reportFilename=UI_Test --timeout 1200000  ../server-side/tests/ui_tests/test.index.ts --server='' --chrome_headless='' --user_email='' --user_pass='' --var_pass=''",
         "ui-show-report": "ts-mocha --delay --reporter mochawesome --reporter-options reportDir=mochawesome-report,reportFilename=UI_Test,timestamp=yyyy.mm.dd'T'HH_MM_ss,autoOpen --timeout 1200000  ../server-side/tests/ui_tests/test.index.ts --server='' --chrome_headless='' --user_email='' --user_pass='' --var_pass=''",
         "create-test": "node ../script/create.js"
     },
     "devDependencies": {
-        "@rollup/plugin-commonjs": "^12.0.0",
-        "@rollup/plugin-json": "^4.1.0",
+        "@rollup/plugin-commonjs": "^21.0.0",
         "@rollup/plugin-node-resolve": "^8.0.0",
-        "@types/chai": "^4.2.21",
-        "@types/chai-as-promised": "^7.1.2",
         "@types/node": "^10.17.24",
         "@types/node-fetch": "^2.5.7",
-        "@types/uuid": "^8.3.3",
         "nodemon": "^2.0.4",
         "prettier": "^2.0.5",
-        "rollup": "^2.10.9",
-        "rollup-plugin-typescript2": "^0.27.1",
         "ts-node": "^8.10.2",
         "typescript": "~3.8.0"
     },
     "dependencies": {
-        "@pepperi-addons/debug-server": "^0.0.38",
+        "@pepperi-addons/debug-server": "^0.0.32",
         "@pepperi-addons/papi-sdk": "^1.47.1",
+        "@types/chai": "^4.2.21",
+        "@types/chai-as-promised": "^7.1.2",
+        "chai": "^4.2.0",
+        "chai-as-promised": "^7.1.1",
         "lorem-ipsum": "^2.0.4",
         "mocha": "^7.2.0",
         "mochawesome": "^7.0.1",
         "node-fetch": "^2.6.7",
-        "test_infra": "file:../potentialQA_SDK/",
-        "ts-mocha": "^8.0.0",
-        "uuid": "^8.3.2",
-        "bluebird": "^3.7.2"
+        "ts-mocha": "^8.0.0"
     }
 }

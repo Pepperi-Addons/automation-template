@@ -1,10 +1,10 @@
 import { PapiClient, Subscription } from "@pepperi-addons/papi-sdk";
-import GeneralService from "../../../potentialQA_SDK/server_side/general.service";
-import { NebulaTestService, unitTestsResult } from "./nebulatest.service";
+import { NebulaTestService, unitTestsResult } from "./NebulaTest.service";
 import { Promise } from "bluebird";
 import { BasicRecord, NebulaPNSEmulator, PNSPostBody } from "./NebulaPNSEmulator.service";
 import { AddonUUID as testingAddonUUID } from "../../../../addon.config.json";
 import { GetResourcesRequiringSyncParameters, GetResourcesRequiringSyncResponse, GetRecordsRequiringSyncParameters, GetRecordsRequiringSyncResponse } from "../../entities/nebula/types";
+import { GeneralService } from "test_infra";
 
 export class NebulaLocalFunctions extends NebulaTestService {
 

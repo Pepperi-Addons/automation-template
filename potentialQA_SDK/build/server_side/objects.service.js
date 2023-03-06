@@ -1,56 +1,27 @@
-import {
-    PapiClient,
-    Account,
-    ApiFieldObject,
-    GeneralActivity,
-    Transaction,
-    Item,
-    TransactionLines,
-    FindOptions,
-    User,
-    UserDefinedTableMetaData,
-    UserDefinedTableRow,
-    Catalog,
-    Contact,
-    BatchApiResponse,
-    ArchiveBody,
-} from '@pepperi-addons/papi-sdk';
-import { GeneralService } from 'test_infra';
-// import GeneralService from '../../../potentialQA_SDK/server_side/general.service';
-
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const apiCallsInterval = 4000;
-
-export class ObjectsService {
-    papiClient: PapiClient;
-    generalService: GeneralService;
-    dataObject: any; // the 'Data' object passsed inside the http request sent to start the test -- put all the data you need here
-
-    constructor(public service: GeneralService, dataObject:any) {
+class ObjectsService {
+    constructor(service) {
+        this.service = service;
         this.papiClient = service.papiClient;
         this.generalService = service;
-        this.dataObject = dataObject;
     }
-
-    getItems(options?: FindOptions): Promise<Item[]> {
+    getItems(options) {
         return this.papiClient.items.find(options);
     }
-
-    postItem(item: Item): Promise<Item> {
+    postItem(item) {
         return this.papiClient.items.upsert(item);
     }
-
-    getUsers(options?: FindOptions): Promise<User[]> {
+    getUsers(options) {
         return this.papiClient.users.find(options);
     }
-
-    createUser(body: User): Promise<User> {
+    createUser(body) {
         return this.papiClient.post('/CreateUser', body);
     }
-
-    updateUser(body: User): Promise<User> {
+    updateUser(body) {
         return this.papiClient.users.upsert(body);
     }
-
     async getRepProfile() {
         const profiles = await this.papiClient.get('/profiles');
         for (const i in profiles) {
@@ -59,19 +30,17 @@ export class ObjectsService {
             }
         }
     }
-
-    async getSecurityGroup(idpBaseURL: string) {
+    async getSecurityGroup(idpBaseURL) {
         const securityGroups = await this.generalService
             .fetchStatus(idpBaseURL + '/api/securitygroups', {
-                method: 'GET',
-                headers: {
-                    Authorization: 'Bearer ' + this.papiClient['options'].token,
-                },
-            })
+            method: 'GET',
+            headers: {
+                Authorization: 'Bearer ' + this.papiClient['options'].token,
+            },
+        })
             .then((res) => res.Body);
         return securityGroups;
     }
-
     getSingleUser(type, ID) {
         switch (type) {
             case 'UUID':
@@ -82,11 +51,9 @@ export class ObjectsService {
                 return this.papiClient.get('/users/' + ID);
         }
     }
-
-    getCatalogs(options?: FindOptions): Promise<Catalog[]> {
+    getCatalogs(options) {
         return this.papiClient.catalogs.find(options);
     }
-
     deleteUser(type, ID) {
         switch (type) {
             case 'UUID':
@@ -106,103 +73,79 @@ export class ObjectsService {
                     .then((res) => (res ? JSON.parse(res) : ''));
         }
     }
-
     getContacts(InternalID) {
         return this.papiClient.get('/contacts?where=InternalID=' + InternalID);
     }
-
-    getContactsSDK(options?: FindOptions) {
+    getContactsSDK(options) {
         return this.papiClient.contacts.find(options);
     }
-
     getBulk(type, clause) {
         return this.papiClient.get('/' + type + clause);
     }
-
-    createContact(body: Contact): Promise<Contact> {
+    createContact(body) {
         return this.papiClient.contacts.upsert(body);
     }
-
-    connectAsBuyer(body: any) {
+    connectAsBuyer(body) {
         return this.papiClient.post('/contacts/connectAsBuyer', body);
     }
-
-    disconnectBuyer(body: any) {
+    disconnectBuyer(body) {
         return this.papiClient.post('/contacts/DisconnectBuyer', body);
     }
-
     deleteContact(InternalID) {
         return this.papiClient
             .delete('/contacts/' + InternalID)
             .then((res) => res.text())
             .then((res) => (res ? JSON.parse(res) : ''));
     }
-
-    getTransactionLines(options?: FindOptions): Promise<TransactionLines[]> {
+    getTransactionLines(options) {
         return this.papiClient.transactionLines.find(options);
     }
-
-    getTransactionLinesByID(id: number): Promise<TransactionLines> {
+    getTransactionLinesByID(id) {
         return this.papiClient.transactionLines.get(id);
     }
-
-    createTransactionLine(body: TransactionLines): Promise<TransactionLines> {
+    createTransactionLine(body) {
         return this.papiClient.transactionLines.upsert(body);
     }
-
-    deleteTransactionLine(id: number): Promise<boolean> {
+    deleteTransactionLine(id) {
         return this.papiClient.transactionLines.delete(id);
     }
-
-    createActivity(body: GeneralActivity) {
+    createActivity(body) {
         return this.papiClient.activities.upsert(body);
     }
-
-    getActivity(options?: FindOptions) {
+    getActivity(options) {
         return this.papiClient.activities.find(options);
     }
-
-    deleteActivity(activityID: number) {
+    deleteActivity(activityID) {
         return this.papiClient.activities.delete(activityID);
     }
-
-    createTransaction(body: Transaction) {
+    createTransaction(body) {
         return this.papiClient.transactions.upsert(body);
     }
-
-    getTransactionByID(transactionID: number): Promise<Transaction> {
+    getTransactionByID(transactionID) {
         return this.papiClient.transactions.get(transactionID);
     }
-
-    getTransaction(options?: FindOptions) {
+    getTransaction(options) {
         return this.papiClient.transactions.find(options);
     }
-
-    deleteTransaction(transactionID: number) {
+    deleteTransaction(transactionID) {
         return this.papiClient.transactions.delete(transactionID);
     }
-
-    bulkCreate(type: string, body: any) {
+    bulkCreate(type, body) {
         return this.papiClient.post('/bulk/' + type + '/json', body);
     }
-
     getBulkJobInfo(ID) {
         return this.papiClient.get('/bulk/jobinfo/' + ID);
     }
-
-    archiveTransaction(body: ArchiveBody) {
+    archiveTransaction(body) {
         return this.papiClient.maintenance.archive(body);
     }
-
     reloadNuc() {
         return this.papiClient.post('/deployment/reload');
     }
-
     getArchiveJob(URI) {
         return this.papiClient.get(URI);
     }
-
-    async waitForArchiveJobStatus(URI, maxTime: number) {
+    async waitForArchiveJobStatus(URI, maxTime) {
         const maxLoops = maxTime / apiCallsInterval;
         let counter = 0;
         let apiGetResponse;
@@ -213,170 +156,150 @@ export class ObjectsService {
         } while (apiGetResponse.Status == 'InProgress' && counter < maxLoops);
         return apiGetResponse;
     }
-
-    createAccount(body: Account): Promise<Account> {
+    createAccount(body) {
         return this.papiClient.accounts.upsert(body);
     }
-
-    getAccountByID(accountID: number): Promise<Account> {
+    getAccountByID(accountID) {
         return this.papiClient.accounts.get(accountID);
     }
-
-    getAccounts(options?: FindOptions) {
+    getAccounts(options) {
         return this.papiClient.accounts.find(options);
     }
-
-    countAccounts(options?): Promise<number> {
+    countAccounts(options) {
         return this.papiClient.accounts.count(options);
     }
-
-    countUDTRows(options?): Promise<number> {
+    countUDTRows(options) {
         return this.papiClient.userDefinedTables.count(options);
     }
-
-    getAllAccounts(options?: FindOptions) {
+    getAllAccounts(options) {
         return this.papiClient.accounts.iter(options).toArray();
     }
-
-    deleteAccount(accountID: number): Promise<boolean> {
+    deleteAccount(accountID) {
         return this.papiClient.accounts.delete(accountID);
     }
-
-    postUDTMetaData(body: UserDefinedTableMetaData): Promise<UserDefinedTableMetaData> {
+    postUDTMetaData(body) {
         return this.papiClient.metaData.userDefinedTables.upsert(body);
     }
-
-    getUDTMetaData(id: number): Promise<UserDefinedTableMetaData> {
+    getUDTMetaData(id) {
         return this.papiClient.metaData.userDefinedTables.get(id);
     }
-
-    postUDT(body: UserDefinedTableRow): Promise<UserDefinedTableRow> {
+    postUDT(body) {
         return this.papiClient.userDefinedTables.upsert(body);
     }
-
-    getUDT(options?: FindOptions): Promise<UserDefinedTableRow[]> {
+    getUDT(options) {
         return this.papiClient.userDefinedTables.find(options);
     }
-
-    postBatchUDT(body: UserDefinedTableRow[]): Promise<BatchApiResponse[]> {
+    postBatchUDT(body) {
         return this.papiClient.userDefinedTables.batch(body);
     }
-
-    postBatchAccount(body: Account[]): Promise<BatchApiResponse[]> {
+    postBatchAccount(body) {
         return this.papiClient.accounts.batch(body);
     }
-
     createBulkArray(amount, exID, hidden) {
-        const bulkArray = [] as any;
+        const bulkArray = [];
         for (let i = 0; i < amount; i++) {
             bulkArray.push([exID + ' ' + i, 'Bulk Account ' + i, hidden]);
         }
         return bulkArray;
     }
-
     createBulkMixedArray(amount, exID) {
-        const bulkArray = [] as any;
+        const bulkArray = [];
         for (let i = 0; i < amount; i++) {
             if (i % 2 == 0) {
                 bulkArray.push([exID + ' mixed ' + i, 'Bulk Account Update' + i, '0']);
-            } else {
+            }
+            else {
                 bulkArray.push([exID + ' mixed ' + i, 'Bulk Account Ignore' + i, '1']);
             }
         }
         return bulkArray;
     }
-
     createBulkMixedArrayStart(amount, exID) {
-        const bulkArray = [] as any;
+        const bulkArray = [];
         for (let i = 0; i < amount; i++) {
             if (i < 5000) {
                 bulkArray.push([exID + ' mixed ' + i, 'Bulk Account Update' + i, '0']);
-            } else {
+            }
+            else {
                 bulkArray.push([exID + ' mixed ' + i, 'Bulk Account Ignore' + i, '1']);
             }
         }
         return bulkArray;
     }
-
     createBulkMixedArrayStartDelete(amount, exID) {
-        const bulkArray = [] as any;
+        const bulkArray = [];
         for (let i = 0; i < amount; i++) {
             if (i < 5000) {
                 bulkArray.push([exID + ' mixed ' + i, 'Bulk Account Update' + i, '1']);
-            } else {
+            }
+            else {
                 bulkArray.push([exID + ' mixed ' + i, 'Bulk Account Ignore' + i, '1']);
             }
         }
         return bulkArray;
     }
-
     createBulkMixedArrayEnd(amount, exID) {
-        const bulkArray = [] as any;
+        const bulkArray = [];
         for (let i = 0; i < amount; i++) {
             if (i > 5000) {
                 bulkArray.push([exID + ' mixed ' + i, 'Bulk Account Update' + i, '0']);
-            } else {
+            }
+            else {
                 bulkArray.push([exID + ' mixed ' + i, 'Bulk Account Ignore' + i, '1']);
             }
         }
         return bulkArray;
     }
-
     createBulkMixedArrayEndDelete(amount, exID) {
-        const bulkArray = [] as any;
+        const bulkArray = [];
         for (let i = 0; i < amount; i++) {
             if (i > 5000) {
                 bulkArray.push([exID + ' mixed ' + i, 'Bulk Account Update' + i, '1']);
-            } else {
+            }
+            else {
                 bulkArray.push([exID + ' mixed ' + i, 'Bulk Account Ignore' + i, '1']);
             }
         }
         return bulkArray;
     }
-
     createBulkMixedArrayDelete(amount, exID) {
-        const bulkArray = [] as any;
+        const bulkArray = [];
         for (let i = 0; i < amount; i++) {
             if (i % 2 == 0) {
                 bulkArray.push([exID + ' mixed ' + i, 'Bulk Account Update' + i, '1']);
-            } else {
+            }
+            else {
                 bulkArray.push([exID + ' mixed ' + i, 'Bulk Account Ignore' + i, '1']);
             }
         }
         return bulkArray;
     }
-
     createBulkUDTArray(amount, exID, hidden) {
-        const bulkArray = [] as any;
+        const bulkArray = [];
         for (let i = 0; i < amount; i++) {
             bulkArray.push([exID, 'Test ' + i, '', 'Value ' + i, hidden]);
         }
         return bulkArray;
     }
-
     updateBulkArray(array) {
         for (let i = 0; i < array.length; i++) {
             array[i][1] += ' Update';
         }
         return array;
     }
-
     addHiddenBulkArray(array) {
         for (let i = 0; i < array.length; i++) {
             array[i].push('1');
         }
         return array;
     }
-
-    deleteUDT(id: number): Promise<boolean> {
+    deleteUDT(id) {
         return this.papiClient.userDefinedTables.delete(id);
     }
-
-    deleteUDTMetaData(id: number): Promise<boolean> {
+    deleteUDTMetaData(id) {
         return this.papiClient.metaData.userDefinedTables.delete(id);
     }
-
-    async waitForBulkJobStatus(ID: number, maxTime: number) {
+    async waitForBulkJobStatus(ID, maxTime) {
         const maxLoops = maxTime / apiCallsInterval;
         let counter = 0;
         let apiGetResponse;
@@ -384,18 +307,14 @@ export class ObjectsService {
             this.generalService.sleep(apiCallsInterval);
             apiGetResponse = await this.getBulkJobInfo(ID);
             counter++;
-        } while (
-            (apiGetResponse.Status == 'Not Started' || apiGetResponse.Status == 'In Progress') &&
-            counter < maxLoops
-        );
+        } while ((apiGetResponse.Status == 'Not Started' || apiGetResponse.Status == 'In Progress') &&
+            counter < maxLoops);
         return apiGetResponse;
     }
-
-    async getATD(type: string) {
+    async getATD(type) {
         return await this.papiClient.metaData.type(type).types.get();
     }
-
-    async findATDbyName(type: string, nameATD: string) {
+    async findATDbyName(type, nameATD) {
         const ATDarr = await this.getATD(type);
         let ATD;
         for (let i = 0; i < ATDarr.length; i++) {
@@ -406,23 +325,23 @@ export class ObjectsService {
         }
         return ATD;
     }
-
-    async createTSA(type: string, body: ApiFieldObject, ATD?: number) {
+    async createTSA(type, body, ATD) {
         if (type != 'accounts') {
             return await this.papiClient.metaData.type(type + '/types/' + ATD).fields.upsert(body);
-        } else {
+        }
+        else {
             return await this.papiClient.metaData.type(type).fields.upsert(body);
         }
     }
-
-    async createBulkTSA(type: string, body: ApiFieldObject[], ATD?: number) {
-        const resultArr: any[] = [];
+    async createBulkTSA(type, body, ATD) {
+        const resultArr = [];
         if (type != 'accounts' && ATD != undefined) {
             for (let i = 0; i < body.length; i++) {
                 const tempResult = await this.papiClient.metaData.type(type + '/types/' + ATD).fields.upsert(body[i]);
                 resultArr.push(tempResult.FieldID);
             }
-        } else {
+        }
+        else {
             for (let i = 0; i < body.length; i++) {
                 const tempResult = await this.papiClient.metaData.type(type).fields.upsert(body[i]);
                 resultArr.push(tempResult.FieldID);
@@ -430,15 +349,15 @@ export class ObjectsService {
         }
         return resultArr;
     }
-
-    async deleteBulkTSA(type: string, body: ApiFieldObject[], ATD?: number) {
-        const resultArr: any[] = [];
+    async deleteBulkTSA(type, body, ATD) {
+        const resultArr = [];
         if (type != 'accounts' && ATD != undefined) {
             for (let i = 0; i < body.length; i++) {
                 await this.papiClient.metaData.type(type).types.subtype(ATD.toString()).fields.delete(body[i].FieldID);
                 resultArr.push(body[i].FieldID);
             }
-        } else {
+        }
+        else {
             for (let i = 0; i < body.length; i++) {
                 await this.papiClient.metaData.type(type).fields.delete(body[i].FieldID);
                 resultArr.push(body[i].FieldID);
@@ -447,3 +366,5 @@ export class ObjectsService {
         return resultArr;
     }
 }
+exports.ObjectsService = ObjectsService;
+//# sourceMappingURL=objects.service.js.map
