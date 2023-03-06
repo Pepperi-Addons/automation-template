@@ -157,7 +157,6 @@ export class NebulaTestService {
             return await this.routerClient.post(`${this.nebulaGetRecordsRequiresSyncRelativeURL}?addon_uuid=${parameters.AddonUUID}&resource=${parameters.Resource}`, {
                 ModificationDateTime: parameters.ModificationDateTime,
                 IncludeDeleted: parameters.IncludeDeleted,
-                SystemFilter: parameters.SystemFilter,
                 Token: parameters.Token
             });
         }

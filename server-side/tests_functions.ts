@@ -17,7 +17,6 @@ let testName = '';
 let context = {};
 
 export async function runTest(addonUUID: string, client: Client, request, testerFunctions: TesterFunctions) {
-    debugger;
     if (addonUUID.length !== 36) {
         throw new Error(`Error: ${addonUUID} Is Not A Valid Addon UUID`);
     }

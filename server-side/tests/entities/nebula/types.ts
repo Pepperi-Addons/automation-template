@@ -30,5 +30,4 @@ export interface GetRecordsRequiringSyncParameters {
     IncludeDeleted: boolean,
     Token: string,
     ModificationDateTime?: string,
-    SystemFilter?: SystemFilter
 };

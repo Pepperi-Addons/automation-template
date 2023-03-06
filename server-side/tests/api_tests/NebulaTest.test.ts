@@ -38,14 +38,13 @@ export async function NebulaTest(generalService: GeneralService, addonService: G
         console.log(JSON.stringify(performanceManager.getStatistics()));
     }
 
-    function buildGetRecordsRequiringSyncParameters(tableName: string, token: string ,modificationDateTime?: string, includeDeleted: boolean = false, filter: SystemFilter | undefined = undefined): GetRecordsRequiringSyncParameters {
+    function buildGetRecordsRequiringSyncParameters(tableName: string, token: string ,modificationDateTime?: string, includeDeleted: boolean = false): GetRecordsRequiringSyncParameters {
         return {
             AddonUUID: automationAddonUUID,
             Resource: tableName,
             IncludeDeleted: includeDeleted,
             Token: token,
             ModificationDateTime: modificationDateTime,
-            SystemFilter: filter
         };
     }
 
@@ -57,8 +56,8 @@ export async function NebulaTest(generalService: GeneralService, addonService: G
         };
     }
     
-    async function getTokenForDocuments(nebulatestService, schemaName: string, timeStamp?: string, includeDeleted: boolean = false): Promise<string> {
-        const getResourcesRequiringSyncParameters = buildGetResourcesRequiringSyncParameters(timeStamp, includeDeleted);
+    async function getTokenForDocuments(nebulatestService, schemaName: string, timeStamp?: string, includeDeleted: boolean = false, filter?: SystemFilter): Promise<string> {
+        const getResourcesRequiringSyncParameters = buildGetResourcesRequiringSyncParameters(timeStamp, includeDeleted, filter);
         const resourcesRequiringSync = await nebulatestService.getResourcesRequiringSync(getResourcesRequiringSyncParameters);
 
         expect(resourcesRequiringSync).to.not.be.undefined;
@@ -1072,7 +1071,6 @@ export async function NebulaTest(generalService: GeneralService, addonService: G
         const documentsThatPointA = ['1', '2', '3'];
         const documentsThatPointB = ['4', '5', '6'];
         let pointingSchemaService: ADALTableService | undefined = undefined;
-        let resourceToken: string | undefined = undefined;
 
         function buildSystemFilter(accountUUID: string): SystemFilter {
             return {
@@ -1118,18 +1116,16 @@ export async function NebulaTest(generalService: GeneralService, addonService: G
             await nebulatestService.waitForPNS();
         });
 
-        it('Preparations - get token from get schemes', async () => {
-            resourceToken = await getTokenForDocuments(nebulatestService, pointingSchemaService!.schemaName!, timeStampBeforeCreation);
-            expect(resourceToken).to.not.be.undefined;
-        });
-
         it('Call getRecordsRequiringSync, expect only documents pointing to given account in result', async () => {
             assertInitialPreparations();
 
             // Check only documents that points to "current account" (account that point to current user) are retrieved.
             accounts = await getAccountsToPointTo();
             const filter = buildSystemFilter(accounts.pointingAccount.UUID!)
-            const getRecordsRequiringSyncParams = buildGetRecordsRequiringSyncParameters(pointingSchemaService!.schemaName, resourceToken!, timeStampBeforeCreation, false, filter);
+            const token = await getTokenForDocuments(nebulatestService, pointingSchemaService!.schemaName!, timeStampBeforeCreation, false, filter);
+            expect(token).to.not.be.undefined;
+
+            const getRecordsRequiringSyncParams = buildGetRecordsRequiringSyncParameters(pointingSchemaService!.schemaName, token, timeStampBeforeCreation, false);
             const recordsKeysRequiringSync = await nebulatestService.getRecordsRequiringSync(getRecordsRequiringSyncParams);
             expect(recordsKeysRequiringSync).to.not.be.undefined;
             expect(recordsKeysRequiringSync.Keys.length).to.be.equal(3);
@@ -1144,8 +1140,11 @@ export async function NebulaTest(generalService: GeneralService, addonService: G
 
             // Check only documents that points to "current account" (account that point to current user) are retrieved.
             accounts = await getAccountsToPointTo();
-            const filter = buildSystemFilter(accounts.otherAccount.UUID!)
-            const getRecordsRequiringSyncParams = buildGetRecordsRequiringSyncParameters(pointingSchemaService!.schemaName, resourceToken!, timeStampBeforeCreation, false, filter);
+            const filter = buildSystemFilter(accounts.otherAccount.UUID!);
+            const token = await getTokenForDocuments(nebulatestService, pointingSchemaService!.schemaName!, timeStampBeforeCreation, false, filter);
+            expect(token).to.not.be.undefined;
+
+            const getRecordsRequiringSyncParams = buildGetRecordsRequiringSyncParameters(pointingSchemaService!.schemaName, token, timeStampBeforeCreation, false);
             const recordsKeysRequiringSync = await nebulatestService.getRecordsRequiringSync(getRecordsRequiringSyncParams);
             expect(recordsKeysRequiringSync).to.not.be.undefined;
             expect(recordsKeysRequiringSync.Keys.length).to.be.equal(3);
@@ -1245,7 +1244,7 @@ export async function NebulaTest(generalService: GeneralService, addonService: G
 
         it('Call getRecordsRequiringSync, expect document to be returned as a hidden node', async () => {
 
-            const getRecordsRequiringSyncParams = buildGetRecordsRequiringSyncParameters(pointingSchemaService!.schemaName, resourceToken!, timeStampBeforeCreation, true, { Type: "None" });
+            const getRecordsRequiringSyncParams = buildGetRecordsRequiringSyncParameters(pointingSchemaService!.schemaName, resourceToken!, timeStampBeforeCreation, true);
             const recordsKeysRequiringSync: GetRecordsRequiringSyncResponse = await nebulatestService.getRecordsRequiringSync(getRecordsRequiringSyncParams);
             console.log(JSON.stringify(recordsKeysRequiringSync));
             expect(recordsKeysRequiringSync).to.not.be.undefined;
