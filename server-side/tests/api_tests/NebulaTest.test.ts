@@ -14,7 +14,6 @@ import { NebulaServiceFactory } from "./services/NebulaServiceFactory";
 import { AccountsService } from "./services/accounts.service";
 import { AccountUser, AccountUsersService } from "./services/account-users.service";
 import { UsersService } from "./services/users.service";
-import fs from 'fs';
 
 export async function NebulaTest(generalService: GeneralService, addonService: GeneralService, request, tester: TesterFunctions) {
 
