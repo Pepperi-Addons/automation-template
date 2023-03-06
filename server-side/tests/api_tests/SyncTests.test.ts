@@ -1,4 +1,4 @@
-import GeneralService, { TesterFunctions } from "../../potentialQA_SDK/server_side/general.service";
+import GeneralService, { TesterFunctions } from "test_infra";
 import { Client } from "@pepperi-addons/debug-server/dist";
 import { CommandFactory } from "./services/sync/test-commands/factory/commands-factory";
 import { TestCommand } from "./services/sync/test-commands/base-command";

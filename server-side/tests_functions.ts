@@ -17,6 +17,7 @@ let testName = '';
 let context = {};
 
 export async function runTest(addonUUID: string, client: Client, request, testerFunctions: TesterFunctions) {
+    debugger;
     if (addonUUID.length !== 36) {
         throw new Error(`Error: ${addonUUID} Is Not A Valid Addon UUID`);
     }
@@ -115,6 +116,7 @@ export async function dimx_tests(client: Client, addonClient: Client, request: R
 context["dimx_tests"] = dimx_tests;
 
 export async function sync_tests(client: Client, addonClient: Client, request: Request, testerFunctions: TesterFunctions) {
+    debugger;
     const service = new GeneralService(client);
     const serviceAddon = new GeneralService(addonClient)
     testName = 'SyncTests'; //printing your test name - done for logging
