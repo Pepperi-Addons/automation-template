@@ -38,13 +38,11 @@ export async function NebulaTest(generalService: GeneralService, addonService: G
         console.log(JSON.stringify(performanceManager.getStatistics()));
     }
 
-    function buildGetRecordsRequiringSyncParameters(tableName: string, token: string ,modificationDateTime?: string, includeDeleted: boolean = false): GetRecordsRequiringSyncParameters {
+    function buildGetRecordsRequiringSyncParameters(tableName: string, token: string): GetRecordsRequiringSyncParameters {
         return {
             AddonUUID: automationAddonUUID,
             Resource: tableName,
-            IncludeDeleted: includeDeleted,
             Token: token,
-            ModificationDateTime: modificationDateTime,
         };
     }
 
@@ -384,7 +382,7 @@ export async function NebulaTest(generalService: GeneralService, addonService: G
             // get records requiring sync using X
             let token = await getTokenForDocuments(nebulatestService, tableName, currentTimeX);
             expect(token).to.not.be.undefined;
-            let getRecordsRequiringSyncParams = buildGetRecordsRequiringSyncParameters(tableName, token, currentTimeX);
+            let getRecordsRequiringSyncParams = buildGetRecordsRequiringSyncParameters(tableName, token);
             const recordsRequiringSyncX = await nebulatestService.getRecordsRequiringSync(getRecordsRequiringSyncParams);
             console.log(`recordsRequiringSyncX: ${JSON.stringify(recordsRequiringSyncX)}`);
 
@@ -426,9 +424,9 @@ export async function NebulaTest(generalService: GeneralService, addonService: G
             await nebulatestService.waitForPNS();
 
             // get records requiring sync using Y
-            token = await getTokenForDocuments(nebulatestService, tableName);
+            token = await getTokenForDocuments(nebulatestService, tableName, currentTimeY);
             expect(token).to.not.be.undefined;
-            getRecordsRequiringSyncParams = buildGetRecordsRequiringSyncParameters(tableName, token, currentTimeY);
+            getRecordsRequiringSyncParams = buildGetRecordsRequiringSyncParameters(tableName, token);
             const recordsRequiringSyncY2 = await nebulatestService.getRecordsRequiringSync(getRecordsRequiringSyncParams);
             console.log(`recordsRequiringSyncY2: ${JSON.stringify(recordsRequiringSyncY2)}`);
 
@@ -501,7 +499,7 @@ export async function NebulaTest(generalService: GeneralService, addonService: G
             // get records requiring sync using X
             let token = await getTokenForDocuments(nebulatestService, tableName, currentTimeX);
             expect(token).to.not.be.undefined;
-            let getRecordsRequiringSyncParams = buildGetRecordsRequiringSyncParameters(tableName, token, currentTimeX);
+            let getRecordsRequiringSyncParams = buildGetRecordsRequiringSyncParameters(tableName, token);
             const recordsRequiringSyncX = await nebulatestService.getRecordsRequiringSync(getRecordsRequiringSyncParams);
             console.log(`recordsRequiringSyncX: ${JSON.stringify(recordsRequiringSyncX)}`);
 
@@ -517,7 +515,9 @@ export async function NebulaTest(generalService: GeneralService, addonService: G
             expect(resourcesRequiringSyncX2.find(resource => resource.Resource === tableName)).to.not.equal(undefined);
 
             // get records requiring sync using X with IncludeDeleted = true
-            getRecordsRequiringSyncParams = buildGetRecordsRequiringSyncParameters(tableName, token, currentTimeX, true);
+            token = await getTokenForDocuments(nebulatestService, tableName, currentTimeX, true);
+            expect(token).to.not.be.undefined;
+            getRecordsRequiringSyncParams = buildGetRecordsRequiringSyncParameters(tableName, token);
             const recordsRequiringSyncX2 = await nebulatestService.getRecordsRequiringSync(getRecordsRequiringSyncParams);
             console.log(`recordsRequiringSyncX2: ${JSON.stringify(recordsRequiringSyncX2)}`);
 
@@ -724,7 +724,7 @@ export async function NebulaTest(generalService: GeneralService, addonService: G
             assertInitialPreparations();
 
             // Check only documents that points to current user are retrieved.
-            const getRecordsRequiringSyncParams = buildGetRecordsRequiringSyncParameters(pointingSchemaService!.schemaName!, resourceToken!, timeStampBeforeCreation);
+            const getRecordsRequiringSyncParams = buildGetRecordsRequiringSyncParameters(pointingSchemaService!.schemaName!, resourceToken!);
             let recordsRequiringSync = await nebulatestService.getRecordsRequiringSync(getRecordsRequiringSyncParams);
             expect(recordsRequiringSync).to.not.be.undefined;
             expect(recordsRequiringSync.Keys.length).to.be.equal(3);
@@ -760,7 +760,7 @@ export async function NebulaTest(generalService: GeneralService, addonService: G
             assertInitialPreparations();
 
             // Check only documents that points to current user are retrieved.
-            const getRecordsRequiringSyncParams = buildGetRecordsRequiringSyncParameters(pointingSchemaService!.schemaName!, resourceToken!, timeStampBeforeCreation);
+            const getRecordsRequiringSyncParams = buildGetRecordsRequiringSyncParameters(pointingSchemaService!.schemaName!, resourceToken!);
             const recordsKeysRequiringSync = await nebulatestService.getRecordsRequiringSync(getRecordsRequiringSyncParams);
             expect(recordsKeysRequiringSync).to.not.be.undefined;
             expect(recordsKeysRequiringSync.Keys.length).to.be.equal(3);
@@ -925,7 +925,7 @@ export async function NebulaTest(generalService: GeneralService, addonService: G
             assertInitialPreparations();
 
             // Check only documents that points to "current account" (account that point to current user) are retrieved.
-            const getRecordsRequiringSyncParams = buildGetRecordsRequiringSyncParameters(pointingSchemaService!.schemaName, resourceToken!, timeStampBeforeCreation);
+            const getRecordsRequiringSyncParams = buildGetRecordsRequiringSyncParameters(pointingSchemaService!.schemaName, resourceToken!);
             const recordsKeysRequiringSync = await nebulatestService.getRecordsRequiringSync(getRecordsRequiringSyncParams);
             expect(recordsKeysRequiringSync).to.not.be.undefined;
             expect(recordsKeysRequiringSync.Keys.length).to.be.equal(3);
@@ -962,7 +962,7 @@ export async function NebulaTest(generalService: GeneralService, addonService: G
             const schemaName = pointingSchemaService!.schemaName;
 
             // Check only documents that points to "current account" are retrieved.
-            const getRecordsRequiringSyncParams = buildGetRecordsRequiringSyncParameters(pointingSchemaService!.schemaName, resourceToken!, timeStampBeforeCreation);
+            const getRecordsRequiringSyncParams = buildGetRecordsRequiringSyncParameters(pointingSchemaService!.schemaName, resourceToken!);
             const recordsKeysRequiringSync = await nebulatestService.getRecordsRequiringSync(getRecordsRequiringSyncParams);
             expect(recordsKeysRequiringSync).to.not.be.undefined;
             expect(recordsKeysRequiringSync.Keys.length).to.be.equal(3);
@@ -1125,7 +1125,7 @@ export async function NebulaTest(generalService: GeneralService, addonService: G
             const token = await getTokenForDocuments(nebulatestService, pointingSchemaService!.schemaName!, timeStampBeforeCreation, false, filter);
             expect(token).to.not.be.undefined;
 
-            const getRecordsRequiringSyncParams = buildGetRecordsRequiringSyncParameters(pointingSchemaService!.schemaName, token, timeStampBeforeCreation, false);
+            const getRecordsRequiringSyncParams = buildGetRecordsRequiringSyncParameters(pointingSchemaService!.schemaName, token);
             const recordsKeysRequiringSync = await nebulatestService.getRecordsRequiringSync(getRecordsRequiringSyncParams);
             expect(recordsKeysRequiringSync).to.not.be.undefined;
             expect(recordsKeysRequiringSync.Keys.length).to.be.equal(3);
@@ -1144,7 +1144,7 @@ export async function NebulaTest(generalService: GeneralService, addonService: G
             const token = await getTokenForDocuments(nebulatestService, pointingSchemaService!.schemaName!, timeStampBeforeCreation, false, filter);
             expect(token).to.not.be.undefined;
 
-            const getRecordsRequiringSyncParams = buildGetRecordsRequiringSyncParameters(pointingSchemaService!.schemaName, token, timeStampBeforeCreation, false);
+            const getRecordsRequiringSyncParams = buildGetRecordsRequiringSyncParameters(pointingSchemaService!.schemaName, token);
             const recordsKeysRequiringSync = await nebulatestService.getRecordsRequiringSync(getRecordsRequiringSyncParams);
             expect(recordsKeysRequiringSync).to.not.be.undefined;
             expect(recordsKeysRequiringSync.Keys.length).to.be.equal(3);
@@ -1244,7 +1244,7 @@ export async function NebulaTest(generalService: GeneralService, addonService: G
 
         it('Call getRecordsRequiringSync, expect document to be returned as a hidden node', async () => {
 
-            const getRecordsRequiringSyncParams = buildGetRecordsRequiringSyncParameters(pointingSchemaService!.schemaName, resourceToken!, timeStampBeforeCreation, true);
+            const getRecordsRequiringSyncParams = buildGetRecordsRequiringSyncParameters(pointingSchemaService!.schemaName, resourceToken!);
             const recordsKeysRequiringSync: GetRecordsRequiringSyncResponse = await nebulatestService.getRecordsRequiringSync(getRecordsRequiringSyncParams);
             console.log(JSON.stringify(recordsKeysRequiringSync));
             expect(recordsKeysRequiringSync).to.not.be.undefined;
