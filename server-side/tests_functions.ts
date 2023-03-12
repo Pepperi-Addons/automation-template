@@ -1,5 +1,6 @@
 import { DataIndex } from './tests/api_tests/DataIndex.test';
 import { NebulaTest } from './tests/api_tests/NebulaTest.test';
+import { NebulaInternalTest } from './tests/api_tests/NebulaInternalTest.test';
 
 import { SchemaExtensions } from './tests/api_tests/SchemaExtensions.test';
 import { Client, Request } from '@pepperi-addons/debug-server';
@@ -155,4 +156,16 @@ export async function nebula_test(client: Client, addonClient: Client, request: 
     return (await testerFunctions.run());
 };
 context["nebula_test"] = nebula_test;
+
+export async function nebula_internal_test(client: Client, addonClient: Client, request: Request, testerFunctions: TesterFunctions) {
+    const service = new GeneralService(client);
+    const serviceAddon = new GeneralService(addonClient);
+    testName = 'NebulaInternalTest'; //printing your test name - done for logging
+    service.PrintMemoryUseToLog('Start', testName);
+    testerFunctions = service.initiateTesterFunctions(client, testName);
+    await NebulaInternalTest(service, serviceAddon, request, testerFunctions);//this is the call to YOUR test function
+    await test_data(client, testerFunctions);//this is done to print versions at the end of test - can be deleted
+    return (await testerFunctions.run());
+};
+context["nebula_internal_test"] = nebula_internal_test;
 
