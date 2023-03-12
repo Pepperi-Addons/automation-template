@@ -27,7 +27,5 @@ export interface GetRecordsRequiringSyncResponse {
 export interface GetRecordsRequiringSyncParameters {
     AddonUUID: string,
     Resource: string,
-    IncludeDeleted: boolean,
-    ModificationDateTime?: string,
-    SystemFilter?: SystemFilter
+    Token: string,
 };
