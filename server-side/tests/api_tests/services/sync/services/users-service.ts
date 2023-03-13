@@ -28,7 +28,7 @@ export class UsersService {
             let user = {
                 Email: "sync_automation_user@pepperitest.com"
             }
-            let notCurrentUser = await this.papiClient.post('/createUser',user)
+            let notCurrentUser = await this.papiClient.post('/createUser', user)
             return [notCurrentUser]
         }
         return notCurrentUsers;       
