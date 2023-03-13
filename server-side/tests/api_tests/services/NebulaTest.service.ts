@@ -143,7 +143,7 @@ export class NebulaTestService {
             return (await this.routerClient.post(this.nebulaGetResourcesRequiringSyncRelativeURL, {
                 ModificationDateTime: parameters.ModificationDateTime,
                 IncludeDeleted: parameters.IncludeDeleted ?? false,
-                SystemFilter: parameters.SystemFilter
+                PathData: parameters.PathData
             })).results;
         }
         catch (error) {

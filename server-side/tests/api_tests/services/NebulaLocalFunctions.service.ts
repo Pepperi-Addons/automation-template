@@ -133,7 +133,7 @@ export class NebulaLocalFunctions extends NebulaTestService {
             const results = (await this.routerClient.post(this.nebulaGetResourcesRequiringSyncRelativeURL, {
                 ModificationDateTime: parameters.ModificationDateTime,
                 IncludeDeleted: parameters.IncludeDeleted,
-                SystemFilter: parameters.SystemFilter
+                PathData: parameters.PathData,
             }, { 'Content-Type': 'application/json' })).results;
             this.routerClient['options']['baseURL'] = this.originalBaseURL;
             return results;
