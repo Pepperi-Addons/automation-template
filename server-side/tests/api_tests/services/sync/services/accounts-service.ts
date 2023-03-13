@@ -30,6 +30,11 @@ export class AccountsService {
         const notConnectedAccounts = allAccounts.filter(account => {
             return !connectedAccounts.find(conn => conn.UUID === account.UUID)
         });
+        if(notConnectedAccounts.length == 0){
+            let acc = await this.createAccount()
+            await this.hideAccountFromCurrentUser(acc)
+            return [acc]
+        }
         return notConnectedAccounts;
     }
 

@@ -31,7 +31,7 @@ export class SchemaExistsCommand extends BaseCommand {
     }
 
     async processSyncResponse(syncRes: any): Promise<any> {
-        this.syncDataResult.data =  await this.syncService.handleSyncData(syncRes, false)
+        this.syncDataResult.data =  await this.syncService.getSyncData(syncRes)
         return this.syncDataResult.data;
     }
     

@@ -26,7 +26,8 @@ import {
   RecordSizeHundredThousandCommand,
   ConnectAccountDelta,
   WebappCommand,
-  PushDataTimeCommand
+  PushDataTimeCommand,
+  UploadDataToSync
 
 } from "..";
 
@@ -57,6 +58,7 @@ export class CommandFactory {
     ConnectAccountDelta: ConnectAccountDelta,
     WebappCommand: WebappCommand,
     PushDataTimeCommand: PushDataTimeCommand,
+    UploadDataToSync:UploadDataToSync,
     CleanupCommand: CleanupCommand
   };
 

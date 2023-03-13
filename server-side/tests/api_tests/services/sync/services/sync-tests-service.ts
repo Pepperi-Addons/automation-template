@@ -22,15 +22,6 @@ export class SyncService {
         return await GlobalSyncService.httpGet(url)
     }
 
-    async handleSyncData(syncRes: any, return_url: boolean){
-        let data = await this.auditLogService.getSyncDataFromAudit(syncRes)
-        let res = data
-        if(return_url){
-            res = await this.getSyncDataFromUrl(data.ResourcesURL)
-        }
-        return res
-    }
-
     async getSyncData(syncRes: any){
         let data = await this.auditLogService.getSyncDataFromAudit(syncRes)
         let res = data
