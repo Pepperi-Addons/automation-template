@@ -8,8 +8,8 @@ export interface PathDestination {
 export interface GetResourcesRequiringSyncParameters {
     ModificationDateTime?: string;
     IncludeDeleted?: boolean;
-    PathData: {
-        Destinations: PathDestination[]; // Describe where to trim the paths.
+    PathData?: {
+        Destinations?: PathDestination[]; // Describe where to trim the paths.
         IncludedResources: string[]; // Resources that must be in the path
         ExcludedResources: string[]; // Resources that must not be in the path
     };

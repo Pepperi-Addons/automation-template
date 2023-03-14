@@ -47,9 +47,9 @@ export async function NebulaTest(generalService: GeneralService, addonService: G
     }
 
     function buildPathData(destinations?: PathDestination[], includedResources: string[] = [], excludedResources: string[] = []): GetResourcesRequiringSyncParameters['PathData'] {
-        if (destinations === undefined || destinations.length === 0) {
-            const defaultDestination: PathDestination = { Resource: 'users', Key: usersService.getCurrentUserUUID() };
-            destinations = [defaultDestination];
+
+        if (destinations === undefined && includedResources.length === 0 && excludedResources.length === 0) {
+            return undefined;
         }
 
         return {
@@ -108,14 +108,14 @@ export async function NebulaTest(generalService: GeneralService, addonService: G
         const performanceManager: PerformanceManager = new PerformanceManager();
         const resourceManager: ResourceManagerService = new ResourceManagerService(generalService.papiClient, automationAddonUUID);
 
-        it(`first clean of PNS`, async () => {
-            await nebulatestService.initPNS();
-            //const originalBaseURL = nebulatestService.papiClient['options'].baseURL;
-            //nebulatestService.papiClient['options'].baseURL = "";
-            //await nebulatestService.papiClient.post('http://localhost:4500/pns_endpoints/foo', { hello: "world" });
-            //await nebulatestService.papiClient.post('http://localhost:4500/pns_endpoints/foo', { hello: "world" });
-            //nebulatestService.papiClient['options'].baseURL = originalBaseURL;
-        });
+        // it(`first clean of PNS`, async () => {
+        //     await nebulatestService.initPNS();
+        //     //const originalBaseURL = nebulatestService.papiClient['options'].baseURL;
+        //     //nebulatestService.papiClient['options'].baseURL = "";
+        //     //await nebulatestService.papiClient.post('http://localhost:4500/pns_endpoints/foo', { hello: "world" });
+        //     //await nebulatestService.papiClient.post('http://localhost:4500/pns_endpoints/foo', { hello: "world" });
+        //     //nebulatestService.papiClient['options'].baseURL = originalBaseURL;
+        // });
 
         it(`Create ADAL schema with sync=true, add items, wait for 16 seconds and check if nebula has the records`, async () => {
             performanceManager.startMeasure(`Test 1`, `Create ADAL schema with sync=true, add items, wait for 16 seconds and check if nebula has the records`);
