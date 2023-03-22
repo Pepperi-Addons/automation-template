@@ -21,7 +21,7 @@ export interface Connector {
     purgeSchema: () => any;
     getDocuments: (params: FindOptions) => Promise<ElasticSearchDocument[]>;
     postDocument(arg0: {}): unknown;
-    search: (dslQuery: any) => Promise<ElasticSearchDocument[] | SearchData<ElasticSearchDocument>>;
+    search: (requestBody: any) => Promise<ElasticSearchDocument[] | SearchData<ElasticSearchDocument>>;
     getDocumentsFromAbstract: (params: FindOptions) => Promise<ElasticSearchDocument[]>;
 }
 
@@ -118,9 +118,9 @@ export class DataIndexService {
                     .resource(baseSchema.Name)
                     .create(body);
             },
-            search: (dslQuery: any): Promise<any> => {
+            search: (requestBody: any): Promise<any> => {
                 return api
-                    .search(dslQuery)
+                    .search(requestBody)
                     .uuid(this.addonUUID)
                     .resource(baseSchema.Name);
             },
