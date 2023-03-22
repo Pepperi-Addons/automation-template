@@ -9,7 +9,7 @@ import { GeneralService, TesterFunctions } from 'test_infra';
 
 
 export async function DataIndex(generalService: GeneralService, addonService: GeneralService, request, tester: TesterFunctions) {
-    const dataObj = request.body.Data; // the 'Data' object passsed inside the http request sent to start the test -- put all the data you need here
+    const dataObj = request.body.Data; // the 'Data' object passed inside the http request sent to start the test -- put all the data you need here
     const service = new DataIndexService(generalService, addonService.papiClient, dataObj);
     const describe = tester.describe;
     const expect = tester.expect;
@@ -296,11 +296,30 @@ function baseTester(it: any, expect, connector: Connector, generalService: Gener
 
     // DI-21958
     it("Validate that strings are mapped as keywords (by doing aggregations on them)", async () => {
-        let diResponse = await connector.searchByDSL({
+        let diResponse = await connector.search({
             "aggs": {
                 "my-agg-name": {
                     "terms": {
                         "field": "name.first"
+                    }
+                }
+            }
+        });
+        expect(diResponse, "Raw response").to.have.property("aggregations");
+        expect(diResponse["aggregations"], "Response aggregations").to.have.property("my-agg-name");
+        expect(diResponse["aggregations"]["my-agg-name"], "Response specific aggregation").to.have.property("buckets");
+        expect(diResponse["aggregations"]["my-agg-name"]["buckets"], "Response buckets").to.be.an('array').with.lengthOf(3);
+    })
+
+    // DI-22639
+    it("Validate that DSL queries can be sent wrapped in a property called \"DSL\"", async () => {
+        let diResponse = await connector.search({
+            DSL: {
+                "aggs": {
+                    "my-agg-name": {
+                        "terms": {
+                            "field": "name.first"
+                        }
                     }
                 }
             }
@@ -339,6 +358,17 @@ function baseTester(it: any, expect, connector: Connector, generalService: Gener
             where: "name.first='Alex'"
         });
         expect(diResponse, "Response array").to.be.an('array').with.lengthOf(1);
+    })
+
+    // DI-22639
+    it("Search documents using the \"search\" endpoint", async () => {
+        let diResponse = await connector.search({
+            Where: "name.first='Alex'"
+        });
+        debugger;
+        expect(diResponse, "Response body").to.be.an('object').with.property("Objects");
+        expect(diResponse["Objects"], "Response array").to.be.an('array').with.lengthOf(1);
+        expect(diResponse["Objects"][0], "Response first result").to.be.an('object').property("name.first").to.equal("Alex");
     })
 
     it(`Index Purge`, async () => {

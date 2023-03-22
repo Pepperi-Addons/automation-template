@@ -5,10 +5,11 @@ import {
     PapiClient,
     AddonDataScheme,
     ElasticSearchDocument,
+    SearchData,
 } from '@pepperi-addons/papi-sdk';
 
 // import GeneralService from '../../../potentialQA_SDK/server_side/general.service';
-import {GeneralService} from 'test_infra'
+import { GeneralService } from 'test_infra'
 import { v4 as uuidv4 } from 'uuid';
 
 type PartialScheme = Omit<AddonDataScheme, "Name" | "Type" | "DataSourceData">;
@@ -20,7 +21,7 @@ export interface Connector {
     purgeSchema: () => any;
     getDocuments: (params: FindOptions) => Promise<ElasticSearchDocument[]>;
     postDocument(arg0: {}): unknown;
-    searchByDSL: (dslQuery: any) => Promise<ElasticSearchDocument[]>;
+    search: (dslQuery: any) => Promise<ElasticSearchDocument[] | SearchData<ElasticSearchDocument>>;
     getDocumentsFromAbstract: (params: FindOptions) => Promise<ElasticSearchDocument[]>;
 }
 
@@ -117,7 +118,7 @@ export class DataIndexService {
                     .resource(baseSchema.Name)
                     .create(body);
             },
-            searchByDSL: (dslQuery: any): Promise<any> => {
+            search: (dslQuery: any): Promise<any> => {
                 return api
                     .search(dslQuery)
                     .uuid(this.addonUUID)
