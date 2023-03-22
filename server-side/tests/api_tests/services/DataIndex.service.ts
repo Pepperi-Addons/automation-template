@@ -23,6 +23,7 @@ export interface Connector {
     postDocument(arg0: {}): unknown;
     search: (requestBody: any) => Promise<ElasticSearchDocument[] | SearchData<ElasticSearchDocument>>;
     getDocumentsFromAbstract: (params: FindOptions) => Promise<ElasticSearchDocument[]>;
+    isShared: () => boolean;
 }
 
 export class DataIndexService {
@@ -133,6 +134,9 @@ export class DataIndexService {
             purgeSchema: () => {
                 return this.papiClient
                     .post(`/addons/data/schemes/${baseSchema.Name}/purge`);
+            },
+            isShared: () => {
+                return type === "shared";
             }
         }
     }
