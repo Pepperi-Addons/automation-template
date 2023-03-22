@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { Connector, validateOrderOfResponseBySpecificField } from './services/DataIndex.service';
-import { PapiClient } from '@pepperi-addons/papi-sdk';
+import { PapiClient, SearchBody } from '@pepperi-addons/papi-sdk';
 //00000000-0000-0000-0000-00000e1a571c
 import { DataIndexService } from "./services/DataIndex.service";
 import { GeneralService, TesterFunctions } from 'test_infra';
@@ -365,10 +365,24 @@ function baseTester(it: any, expect, connector: Connector, generalService: Gener
         let diResponse = await connector.search({
             Where: "name.first='Alex'"
         });
-        debugger;
         expect(diResponse, "Response body").to.be.an('object').with.property("Objects");
         expect(diResponse["Objects"], "Response array").to.be.an('array').with.lengthOf(1);
-        expect(diResponse["Objects"][0], "Response first result").to.be.an('object').property("name.first").to.equal("Alex");
+        expect(diResponse["Objects"][0], "Response first result").to.be.an('object').with.property("name.first").to.equal("Alex");
+    })
+
+    it("Search documents using the \"search\" endpoint", async () => {
+        let searchBody: SearchBody & { OrderBy?: string } = {
+            Fields: ["name.first", "name.last", "string_field", "bool_field"],
+            Page: 2,
+            PageSize: 2,
+            IncludeCount: true,
+            OrderBy: "int_field"
+        };
+        let diResponse = await connector.search(searchBody);
+        expect(diResponse, "Response body").to.be.an('object').with.property("Objects");
+        expect(diResponse, "Response body").to.be.an('object').with.property("Count").to.equal(6);
+        expect(diResponse["Objects"], "Response array").to.be.an('array').with.lengthOf(2);
+        expect(diResponse["Objects"][0], "Response first result").to.be.an('object').to.include.all.keys("name.first", "name.last", "string_field", "bool_field");
     })
 
     it(`Index Purge`, async () => {
