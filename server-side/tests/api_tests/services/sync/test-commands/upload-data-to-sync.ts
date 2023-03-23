@@ -8,7 +8,9 @@ import { SyncDimxService } from "../services/sync-dimx-service";
 import { SyncFileService } from "../services/sync-file-service";
 import { BaseCommand as BaseCommand } from "./base-command";
 
-// this class should not be executed, only inherited
+/**
+ *  class to upload big data size to sync - not for testing, tool folr investigating sync
+ */
 export class UploadDataToSync extends BaseCommand {
     papiClient: PapiClient;
     client: Client    
@@ -30,14 +32,11 @@ export class UploadDataToSync extends BaseCommand {
     private automationUUID = "02754342-e0b5-4300-b728-a94ea5e0e8f4"
 
     async setupSchemes(): Promise<any> {
-        // generate schema with fields
-        // const schema = this.syncAdalService.generateSchemeWithFields(1, `test_sync_data_capacity`)
-        // const adalService = await this.syncAdalService.getAdalService(schema)
-        // this.schemeCreated = adalService
-        // return adalService  
         return Promise.resolve(undefined);
     }
 
+    // generation data with big record size and a lot of records,
+    // inserting the data according to the index in the for loop
     async pushData(adalService1: ADALTableService): Promise<any> {  
         const promises: Promise<any>[] = []
         for (let index = 0; index < 1; index++) {
@@ -64,9 +63,7 @@ export class UploadDataToSync extends BaseCommand {
         }
         
         await Promise.all(promises)
-       
-        
-        // await GlobalSyncService.sleep(this.TIME_TO_SLEEP_FOR_NEBULA)
+    
     }
 
     async sync(): Promise<any> {
@@ -78,6 +75,7 @@ export class UploadDataToSync extends BaseCommand {
     }
     
     async  test(syncRes: any, syncData:any, expect: Chai.ExpectStatic): Promise<any> {
+        // it is not a test it is just a tool for bug investigation so we dont need tests
         return Promise.resolve(undefined)
     }
     
