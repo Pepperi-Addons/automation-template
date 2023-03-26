@@ -4,7 +4,7 @@ export class SyncDataResult {
     data: any;
 
     async getSchemes() {
-        let schemesArray = this.data.ResourcesData.map(resource =>{
+        let schemesArray = this.data.Resources.Data.map(resource =>{
             if(resource.Schema.AddonUUID == config.AddonUUID){
                 return resource.Schema.Name
             }
@@ -13,18 +13,18 @@ export class SyncDataResult {
     }
 
     getObjects(schemaName: string): any[] {
-        return this.data.ResourcesData.find(resource => resource.Schema.Name == schemaName).Objects;
+        return this.data.Resources.Data.find(resource => resource.Schema.Name == schemaName).Objects;
     }
 
     getSchemesFromWACD(){
-        let schemes = this.data.ResourcesData.map(resource =>{
+        let schemes = this.data.Resources.Data.map(resource =>{
             return resource.MetaData[0].ExternalID.replace('CPI_Data_' + config.AddonUUID + '_', '')
         })
         return schemes
     }
 
     getObjectsFromWACD(schemaName: string): any[] {
-        return this.data.ResourcesData.find(resource => resource.MetaData[0].ExternalID.replace('CPI_Data_' + config.AddonUUID + '_', '') == schemaName).Data;
+        return this.data.Resources.Data.find(resource => resource.MetaData[0].ExternalID.replace('CPI_Data_' + config.AddonUUID + '_', '') == schemaName).Data;
     }
     
 }

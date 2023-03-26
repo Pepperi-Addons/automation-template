@@ -58,17 +58,31 @@ export class SystemFilterService extends SyncAdalService {
     }        
 
     generateSystemFilter(account:boolean,webapp:boolean,accountUUID?:string){
-        let Type = account ? 'Account' : webapp? 'User' : 'None'
-        let SystemFilter = {
-            SystemFilter: {
-                Type: Type 
-            }
+        const pathData: NebulaPathData = 
+        {
+            Destinations:[
+                {
+                    Resource : account ? 'accounts' : webapp? 'users': undefined,
+                    Key: account ? accountUUID : webapp ? this.usersService.getCurrentUserUUID(): undefined 
+                }
+            ],
+            IncludedResources: account? ['accounts']: webapp? ['users'] : [],
+            ExcludedResources: account? ['users']: webapp? ['accounts'] : []
         }
-        if(account && !accountUUID){
-            throw new Error('Account must have Account UUID')
-        }
-        account ? SystemFilter.SystemFilter["AccountUUID"] = accountUUID : undefined
-        return SystemFilter
+
+        return pathData
+
+        // let Type = account ? 'Account' : webapp? 'User' : 'None'
+        // let SystemFilter = {
+        //     SystemFilter: {
+        //         Type: Type 
+        //     }
+        // }
+        // if(account && !accountUUID){
+        //     throw new Error('Account must have Account UUID')
+        // }
+        // account ? SystemFilter.SystemFilter["AccountUUID"] = accountUUID : undefined
+        // return SystemFilter
     }
 
     generateSchemaField(type: 'User' | 'Account' | 'None'){
@@ -89,4 +103,15 @@ export class SystemFilterService extends SyncAdalService {
         return type != 'None' ? resourceField : nameField
     }
 
+}
+
+export interface NebulaPathData{
+    Destinations: NebulaDestination[],
+    IncludedResources?: string[],
+    ExcludedResources?: string[]
+}
+
+export interface NebulaDestination{
+    Resource: string | undefined,
+    Key: string | undefined
 }
