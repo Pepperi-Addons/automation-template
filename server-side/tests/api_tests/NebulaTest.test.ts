@@ -2576,6 +2576,322 @@ export async function NebulaTest(generalService: GeneralService, addonService: G
 
         });
 
+        describe('double 2 hop path to users with loop, X -> Y|users, Y -> X', () => {
+
+            // Preparations parameters
+            const timeStampBeforeCreation = new Date().toISOString();
+            let ySchemaService: ADALTableService | undefined = undefined;
+            let xSchemaService: ADALTableService | undefined = undefined;
+            const profileFilterKey = uuidv4();
+            const yTableName =  `nebula_test_Y_2_2_hop_${getShortUUID()}`
+            const filterName = 'testFilter' + getShortUUID();
+            const yFieldName = 'AccountRef';
+            const xFieldName = 'UserRef';
+
+            function getFilter(): FilterObject {
+                return {
+                    Key: filterName,
+                    Name: filterName,
+                    Resource: ySchemaService!.schemaName!,
+                    Field: 'Key',
+                    PreviousField: yFieldName,
+                    PreviousFilter: "ConnectedAccounts",
+                };
+            }
+
+            function getProfileFilter(): ProfileFilterObject {
+                return {
+                    Key: profileFilterKey,
+                    EmployeeType: getCurrentEmployeeType(addonService.papiClient),
+                    Resource: ySchemaService!.schemaName!,
+                    Filter: filterName
+                };
+            }
+
+            function getYSchema(): AddonDataScheme {
+                return {
+                    Name: yTableName,
+                    Type: "data",
+                    Fields:
+                    {
+                        XRef: {
+                            Type: "Resource",
+                            ApplySystemFilter: true,
+                            AddonUUID: automationAddonUUID,
+                            Resource: xSchemaService!.schemaName!
+                        },
+                    },
+                    SyncData: {
+                        Sync: true
+                    },
+                    GenericResource: true
+                };
+            }
+
+            function getXSchema(): AddonDataScheme {
+                return {
+                    Name: `nebula_test_X_2_2_hop_${getShortUUID()}`,
+                    Type: "data",
+                    Fields:
+                    {
+                        UsersRef: {
+                            Type: "Resource",
+                            ApplySystemFilter: true,
+                            AddonUUID: CORE_RESOURCES_UUID,
+                            Resource: USERS_TABLE
+                        },
+                        YRef: {
+                            Type: "Resource",
+                            ApplySystemFilter: true,
+                            AddonUUID: automationAddonUUID,
+                            Resource: yTableName
+                        },
+                    },
+                    SyncData: {
+                        Sync: true
+                    },
+                };
+            }
+
+            it('Preparations - create X table.', async () => {
+                const schema = getXSchema();
+                xSchemaService = await resourceManager.createAdalTable(schema);
+                await nebulatestService.pnsInsertSchema(testingAddonUUID, xSchemaService!.schemaName!);
+                console.debug(`X Schema name is: ${xSchemaService?.schemaName}`);
+            });
+
+            it('Preparations - create Y table', async () => {
+                const schema = getYSchema();
+                ySchemaService = await resourceManager.createAdalTable(schema);
+                await nebulatestService.pnsInsertSchema(testingAddonUUID, ySchemaService!.schemaName!);
+                console.debug(`Y Schema name is: ${ySchemaService?.schemaName}`);
+            });
+
+            it('Preparations - wait for PNS after table creation.', async () => {
+                await nebulatestService.waitForPNS();
+            });
+
+            it('Preparations - upsert filter.', async () => {
+                // We must create the filter before the profile filter otherwise it will fail the validation
+                const filter = getFilter();
+                const result = await febulaService.upsertFilter(filter);
+                // await nebulatestService.pnsInsertFilter(result.Key); // Disabled because it is meaningless without the profile filter
+                console.debug(`Filter name is: ${result.Name}`);
+                console.debug(`Filter key is: ${result.Key}`);
+            });
+
+            it('Preparations - upsert profile filter.', async () => {
+                const profileFilter = getProfileFilter();
+                const result = await febulaService.upsertProfileFilter(profileFilter);
+                await nebulatestService.pnsInsertProfileFilter(result.Key);
+                console.debug(`Profile filter key is: ${result.Key}`);
+            });
+
+            it('Preparations - wait for PNS after profile/filter upsertion.', async () => {
+                await nebulatestService.waitForPNS();
+            });
+
+            it('Preparations - upsert documents into Y table.', async () => {
+                const documents: AddonData[] = [{
+                    Key: '1',
+                    [yFieldName]: (await accountUsersService.getAccountPointingToCurrentUser()).UUID!
+                }];
+                await ySchemaService!.upsertBatch(documents);
+                await nebulatestService.pnsInsertRecords(testingAddonUUID, ySchemaService!.schemaName!, (documents as BasicRecord[]));
+            });
+
+            it('Preparations - upsert documents into table X table.', async () => {
+                const documents: AddonData[] = [{
+                    Key: '1',
+                    [xFieldName]: '1'
+                }];
+                await xSchemaService!.upsertBatch(documents);
+                await nebulatestService.pnsInsertRecords(testingAddonUUID, xSchemaService!.schemaName!, (documents as BasicRecord[]));
+            });
+
+            it('Preparations - wait for PNS after documents upsertion.', async () => {
+                await nebulatestService.waitForPNS();
+            });
+
+            it('get resources requiring sync with accounts table in the path, expect to get both tables', async () => {
+                // Get schemas that have the account in their path
+                const pathData = buildPathData(undefined, ['accounts']);
+                const getResourcesRequiringSyncParameters = buildGetResourcesRequiringSyncParameters(pathData, timeStampBeforeCreation, false);
+                const resourcesRequiringSync = await nebulatestService.getResourcesRequiringSync(getResourcesRequiringSyncParameters);
+
+                // Check that expected schemas are in response
+                expect(resourcesRequiringSync).to.not.be.undefined;
+                expect(resourcesRequiringSync.find(resource => resource.Resource === xSchemaService!.schemaName)).to.not.be.undefined;
+                expect(resourcesRequiringSync.find(resource => resource.Resource === ySchemaService!.schemaName)).to.not.be.undefined;
+            });
+
+            it('get resources requiring sync pointing to current user, expect to get tables', async () => {
+                const pathData = getUsersPathData();
+                pathData!.ExcludedResources = [];
+                const getResourcesRequiringSyncParameters = buildGetResourcesRequiringSyncParameters(pathData, timeStampBeforeCreation, false);
+                const resourcesRequiringSync = await nebulatestService.getResourcesRequiringSync(getResourcesRequiringSyncParameters);
+
+                // Check that expected schemas are in response
+                expect(resourcesRequiringSync).to.not.be.undefined;
+                expect(resourcesRequiringSync.find(resource => resource.Resource === xSchemaService!.schemaName)).to.not.be.undefined;
+                expect(resourcesRequiringSync.find(resource => resource.Resource === ySchemaService!.schemaName)).to.not.be.undefined;
+            });
+
+            it('get resources requiring sync pointing to current user who don`t pass thro "users" table, expect to not get tables', async () => {
+                // Get schemas that have the account in their path
+                const pathData = getUsersPathData();
+                pathData!.ExcludedResources! = [USERS_TABLE];
+                const getResourcesRequiringSyncParameters = buildGetResourcesRequiringSyncParameters(pathData, timeStampBeforeCreation, false);
+                const resourcesRequiringSync = await nebulatestService.getResourcesRequiringSync(getResourcesRequiringSyncParameters);
+
+                // Check that expected schemas are in response
+                expect(resourcesRequiringSync).to.not.be.undefined;
+                expect(resourcesRequiringSync.find(resource => resource.Resource === xSchemaService!.schemaName)).to.be.undefined;
+                expect(resourcesRequiringSync.find(resource => resource.Resource === ySchemaService!.schemaName)).to.be.undefined;
+            });
+
+            it('get resources requiring sync pointing to current user not via accounts, expect to not get tables', async () => {
+                const pathData = getUsersPathData();
+                const getResourcesRequiringSyncParameters = buildGetResourcesRequiringSyncParameters(pathData, timeStampBeforeCreation, false);
+                const resourcesRequiringSync = await nebulatestService.getResourcesRequiringSync(getResourcesRequiringSyncParameters);
+
+                // Check that expected schemas are in response
+                expect(resourcesRequiringSync).to.not.be.undefined;
+                expect(resourcesRequiringSync.find(resource => resource.Resource === xSchemaService!.schemaName)).to.be.undefined;
+                expect(resourcesRequiringSync.find(resource => resource.Resource === ySchemaService!.schemaName)).to.be.undefined;
+            });
+
+            it('get resources requiring sync pointing to current user with Y table in path, expect to only get X table', async () => {
+                const pathData = getUsersPathData();
+                pathData!.ExcludedResources! = [];
+                pathData!.IncludedResources! = [ySchemaService!.schemaName!];
+                const getResourcesRequiringSyncParameters = buildGetResourcesRequiringSyncParameters(pathData, timeStampBeforeCreation, false);
+                const resourcesRequiringSync = await nebulatestService.getResourcesRequiringSync(getResourcesRequiringSyncParameters);
+
+                // Check that expected schemas are in response
+                expect(resourcesRequiringSync).to.not.be.undefined;
+                expect(resourcesRequiringSync.find(resource => resource.Resource === xSchemaService!.schemaName)).to.not.be.undefined;
+                expect(resourcesRequiringSync.find(resource => resource.Resource === ySchemaService!.schemaName)).to.be.undefined;
+            });
+
+            it('get resources requiring sync pointing to current user not via Y table, expect to only get Y table', async () => {
+                const pathData = getUsersPathData();
+                pathData!.ExcludedResources! = [ySchemaService!.schemaName!];
+                const getResourcesRequiringSyncParameters = buildGetResourcesRequiringSyncParameters(pathData, timeStampBeforeCreation, false);
+                const resourcesRequiringSync = await nebulatestService.getResourcesRequiringSync(getResourcesRequiringSyncParameters);
+
+                // Check that expected schemas are in response
+                expect(resourcesRequiringSync).to.not.be.undefined;
+                expect(resourcesRequiringSync.find(resource => resource.Resource === xSchemaService!.schemaName)).to.be.undefined;
+                expect(resourcesRequiringSync.find(resource => resource.Resource === ySchemaService!.schemaName)).to.not.be.undefined;
+            });
+
+            it('get resources requiring sync pointing to current with X table in path, expect to not get tables', async () => {
+                const pathData = getUsersPathData();
+                pathData!.ExcludedResources! = [];
+                pathData!.IncludedResources! = [xSchemaService!.schemaName!];
+                const getResourcesRequiringSyncParameters = buildGetResourcesRequiringSyncParameters(pathData, timeStampBeforeCreation, false);
+                const resourcesRequiringSync = await nebulatestService.getResourcesRequiringSync(getResourcesRequiringSyncParameters);
+
+                // Check that expected schemas are in response
+                expect(resourcesRequiringSync).to.not.be.undefined;
+                expect(resourcesRequiringSync.find(resource => resource.Resource === xSchemaService!.schemaName)).to.be.undefined;
+                expect(resourcesRequiringSync.find(resource => resource.Resource === ySchemaService!.schemaName)).to.be.undefined;
+            });
+
+            it('get resources requiring sync pointing to current user not via X table, expect to get both tables', async () => {
+                const pathData = getUsersPathData();
+                pathData!.ExcludedResources! = [xSchemaService!.schemaName!];
+                const getResourcesRequiringSyncParameters = buildGetResourcesRequiringSyncParameters(pathData, timeStampBeforeCreation, false);
+                const resourcesRequiringSync = await nebulatestService.getResourcesRequiringSync(getResourcesRequiringSyncParameters);
+
+                // Check that expected schemas are in response
+                expect(resourcesRequiringSync).to.not.be.undefined;
+                expect(resourcesRequiringSync.find(resource => resource.Resource === xSchemaService!.schemaName)).to.not.be.undefined;
+                expect(resourcesRequiringSync.find(resource => resource.Resource === ySchemaService!.schemaName)).to.not.be.undefined;
+            });
+
+            it('get resources requiring sync pointing to a different user, expect to not get tables', async () => {
+                // Get schemas that have the account in their path
+                const pathData = getUsersPathData();
+                pathData!.Destinations![0].Key = (await usersService.getNotCurrentUser()).UUID!;
+                const getResourcesRequiringSyncParameters = buildGetResourcesRequiringSyncParameters(pathData, timeStampBeforeCreation, false);
+                const resourcesRequiringSync = await nebulatestService.getResourcesRequiringSync(getResourcesRequiringSyncParameters);
+
+                // Check that expected schemas are in response
+                expect(resourcesRequiringSync).to.not.be.undefined;
+                expect(resourcesRequiringSync.find(resource => resource.Resource === xSchemaService!.schemaName)).to.be.undefined;
+                expect(resourcesRequiringSync.find(resource => resource.Resource === ySchemaService!.schemaName)).to.be.undefined;
+            });
+
+            it('get resources requiring sync pointing to account that points to current user, expect to get tables', async () => {
+                // Get schemas that have the account in their path
+                const pathData = getAccountPathData((await accountUsersService.getAccountPointingToCurrentUser()).UUID!);
+                const getResourcesRequiringSyncParameters = buildGetResourcesRequiringSyncParameters(pathData, timeStampBeforeCreation, false);
+                const resourcesRequiringSync = await nebulatestService.getResourcesRequiringSync(getResourcesRequiringSyncParameters);
+
+                // Check that expected schemas are in response
+                expect(resourcesRequiringSync).to.not.be.undefined;
+                expect(resourcesRequiringSync.find(resource => resource.Resource === xSchemaService!.schemaName)).to.not.be.undefined;
+                expect(resourcesRequiringSync.find(resource => resource.Resource === ySchemaService!.schemaName)).to.not.be.undefined;
+            });
+
+            it('get resources requiring sync pointing to account that points to a different user, expect to not get tables', async () => {
+                // Get schemas that have the account in their path
+                const pathData = getAccountPathData((await accountUsersService.getAccountNotPointingToCurrentUser()).UUID!);
+                const getResourcesRequiringSyncParameters = buildGetResourcesRequiringSyncParameters(pathData, timeStampBeforeCreation, false);
+                const resourcesRequiringSync = await nebulatestService.getResourcesRequiringSync(getResourcesRequiringSyncParameters);
+
+                // Check that expected schemas are in response
+                expect(resourcesRequiringSync).to.not.be.undefined;
+                expect(resourcesRequiringSync.find(resource => resource.Resource === xSchemaService!.schemaName)).to.be.undefined;
+                expect(resourcesRequiringSync.find(resource => resource.Resource === ySchemaService!.schemaName)).to.be.undefined;
+            });
+
+            it('trim path to Y table existent document, expect to get both tables', async () => {
+                // Get schemas that have the account in their path
+                const pathData = buildPathData([{
+                    Resource: ySchemaService!.schemaName!,
+                    Key: '1'
+                }]);
+                const getResourcesRequiringSyncParameters = buildGetResourcesRequiringSyncParameters(pathData, timeStampBeforeCreation, false);
+                const resourcesRequiringSync = await nebulatestService.getResourcesRequiringSync(getResourcesRequiringSyncParameters);
+
+                // Check that expected schemas are in response
+                expect(resourcesRequiringSync).to.not.be.undefined;
+                expect(resourcesRequiringSync.find(resource => resource.Resource === xSchemaService!.schemaName)).to.not.be.undefined;
+                expect(resourcesRequiringSync.find(resource => resource.Resource === ySchemaService!.schemaName)).to.not.be.undefined;
+            });
+
+            it('trim path to Y table non-existent document, expect to get only table Y', async () => {
+                // Get schemas that have the account in their path
+                const pathData = buildPathData([{
+                    Resource: ySchemaService!.schemaName!,
+                    Key: '2'
+                }]);
+                const getResourcesRequiringSyncParameters = buildGetResourcesRequiringSyncParameters(pathData, timeStampBeforeCreation, false);
+                const resourcesRequiringSync = await nebulatestService.getResourcesRequiringSync(getResourcesRequiringSyncParameters);
+
+                // Check that expected schemas are in response
+                expect(resourcesRequiringSync).to.not.be.undefined;
+                expect(resourcesRequiringSync.find(resource => resource.Resource === xSchemaService!.schemaName)).to.be.undefined;
+                expect(resourcesRequiringSync.find(resource => resource.Resource === ySchemaService!.schemaName)).to.not.be.undefined;
+            });
+            
+            it(`Cleanup Of All Inserted profiles/filters`, async () => {
+                const filter = getFilter();
+                await febulaService.deleteFilter(filter);
+
+                const profileFilter = getProfileFilter();
+                await febulaService.deleteProfileFilter(profileFilter);
+            });
+
+            it(`Cleanup Of All Inserted Data and print performance statistics`, async () => {
+                await cleanUp(resourceManager, performanceManager);
+            });
+
+        });
+
     });
 
 }
