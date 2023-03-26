@@ -1,9 +1,19 @@
 export type SystemFilterType = 'None' | 'User' | 'Account';
 
-export interface SystemFilter {
-    Type: SystemFilterType,
-    AccountUUID?: string
-};
+export interface PathDestination {
+    Resource: string;
+    Key: string;
+}
+
+export interface GetResourcesRequiringSyncParameters {
+    ModificationDateTime?: string;
+    IncludeDeleted?: boolean;
+    PathData?: {
+        Destinations?: PathDestination[]; // Describe where to trim the paths.
+        IncludedResources: string[]; // Resources that must be in the path
+        ExcludedResources: string[]; // Resources that must not be in the path
+    };
+}
 
 export interface GetResourcesRequiringSyncResponse {
     AddonUUID: string,
@@ -11,12 +21,6 @@ export interface GetResourcesRequiringSyncResponse {
     Hidden: boolean,
     Type: string,
     SyndData: any
-};
-
-export interface GetResourcesRequiringSyncParameters {
-    ModificationDateTime?: string,
-    IncludeDeleted?: boolean,
-    SystemFilter?: SystemFilter
 };
 
 export interface GetRecordsRequiringSyncResponse {
