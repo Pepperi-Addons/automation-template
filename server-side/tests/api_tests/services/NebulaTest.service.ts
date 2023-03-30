@@ -106,6 +106,15 @@ export class NebulaTestService {
     pnsUpdateSchemaHiddenStatus(addonUUID: string, resource: string, hiddenNewValue: boolean) {
         return;
     }
+
+    async pnsInsertProfileFilter(key: string) {
+        return;
+    }
+
+    async pnsInsertFilter(key: string) {
+       return;
+    }
+
     papiClient: PapiClient;
     routerClient: PapiClient;
     generalService: GeneralService;
