@@ -53,9 +53,10 @@ export class SyncFileService {
     private async uploadFileAndImport(body: any[], schemaName: string) {
         // convert to csv
         const csv = this.convertToCSV(body);
+        const buffer = Buffer.from(csv)
         let fileURL = await this.getFileToUpload();
         //upload Object To S3
-        await this.apiCall('PUT', fileURL.PresignedURL, csv).then((res) => res.text());
+        await this.apiCall('PUT', fileURL.PresignedURL, buffer).then((res) => res.text());
         console.log('successfully uploaded file')
         console.log(fileURL.URL)
         if (fileURL != undefined && fileURL.URL != undefined) {
@@ -99,7 +100,7 @@ export class SyncFileService {
             headers: { 'Content-Type':'text/csv' }
         };
         if (body) {
-            options.body = typeof body !== 'string' ? JSON.stringify(body) : body;
+            options.body = body;
         }
         const res = await fetch(url, options);
         if (!res.ok) {
