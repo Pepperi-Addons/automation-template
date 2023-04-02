@@ -216,12 +216,13 @@ function baseTester(it: any, expect, connector: Connector, generalService: Gener
         expect(diResponse, "Response array").to.be.an('array').with.lengthOf(2);
     })
 
-    // it("Get all documents that string_field doesn't end with \"Kimbell\" (using not)", async () => {
-    //     let diResponse = await connector.getDocuments({
-    //         where: "string_field not like '%Kimbell'"
-    //     });
-    //     expect(diResponse, "Response array").to.be.an('array').with.lengthOf(4);
-    // })
+    // DI-22093
+    it("Get all documents that string_field doesn't end with \"Kimbell\" (using not)", async () => {
+        let diResponse = await connector.getDocuments({
+            where: "string_field not like '%Kimbell'"
+        });
+        expect(diResponse, "Response array").to.be.an('array').with.lengthOf(4);
+    })
 
     it("Get all documents that int_field is greater then 4", async () => {
         let diResponse = await connector.getDocuments({
@@ -272,12 +273,13 @@ function baseTester(it: any, expect, connector: Connector, generalService: Gener
     //     expect(diResponse, "Response array").to.be.an('array').with.lengthOf(2);
     // })
 
-    // it("Get all documents that int_field not in list (using not in)", async () => {
-    //     let diResponse = await connector.getDocuments({
-    //         where: "int_field not in (1,3,5)"
-    //     });
-    //     expect(diResponse, "Response array").to.be.an('array').with.lengthOf(3);
-    // })
+    // DI-22092
+    it("Get all documents that int_field not in list (using not in)", async () => {
+        let diResponse = await connector.getDocuments({
+            where: "int_field not in (1,3,5)"
+        });
+        expect(diResponse, "Response array").to.be.an('array').with.lengthOf(3);
+    })
 
     it("Get all documents that string_field not in list (using not in)", async () => {
         let diResponse = await connector.getDocuments({
