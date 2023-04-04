@@ -67,7 +67,8 @@ export class SystemFilterService extends SyncAdalService {
                 }
             ],
             IncludedResources: account? ['accounts']: webapp? ['users'] : [],
-            ExcludedResources: account? ['users']: webapp? ['accounts'] : []
+            ExcludedResources: account? ['users']: webapp? ['accounts'] : [],
+            PermissionSet: "Sync"
         }
 
         return pathData
@@ -108,7 +109,8 @@ export class SystemFilterService extends SyncAdalService {
 export interface NebulaPathData{
     Destinations: NebulaDestination[],
     IncludedResources?: string[],
-    ExcludedResources?: string[]
+    ExcludedResources?: string[],
+    PermissionSet: "Sync"
 }
 
 export interface NebulaDestination{

@@ -28,7 +28,8 @@ import {
   WebappCommand,
   PushDataTimeCommand,
   UploadDataToSync,
-  FilesCommand
+  FilesCommand,
+  AdditionalFieldsCommand
 
 } from "..";
 
@@ -61,7 +62,8 @@ export class CommandFactory {
     PushDataTimeCommand: PushDataTimeCommand,
     UploadDataToSync:UploadDataToSync,
     CleanupCommand: CleanupCommand,
-    FilesCommand: FilesCommand
+    FilesCommand: FilesCommand,
+    AdditionalFieldsCommand: AdditionalFieldsCommand
   };
 
   static createCommand(type: string, syncAdalService: SyncAdalService, client: Client): TestCommand {
