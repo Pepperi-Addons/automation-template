@@ -27,7 +27,8 @@ import {
   ConnectAccountDelta,
   WebappCommand,
   PushDataTimeCommand,
-  UploadDataToSync
+  UploadDataToSync,
+  FilesCommand
 
 } from "..";
 
@@ -59,7 +60,8 @@ export class CommandFactory {
     WebappCommand: WebappCommand,
     PushDataTimeCommand: PushDataTimeCommand,
     UploadDataToSync:UploadDataToSync,
-    CleanupCommand: CleanupCommand
+    CleanupCommand: CleanupCommand,
+    FilesCommand: FilesCommand
   };
 
   static createCommand(type: string, syncAdalService: SyncAdalService, client: Client): TestCommand {

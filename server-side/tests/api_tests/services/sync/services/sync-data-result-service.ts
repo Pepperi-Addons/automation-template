@@ -26,5 +26,16 @@ export class SyncDataResult {
     getObjectsFromWACD(schemaName: string): any[] {
         return this.data.Resources.Data.find(resource => resource.MetaData[0].ExternalID.replace('CPI_Data_' + config.AddonUUID + '_', '') == schemaName).Data;
     }
+
+    getFilesURLS(){
+        const filesArray = this.data.Files.Data.map(file =>{
+            return file.URL
+        })
+        return filesArray
+    }
+
+    getFileDownload(fileURL: string){
+        return this.data.Files.Data.find(file => file.URL == fileURL).DownloadToWebApp;
+    }
     
 }

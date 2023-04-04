@@ -17,7 +17,7 @@ export class SyncFileService {
     syncDimxService: SyncDimxService
     auditLogService: AuditLogService
     isPFSSchemaCreated: Promise<any>
-    constructor(client: Client, papiClient: PapiClient){
+    constructor(client: Client, papiClient: PapiClient, private sync: boolean){
         this.papiClient = papiClient
         this.client = client
         this.syncDimxService = new SyncDimxService()
@@ -27,10 +27,13 @@ export class SyncFileService {
     private urlsToDownload: string[] = []
     private addonUUID = '02754342-e0b5-4300-b728-a94ea5e0e8f4'
 
-    createPFSSchema() {
+    createPFSSchema(sync: boolean = false) {
         return this.papiClient.addons.data.schemes.post({
             Type: "pfs",
             Name: PFS_TABLE_NAME,
+            SyncData: {
+                Sync: this.sync
+            }
         });
     }
     convertToCSV(body: any) {
@@ -38,6 +41,15 @@ export class SyncFileService {
         const rows = body.map(row => Object.values(row).join(','));
         return [header, ...rows].join('\n')
     }
+
+    async uploadFile(body: any, downloadToWebapp: boolean = false){
+        const fileURL = await this.getFileToUpload(downloadToWebapp);
+        const buffer = Buffer.from(body)
+        await this.apiCall('PUT', fileURL.PresignedURL, buffer).then((res) => res.text());
+        return fileURL.URL
+    }
+
+
     async uploadFilesAndImport(body: any, schemaName: string) {
         await this.isPFSSchemaCreated; // wait for the pfs schema to be created.
         const rowLimit = 300000;
@@ -79,11 +91,12 @@ export class SyncFileService {
             }
         }
     }
-    async getFileToUpload() {
+    async getFileToUpload(downloadToWebapp: boolean = false) {
         const url = `/addons/pfs/${this.addonUUID}/${PFS_TABLE_NAME}`
         let expirationDateTime = new Date();
         expirationDateTime.setDate(expirationDateTime.getDate() + 1);
         const body = {
+            "Sync": downloadToWebapp ? "Always" : "None",
             "Key": "/tempBulkAPI/" + uuid() + ".csv",
             "MIME": "text/csv",
             "ExpirationDateTime": expirationDateTime
@@ -116,5 +129,9 @@ export class SyncFileService {
 
     get filesToDownload(){
         return this.urlsToDownload
+    }
+    
+    async uploadAsset(body: string){
+        return await this.papiClient.post('/assets',body)
     }
 }

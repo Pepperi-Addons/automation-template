@@ -119,7 +119,11 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
       {
         name: 'PushDataTimeCommand',
         command: CommandFactory.createCommand('PushDataTimeCommand', syncAdalService, client)
-      },       
+      },     
+      {
+        name: 'FilesCommand',
+        command: CommandFactory.createCommand('FilesCommand', syncAdalService, client)
+      },  
       {
         name: 'CleanupCommand',
         command: CommandFactory.createCommand('CleanupCommand', syncAdalService, client)
