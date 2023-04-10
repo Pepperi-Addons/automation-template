@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { Connector, validateOrderOfResponseBySpecificField } from './services/DataIndex.service';
-import { PapiClient } from '@pepperi-addons/papi-sdk';
+import { PapiClient, SearchBody } from '@pepperi-addons/papi-sdk';
 //00000000-0000-0000-0000-00000e1a571c
 import { DataIndexService } from "./services/DataIndex.service";
 import { GeneralService, TesterFunctions } from 'test_infra';
@@ -9,7 +9,7 @@ import { GeneralService, TesterFunctions } from 'test_infra';
 
 
 export async function DataIndex(generalService: GeneralService, addonService: GeneralService, request, tester: TesterFunctions) {
-    const dataObj = request.body.Data; // the 'Data' object passsed inside the http request sent to start the test -- put all the data you need here
+    const dataObj = request.body.Data; // the 'Data' object passed inside the http request sent to start the test -- put all the data you need here
     const service = new DataIndexService(generalService, addonService.papiClient, dataObj);
     const describe = tester.describe;
     const expect = tester.expect;
@@ -216,12 +216,13 @@ function baseTester(it: any, expect, connector: Connector, generalService: Gener
         expect(diResponse, "Response array").to.be.an('array').with.lengthOf(2);
     })
 
-    // it("Get all documents that string_field doesn't end with \"Kimbell\" (using not)", async () => {
-    //     let diResponse = await connector.getDocuments({
-    //         where: "string_field not like '%Kimbell'"
-    //     });
-    //     expect(diResponse, "Response array").to.be.an('array').with.lengthOf(4);
-    // })
+    // DI-22093
+    it("Get all documents that string_field doesn't end with \"Kimbell\" (using not)", async () => {
+        let diResponse = await connector.getDocuments({
+            where: "string_field not like '%Kimbell'"
+        });
+        expect(diResponse, "Response array").to.be.an('array').with.lengthOf(4);
+    })
 
     it("Get all documents that int_field is greater then 4", async () => {
         let diResponse = await connector.getDocuments({
@@ -272,12 +273,13 @@ function baseTester(it: any, expect, connector: Connector, generalService: Gener
     //     expect(diResponse, "Response array").to.be.an('array').with.lengthOf(2);
     // })
 
-    // it("Get all documents that int_field not in list (using not in)", async () => {
-    //     let diResponse = await connector.getDocuments({
-    //         where: "int_field not in (1,3,5)"
-    //     });
-    //     expect(diResponse, "Response array").to.be.an('array').with.lengthOf(3);
-    // })
+    // DI-22092
+    it("Get all documents that int_field not in list (using not in)", async () => {
+        let diResponse = await connector.getDocuments({
+            where: "int_field not in (1,3,5)"
+        });
+        expect(diResponse, "Response array").to.be.an('array').with.lengthOf(3);
+    })
 
     it("Get all documents that string_field not in list (using not in)", async () => {
         let diResponse = await connector.getDocuments({
@@ -296,11 +298,30 @@ function baseTester(it: any, expect, connector: Connector, generalService: Gener
 
     // DI-21958
     it("Validate that strings are mapped as keywords (by doing aggregations on them)", async () => {
-        let diResponse = await connector.searchByDSL({
+        let diResponse = await connector.search({
             "aggs": {
                 "my-agg-name": {
                     "terms": {
                         "field": "name.first"
+                    }
+                }
+            }
+        });
+        expect(diResponse, "Raw response").to.have.property("aggregations");
+        expect(diResponse["aggregations"], "Response aggregations").to.have.property("my-agg-name");
+        expect(diResponse["aggregations"]["my-agg-name"], "Response specific aggregation").to.have.property("buckets");
+        expect(diResponse["aggregations"]["my-agg-name"]["buckets"], "Response buckets").to.be.an('array').with.lengthOf(3);
+    })
+
+    // DI-22639
+    it("Validate that DSL queries can be sent wrapped in a property called \"DSL\"", async () => {
+        let diResponse = await connector.search({
+            DSL: {
+                "aggs": {
+                    "my-agg-name": {
+                        "terms": {
+                            "field": "name.first"
+                        }
                     }
                 }
             }
@@ -340,6 +361,51 @@ function baseTester(it: any, expect, connector: Connector, generalService: Gener
         });
         expect(diResponse, "Response array").to.be.an('array').with.lengthOf(1);
     })
+
+    // DI-22639
+    it("Search for a specific document using the \"search\" endpoint", async () => {
+        let diResponse = await connector.search({
+            Where: "name.first='Alex'"
+        });
+        expect(diResponse, "Response body").to.be.an('object').with.property("Objects");
+        expect(diResponse["Objects"], "Response array").to.be.an('array').with.lengthOf(1);
+        expect(diResponse["Objects"][0], "Response first result").to.be.an('object').with.property("name.first").to.equal("Alex");
+        // DI-22614: Validate response doesn't include ElasticSearchType
+        expect(diResponse["Objects"][0], "Response first result").to.be.an('object').not.with.property("ElasticSearchType");
+    })
+
+    it("Search for documents using the \"search\" endpoint passing anything but \"Where\"", async () => {
+        let searchBody: SearchBody & { OrderBy?: string } = {
+            Fields: ["name.first", "name.last", "string_field", "bool_field"],
+            Page: 2,
+            PageSize: 2,
+            IncludeCount: true,
+            OrderBy: "int_field"
+        };
+        let diResponse = await connector.search(searchBody);
+        expect(diResponse, "Response body").to.be.an('object').with.property("Objects");
+        expect(diResponse, "Response body").to.be.an('object').with.property("Count").to.equal(6);
+        expect(diResponse["Objects"], "Response array").to.be.an('array').with.lengthOf(2);
+        expect(diResponse["Objects"][0], "Response first result").to.be.an('object').to.include.all.keys("name.first", "name.last", "string_field", "bool_field");
+    })
+
+    if (connector.isShared()) {
+        // DI-22614
+        it("Search documents using the \"search\" endpoint and get ElasticSearchType", async () => {
+            let searchBody: SearchBody & { OrderBy?: string } = {
+                Fields: ["name.first", "name.last", "string_field", "bool_field", "ElasticSearchType"],
+                Page: 2,
+                PageSize: 2,
+                IncludeCount: true,
+                OrderBy: "int_field"
+            };
+            let diResponse = await connector.search(searchBody);
+            expect(diResponse, "Response body").to.be.an('object').with.property("Objects");
+            expect(diResponse, "Response body").to.be.an('object').with.property("Count").to.equal(6);
+            expect(diResponse["Objects"], "Response array").to.be.an('array').with.lengthOf(2);
+            expect(diResponse["Objects"][0], "Response first result").to.be.an('object').to.include.all.keys("name.first", "name.last", "string_field", "bool_field", "ElasticSearchType");
+        })
+    }
 
     it(`Index Purge`, async () => {
         await connector.purgeSchema();
