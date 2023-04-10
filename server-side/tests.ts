@@ -1,6 +1,6 @@
 import { Client } from '@pepperi-addons/debug-server';
 import { TesterFunctions } from 'test_infra';
-import { runTest } from './tests_functions';
+import { mapUuidToTestName, runTest } from './tests_functions';
 
 // import { runTest } from './potentialQA_SDK/tests_functions';
 
@@ -13,6 +13,12 @@ import { runTest } from './tests_functions';
  */
 export async function run(client: Client, request: any, testerFunctions: TesterFunctions) {
     const testedAddonUUID = request.body.AddonUUID;// this is the UUID of tested addon passed inside body
-    console.log(`asked to run ${testedAddonUUID} tests`);
-    return (await runTest(testedAddonUUID, client, request, testerFunctions));
+    const nameOfTest = request.body.TestName;// this is the UUID of tested addon passed inside body
+    console.log(`asked to run ${testedAddonUUID} test: ${nameOfTest ? nameOfTest : "ALL"}`);
+    return (await runTest(testedAddonUUID, nameOfTest, client, request, testerFunctions));
+}
+
+export async function which_tests_for_addonUUID(client: Client, request: any, testerFunctions: TesterFunctions) {
+    const addonUUID = request.body.AddonUUID;// this is the UUID of tested addon passed inside body
+    return (mapUuidToTestName(addonUUID));
 }

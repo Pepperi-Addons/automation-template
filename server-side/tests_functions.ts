@@ -9,7 +9,7 @@ import { UsersTests } from './tests/api_tests/Users.example.test';
 import { DimxTests } from './tests/api_tests/DimxTests.test';
 import { AddonUUID as AddonUUIDFromAddonConfig } from '../addon.config.json'; // TODO: remove, part of a temporarily fix
 import { GeneralService, TesterFunctions } from 'test_infra';
-import {TestDataTests} from './tests/api_tests/test_data';
+import { TestDataTests } from './tests/api_tests/test_data';
 import { SyncTests } from './tests/api_tests/SyncTests.test';
 
 
@@ -17,14 +17,20 @@ import { SyncTests } from './tests/api_tests/SyncTests.test';
 let testName = '';
 let context = {};
 
-export async function runTest(addonUUID: string, client: Client, request, testerFunctions: TesterFunctions) {
-    debugger;
+export async function runTest(addonUUID: string, nameOfTest: string, client: Client, request, testerFunctions: TesterFunctions) {
+    let functionNames;
     if (addonUUID.length !== 36) {
         throw new Error(`Error: ${addonUUID} Is Not A Valid Addon UUID`);
     }
-    const functionNames = mapUuidToTestName(addonUUID);
-    if (functionNames.length === 0) {
-        throw new Error(`Error: No Test For Addon UUID ${addonUUID} Is Existing`);
+    if (nameOfTest === undefined) {
+        functionNames = mapUuidToTestName(addonUUID);
+        if (functionNames.length === 0) {
+            throw new Error(`Error: No Test For Addon UUID ${addonUUID} Is Existing`);
+        }
+    } else {
+        if (!doWeHaveSuchTest(nameOfTest)) {
+            throw new Error(`Error: No Such Test ${nameOfTest} Is Existing`);
+        }
     }
     if (request.body.isLocal === undefined) {
         throw new Error("Error: isLocal is Mandatory Field Inside Test Request Body");
@@ -34,14 +40,20 @@ export async function runTest(addonUUID: string, client: Client, request, tester
     if (request.body.isLocal === "true") {
         addonService.BaseURL = "http://localhost:4500";
     }
-    let testsResult: any[] = [];
-    for (let index = 0; index < functionNames.length; index++) {
-        testsResult.push(await context[functionNames[index]].apply(this, [client, addonService, request, testerFunctions]));
+    if (nameOfTest) {
+        let testsResult;
+        testsResult = (await context[nameOfTest].apply(this, [client, addonService, request, testerFunctions]));
+        return testsResult;
+    } else {
+        let testsResult: any[] = [];
+        for (let index = 0; index < functionNames.length; index++) {
+            testsResult.push(await context[functionNames[index]].apply(this, [client, addonService, request, testerFunctions]));
+        }
+        return testsResult;
     }
-    return testsResult;
 }
 
-function mapUuidToTestName(addonUUID: string): string[] {
+export function mapUuidToTestName(addonUUID: string): string[] {
     let allAddonMatchingNames: string[] = [];
     let addonUUIDMapper = JsonMapper;
     for (let [key, value] of Object.entries(addonUUIDMapper)) {
@@ -50,6 +62,16 @@ function mapUuidToTestName(addonUUID: string): string[] {
         }
     }
     return allAddonMatchingNames;
+}
+
+export function doWeHaveSuchTest(testName: string): boolean {
+    let addonUUIDMapper = JsonMapper;
+    for (let [key, value] of Object.entries(addonUUIDMapper)) {
+        if (camelToSnakeCase(key) === testName) {
+            return true;
+        }
+    }
+    return false;
 }
 
 function camelToSnakeCase(str) {
@@ -123,7 +145,7 @@ export async function sync_tests(client: Client, addonClient: Client, request: R
     testName = 'SyncTests'; //printing your test name - done for logging
     service.PrintMemoryUseToLog('Start', testName);
     testerFunctions = service.initiateTesterFunctions(client, testName);
-    await SyncTests(service, serviceAddon, request,testerFunctions)
+    await SyncTests(service, serviceAddon, request, testerFunctions)
     return (await testerFunctions.run());
 };
 context["sync_tests"] = sync_tests;
