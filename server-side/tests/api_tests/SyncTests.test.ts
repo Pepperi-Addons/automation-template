@@ -24,102 +24,102 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
     // Note: CleanRebuild and CleanupCommand are not part of the tests
     // just an hack to make sure that nebula will work
     let tests: Test[] = [
-      // {
-      //   name: 'CleanRebuild',
-      //   command: CommandFactory.createCommand('CleanRebuild', syncAdalService, client)
-      // },
-      // {
-      //   name: 'SchemaExistsTest',
-      //   command: CommandFactory.createCommand('SchemaExistsTest', syncAdalService, client)
-      // },
-      // {
-      //   name: 'FutureDateCommand',
-      //   command: CommandFactory.createCommand('FutureDateCommand', syncAdalService, client)
-      // },
-      // {
-      //   name: 'ReturnURLCommand',
-      //   command: CommandFactory.createCommand('ReturnURLCommand', syncAdalService, client)
-      // },
-      // {
-      //   name: 'WACDCommand',
-      //   command: CommandFactory.createCommand('WACDCommand', syncAdalService, client)
-      // },
-      // {
-      //   name: 'PapiConnectAccountCommand',
-      //   command: CommandFactory.createCommand('PapiConnectAccountCommand', syncAdalService, client)
-      // },
-      // {
-      //   name: 'SystemFilterNone',
-      //   command: CommandFactory.createCommand('SystemFilterNone',syncAdalService,client)
-      // },
-      // {
-      //   name: 'SystemFilterAccount',
-      //   command: CommandFactory.createCommand('SystemFilterAccount',syncAdalService,client)
-      // },
-      // {
-      //   name: 'SystemFilterUser',
-      //   command: CommandFactory.createCommand('SystemFilterUser',syncAdalService,client)
-      // },
-      // {
-      //   name: 'DeltaTestCommand',
-      //   command: CommandFactory.createCommand('DeltaTestCommand', syncAdalService, client)
-      // },
-      // {
-      //   name: 'ResyncCommand',
-      //   command: CommandFactory.createCommand('ResyncCommand', syncAdalService, client)
-      // },
-      // {
-      //   name: 'HundredRecordsCommand',
-      //   command: CommandFactory.createCommand('HundredRecordsCommand', syncAdalService, client)
-      // },
-      // {
-      //   name: 'ThousandRecordsCommand',
-      //   command: CommandFactory.createCommand('ThousandRecordsCommand', syncAdalService, client)
-      // },
-      // {
-      //   name: 'TenThousandRecordsCommand',
-      //   command: CommandFactory.createCommand('TenThousandRecordsCommand', syncAdalService, client)
-      // },
-      // {
-      //   name: 'PushDataCommand',
-      //   command: CommandFactory.createCommand('PushDataCommand', syncAdalService, client)
-      // },
-      // {
-      //   name: 'PushBigDataCommand',
-      //   command: CommandFactory.createCommand('PushBigDataCommand', syncAdalService, client)
-      // },
-      // {
-      //   name: 'WACDPushDataCommand',
-      //   command: CommandFactory.createCommand('WACDPushDataCommand', syncAdalService, client)
-      // },
-      // {
-      //   name: 'RecordSizeHundredCommand',
-      //   command: CommandFactory.createCommand('RecordSizeHundredCommand', syncAdalService, client)
-      // },
-      // {
-      //   name: 'RecordSizeThousandCommand',
-      //   command: CommandFactory.createCommand('RecordSizeThousandCommand', syncAdalService, client)
-      // },
-      // {
-      //   name: 'RecordSizeTenThousandCommand',
-      //   command: CommandFactory.createCommand('RecordSizeTenThousandCommand', syncAdalService, client)
-      // },
-      // {
-      //   name: 'RecordSizeHundredThousandCommand',
-      //   command: CommandFactory.createCommand('RecordSizeHundredThousandCommand', syncAdalService, client)
-      // }, 
-      // {
-      //   name: 'ConnectAccountDelta',
-      //   command: CommandFactory.createCommand('ConnectAccountDelta', syncAdalService, client)
-      // }, 
-      // {
-      //   name: 'WebappCommand',
-      //   command: CommandFactory.createCommand('WebappCommand', syncAdalService, client)
-      // }, 
-      // {
-      //   name: 'PushDataTimeCommand',
-      //   command: CommandFactory.createCommand('PushDataTimeCommand', syncAdalService, client)
-      // },       
+      {
+        name: 'CleanRebuild',
+        command: CommandFactory.createCommand('CleanRebuild', syncAdalService, client)
+      },
+      {
+        name: 'SchemaExistsTest',
+        command: CommandFactory.createCommand('SchemaExistsTest', syncAdalService, client)
+      },
+      {
+        name: 'FutureDateCommand',
+        command: CommandFactory.createCommand('FutureDateCommand', syncAdalService, client)
+      },
+      {
+        name: 'ReturnURLCommand',
+        command: CommandFactory.createCommand('ReturnURLCommand', syncAdalService, client)
+      },
+      {
+        name: 'WACDCommand',
+        command: CommandFactory.createCommand('WACDCommand', syncAdalService, client)
+      },
+      {
+        name: 'PapiConnectAccountCommand',
+        command: CommandFactory.createCommand('PapiConnectAccountCommand', syncAdalService, client)
+      },
+      {
+        name: 'SystemFilterNone',
+        command: CommandFactory.createCommand('SystemFilterNone',syncAdalService,client)
+      },
+      {
+        name: 'SystemFilterAccount',
+        command: CommandFactory.createCommand('SystemFilterAccount',syncAdalService,client)
+      },
+      {
+        name: 'SystemFilterUser',
+        command: CommandFactory.createCommand('SystemFilterUser',syncAdalService,client)
+      },
+      {
+        name: 'DeltaTestCommand',
+        command: CommandFactory.createCommand('DeltaTestCommand', syncAdalService, client)
+      },
+      {
+        name: 'ResyncCommand',
+        command: CommandFactory.createCommand('ResyncCommand', syncAdalService, client)
+      },
+      {
+        name: 'HundredRecordsCommand',
+        command: CommandFactory.createCommand('HundredRecordsCommand', syncAdalService, client)
+      },
+      {
+        name: 'ThousandRecordsCommand',
+        command: CommandFactory.createCommand('ThousandRecordsCommand', syncAdalService, client)
+      },
+      {
+        name: 'TenThousandRecordsCommand',
+        command: CommandFactory.createCommand('TenThousandRecordsCommand', syncAdalService, client)
+      },
+      {
+        name: 'PushDataCommand',
+        command: CommandFactory.createCommand('PushDataCommand', syncAdalService, client)
+      },
+      {
+        name: 'PushBigDataCommand',
+        command: CommandFactory.createCommand('PushBigDataCommand', syncAdalService, client)
+      },
+      {
+        name: 'WACDPushDataCommand',
+        command: CommandFactory.createCommand('WACDPushDataCommand', syncAdalService, client)
+      },
+      {
+        name: 'RecordSizeHundredCommand',
+        command: CommandFactory.createCommand('RecordSizeHundredCommand', syncAdalService, client)
+      },
+      {
+        name: 'RecordSizeThousandCommand',
+        command: CommandFactory.createCommand('RecordSizeThousandCommand', syncAdalService, client)
+      },
+      {
+        name: 'RecordSizeTenThousandCommand',
+        command: CommandFactory.createCommand('RecordSizeTenThousandCommand', syncAdalService, client)
+      },
+      {
+        name: 'RecordSizeHundredThousandCommand',
+        command: CommandFactory.createCommand('RecordSizeHundredThousandCommand', syncAdalService, client)
+      }, 
+      {
+        name: 'ConnectAccountDelta',
+        command: CommandFactory.createCommand('ConnectAccountDelta', syncAdalService, client)
+      }, 
+      {
+        name: 'WebappCommand',
+        command: CommandFactory.createCommand('WebappCommand', syncAdalService, client)
+      }, 
+      {
+        name: 'PushDataTimeCommand',
+        command: CommandFactory.createCommand('PushDataTimeCommand', syncAdalService, client)
+      },       
       {
         name: 'CleanupCommand',
         command: CommandFactory.createCommand('CleanupCommand', syncAdalService, client)
