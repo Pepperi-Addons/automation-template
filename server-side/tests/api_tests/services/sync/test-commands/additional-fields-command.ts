@@ -61,7 +61,8 @@ export class AdditionalFieldsCommand extends BaseCommand {
         const schemes = await this.syncDataResult.getSchemes()
         expect(schemes).to.contain(this.adalService?.schemaName)
         const objects = this.syncDataResult.getObjects(this.adalService?.schemaName!)
-        expect(objects).to.be.lengthOf(1).and.to.contain.keys('User_Field')
+        expect(objects).to.be.lengthOf(1)
+        expect(objects[0]).to.contain.keys('User_Field')
     }
     
     async cleanup(): Promise<any> {
