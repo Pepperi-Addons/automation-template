@@ -3,6 +3,7 @@ export const JsonMapper = {
 	"SchemaExtensions":"00000000-0000-0000-0000-00000000ada1",
 	"DimxTests":"44c97115-6d14-4626-91dc-83f176e9a0fc",
 	"NebulaTest":"00000000-0000-0000-0000-000000006a91",
+	"NebulaTestPart2":"00000000-0000-0000-0000-000000006a91",
 	"NebulaInternalTest":"00000000-0000-0000-0000-000000006a91",
 	"DataIndexWhereClause":"00000000-0000-0000-0000-00000e1a571c",
 	"templateLine":"Template"

@@ -1,5 +1,6 @@
 import { DataIndex } from './tests/api_tests/DataIndex.test';
 import { NebulaTest } from './tests/api_tests/NebulaTest.test';
+import { NebulaTestPart2 } from './tests/api_tests/NebulaTestPart2.test';
 import { NebulaInternalTest } from './tests/api_tests/NebulaInternalTest.test';
 
 import { SchemaExtensions } from './tests/api_tests/SchemaExtensions.test';
@@ -142,6 +143,18 @@ export async function nebula_test(client: Client, addonClient: Client, request: 
 };
 context["nebula_test"] = nebula_test;
 
+export async function nebula_test_part_2(client: Client, addonClient: Client, request: Request, testerFunctions: TesterFunctions) {
+    const service = new GeneralService(client);
+    const serviceAddon = new GeneralService(addonClient);
+    testName = 'NebulaTest'; //printing your test name - done for logging
+    service.PrintMemoryUseToLog('Start', testName);
+    testerFunctions = service.initiateTesterFunctions(client, testName);
+    await NebulaTestPart2(service, serviceAddon, request, testerFunctions);//this is the call to YOUR test function
+    await test_data(client, testerFunctions);//this is done to print versions at the end of test - can be deleted
+    return (await testerFunctions.run());
+};
+context["nebula_test_part_2"] = nebula_test_part_2;
+
 export async function nebula_internal_test(client: Client, addonClient: Client, request: Request, testerFunctions: TesterFunctions) {
     const service = new GeneralService(client);
     const serviceAddon = new GeneralService(addonClient);
@@ -153,4 +166,3 @@ export async function nebula_internal_test(client: Client, addonClient: Client, 
     return (await testerFunctions.run());
 };
 context["nebula_internal_test"] = nebula_internal_test;
-
