@@ -16,7 +16,7 @@ export class SystemFilterService extends SyncAdalService {
   
     generateScheme(type: 'User' | 'Account' | 'None'){
         const syncSchema:AddonDataScheme = {
-            Name: this.generateScehmaName(`_${type.toLowerCase()}`),
+            Name: this.generateScehmaName(`_${ this.constructor.name}_${type.toLowerCase()}`),
             Type: "data",
             Fields: this.generateSchemaField(type),
             SyncData: {
@@ -67,7 +67,8 @@ export class SystemFilterService extends SyncAdalService {
                 }
             ],
             IncludedResources: account? ['accounts']: webapp? ['users'] : [],
-            ExcludedResources: account? ['users']: webapp? ['accounts'] : []
+            ExcludedResources: account? ['users']: webapp? ['accounts'] : [],
+            PermissionSet: "Sync"
         }
 
         return pathData
@@ -108,7 +109,8 @@ export class SystemFilterService extends SyncAdalService {
 export interface NebulaPathData{
     Destinations: NebulaDestination[],
     IncludedResources?: string[],
-    ExcludedResources?: string[]
+    ExcludedResources?: string[],
+    PermissionSet: "Sync"
 }
 
 export interface NebulaDestination{
