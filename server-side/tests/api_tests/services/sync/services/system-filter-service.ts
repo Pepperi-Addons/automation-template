@@ -72,18 +72,6 @@ export class SystemFilterService extends SyncAdalService {
         }
 
         return pathData
-
-        // let Type = account ? 'Account' : webapp? 'User' : 'None'
-        // let SystemFilter = {
-        //     SystemFilter: {
-        //         Type: Type 
-        //     }
-        // }
-        // if(account && !accountUUID){
-        //     throw new Error('Account must have Account UUID')
-        // }
-        // account ? SystemFilter.SystemFilter["AccountUUID"] = accountUUID : undefined
-        // return SystemFilter
     }
 
     generateSchemaField(type: 'User' | 'Account' | 'None'){

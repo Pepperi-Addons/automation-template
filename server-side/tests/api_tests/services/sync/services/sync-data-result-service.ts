@@ -31,11 +31,11 @@ export class SyncDataResult {
         return this.data.Resources.Data.find(resource => resource.MetaData[0].ExternalID.replace('CPI_Data_' + config.AddonUUID + '_', '') == schemaName).Data;
     }
 
-    getFilesURLS(){
-        const filesArray = this.data.Files.Data.map(file =>{
-            return file.URL
+    getFile(fileURL){
+        const file = this.data.Files.Data.filter(file =>{
+            return file.URL == fileURL
         })
-        return filesArray
+        return file[0]
     }
 
     getFileDownload(fileURL: string){
