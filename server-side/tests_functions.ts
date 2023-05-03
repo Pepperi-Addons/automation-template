@@ -76,7 +76,9 @@ export function doWeHaveSuchTest(testName: string): boolean {
 }
 
 function camelToSnakeCase(str) {
-    return (str.split(/(?=[A-Z])/).join('_').toLowerCase());
+    const camel1 = str.split(/(?=[A-Z])/).join('_').toLowerCase();
+    const camel2 = camel1.split(/(?=[0-9])/).join('_').toLowerCase();
+    return camel2;
 }
 
 // this function is infra function to print addon versions - DO NOT TOUCH

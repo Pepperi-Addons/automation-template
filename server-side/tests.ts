@@ -18,7 +18,7 @@ export async function run(client: Client, request: any, testerFunctions: TesterF
     return (await runTest(testedAddonUUID, nameOfTest, client, request, testerFunctions));
 }
 
-export async function which_tests_for_addonUUID(client: Client, request: any, testerFunctions: TesterFunctions) {
+export async function which_tests_for_addonUUID(_, request: any, __) {
     const addonUUID = request.body.AddonUUID;// this is the UUID of tested addon passed inside body
     return (mapUuidToTestName(addonUUID));
 }
