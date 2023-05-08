@@ -30,6 +30,16 @@ export async function DataIndex(generalService: GeneralService, addonService: Ge
         let connector2 = service.indexType("inherit2");
         abstractTester(it, expect, connector1, connector2, generalService);
     });
+
+    describe('Index Reindex Mechanism Tests:', async () => {
+        let connector = service.indexType("regular");
+        reindexTester(it, expect, connector, generalService);
+    });
+
+    describe('Shared-Index Reindex Mechanism Tests:', async () => {
+        let connector = service.indexType("shared");
+        reindexTester(it, expect, connector, generalService);
+    });
 }
 
 function baseTester(it: any, expect, connector: Connector, generalService: GeneralService) {
@@ -151,7 +161,7 @@ function baseTester(it: any, expect, connector: Connector, generalService: Gener
                 "name.last": "Kimbell"
             }
         ]);
-        generalService.sleep(5000);
+        // generalService.sleep(5000);
     })
 
     it("Get all documents ordered by Key", async () => {
@@ -352,7 +362,7 @@ function baseTester(it: any, expect, connector: Connector, generalService: Gener
             "name.first": "Alex",
             "name.last": "Holland"
         });
-        generalService.sleep(5000);
+        // generalService.sleep(5000);
     })
 
     it("Get document by first name after update (validate that update of reference works)", async () => {
@@ -540,7 +550,7 @@ function abstractTester(it: any, expect: Chai.ExpectStatic, connector1: Connecto
                 ElasticSearchSuperTypes: ["abstarcSchemaName"]
             }
         ]);
-        generalService.sleep(5000);
+        // generalService.sleep(5000);
     });
 
     // DI-21565 + Tests bug DI-22195
@@ -570,5 +580,107 @@ function abstractTester(it: any, expect: Chai.ExpectStatic, connector1: Connecto
     it(`Schemas Purge`, async () => {
         await connector1.purgeSchema();
         await connector2.purgeSchema();
+    });
+}
+
+function reindexTester(it: any, expect: Chai.ExpectStatic, connector: Connector, generalService: GeneralService) {
+    it(`Index Creation`, async () => {
+        await connector.upsertSchema({
+            "Fields": {
+                "multiPurposeField": {
+                    "Type": "String",
+                    "Indexed": true
+                },
+                "int_field": {
+                    "Type": "Integer",
+                    "Indexed": true
+                }
+            }
+        });
+    });
+
+    it(`Create Documents`, async () => {
+        await connector.batchUpsertDocuments([
+            {
+                Key: "1",
+                multiPurposeField: "Susann Renato",
+                int_field: 6
+            },
+            {
+                Key: "2",
+                multiPurposeField: "Jessika Renato",
+                int_field: 4
+            },
+            {
+                Key: "3",
+                multiPurposeField: "Jessika Silvano",
+                int_field: 2
+            }
+        ]);
+    });
+
+    it(`Index Modification (removal of multiPurposeField of type String)`, async () => {
+        await connector.upsertSchema({
+            "Fields": {
+                "int_field": {
+                    "Type": "Integer",
+                    "Indexed": true
+                }
+            }
+        });
+    });
+
+    it(`Reindex`, async () => {
+        await connector.reindex();
+    });
+
+    it(`Index Modification (addition of multiPurposeField of type Integer)`, async () => {
+        await connector.upsertSchema({
+            "Fields": {
+                "multiPurposeField": {
+                    "Type": "Integer",
+                    "Indexed": true
+                },
+                "int_field": {
+                    "Type": "Integer",
+                    "Indexed": true
+                }
+            }
+        });
+    });
+
+    it(`Update Documents`, async () => {
+        await connector.batchUpsertDocuments([
+            {
+                Key: "1",
+                multiPurposeField: "3"
+            },
+            {
+                Key: "2",
+                multiPurposeField: "2"
+            },
+            {
+                Key: "3",
+                multiPurposeField: "1"
+            }
+        ]);
+    });
+
+    it("Get all documents ordered by Key", async () => {
+        let diResponse = await connector.getDocuments({
+            order_by: "Key"
+        });
+        expect(diResponse, "Response array").to.be.an('array').with.lengthOf(6);
+        validateOrderOfResponseBySpecificField(diResponse, "Key");
+        expect(diResponse[0], "First result").to.have.a.property("multiPurposeField").that.is.eq("3");
+        expect(diResponse[0], "First result").to.have.a.property("int_field").that.is.eq(6);
+        expect(diResponse[1], "Second result").to.have.a.property("multiPurposeField").that.is.eq("2");
+        expect(diResponse[1], "Second result").to.have.a.property("int_field").that.is.eq(4);
+        expect(diResponse[2], "Third result").to.have.a.property("multiPurposeField").that.is.eq("1");
+        expect(diResponse[2], "Third result").to.have.a.property("int_field").that.is.eq(2);
+    })
+
+    it(`Schemas Purge`, async () => {
+        await connector.purgeSchema();
     });
 }
