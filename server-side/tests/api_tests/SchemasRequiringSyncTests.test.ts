@@ -23,7 +23,6 @@ export async function SchemasRequiringSyncTests(generalService: GeneralService, 
 
     const automationAddonUUID = "02754342-e0b5-4300-b728-a94ea5e0e8f4";
     const CORE_RESOURCES_UUID = 'fc5a5974-3b30-4430-8feb-7d5b9699bc9f';
-    const CORE_UUID = '00000000-0000-0000-0000-00000000c07e';
     const usersService = new UsersService(generalService.papiClient);
     const accountUsersService = new AccountUsersService(generalService.papiClient);
 
@@ -227,8 +226,9 @@ export async function SchemasRequiringSyncTests(generalService: GeneralService, 
                 await nebulatestService.waitForPNS();
             });
 
+            let accountUUID = '';
             it('Preparations - upsert documents into table pointing to accounts.', async () => {
-                const accountUUID = await getAnAccountUUID();
+                accountUUID = (await accountUsersService.getAccountPointingToCurrentUser()).UUID!;//await getAnAccountUUID();
                 const accountDocuments: AddonData[] = [{
                     Key: '1',
                     field1: accountUUID
@@ -252,7 +252,7 @@ export async function SchemasRequiringSyncTests(generalService: GeneralService, 
 
             it('System filter type "Account", expect to get table pointing to accounts and not users', async () => {
                 // Get schemas that have the account in their path
-                const filter = buildSystemFilter('Account');
+                const filter = buildSystemFilter('Account', accountUUID);
                 const getResourcesRequiringSyncParameters = buildGetResourcesRequiringSyncParameters(timeStampBeforeCreation, false, filter);
                 const resourcesRequiringSync = await nebulatestService.getResourcesRequiringSync(getResourcesRequiringSyncParameters);
 
@@ -375,7 +375,7 @@ export async function SchemasRequiringSyncTests(generalService: GeneralService, 
                 await nebulatestService.waitForPNS();
             });
 
-            it('Preparations - upsert a document that points an account which does not point to current user.', async () => {
+            it('Preparations - upsert a document that points to an account which does not point to current user.', async () => {
                 const accountDocuments: AddonData[] = [{
                     Key: '1',
                     field1: (await accountUsersService.getAccountNotPointingToCurrentUser()).UUID
