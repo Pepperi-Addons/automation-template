@@ -7,5 +7,6 @@ export const JsonMapper = {
 	"NebulaTestPart2":"00000000-0000-0000-0000-000000006a91",
 	"NebulaInternalTest":"00000000-0000-0000-0000-000000006a91",
 	"DataIndexWhereClause":"00000000-0000-0000-0000-00000e1a571c",
+	"SchemasRequiringSyncTests":"00000000-0000-0000-0000-000000006a91",
 	"templateLine":"Template"
 };
