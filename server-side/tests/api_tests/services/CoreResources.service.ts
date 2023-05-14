@@ -29,11 +29,11 @@ export class CoreResourcesService {
 		return await this.papiClient.get(`/${resource}`);
 	}
 
-	async buildTable(resource: string) {
-		return this.papiClient.post(`/addons/api/${this.addonUUID}/adal/build?resource=${resource}`);
+	async buildTable(resource: string): Promise<any> {
+		return await this.papiClient.post(`/addons/api/${this.addonUUID}/adal/build?resource=${resource}`);
 	}
 
-	async cleanTable(resource: string) {
+	async cleanTable(resource: string): Promise<void> {
 		let objects = await this.getAdalResourceObjects(resource);
 		objects.forEach(obj => obj.Hidden = true);
 		await this.papiClient.post(`/addons/data/batch/${this.addonUUID}/${resource}`, {Objects: objects});
@@ -67,7 +67,7 @@ export class CoreResourcesService {
         return {UUIDs: contactsUUIDs};
     }
 
-    async waitForAsyncJob(seconds: number = 30) {
+    async waitForAsyncJob(seconds: number = 30): Promise<void> {
         console.log(`Waiting for ${seconds} seconds for opeation to catch up...`);
         await this.generalService.sleep(seconds * 1000);
         console.log(`Done waiting for operation`);
