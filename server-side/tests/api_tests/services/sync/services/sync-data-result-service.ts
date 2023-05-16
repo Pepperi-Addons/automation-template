@@ -3,6 +3,9 @@ import config from '../../../../../../addon.config.json';
 export class SyncDataResult {
     data: any;
 
+    getResourcesContentLength(){
+        return this.data.Resources.ContentLength
+    }
     async getSchemes() {
         let schemesArray = this.data.Resources.Data.map(resource =>{
             if(resource.Schema.AddonUUID == config.AddonUUID){

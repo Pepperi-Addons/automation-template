@@ -125,6 +125,10 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
         command: CommandFactory.createCommand('FilesCommand', syncAdalService, client)
       },  
       {
+        name: 'ContentLengthCommand',
+        command: CommandFactory.createCommand('ContentLengthCommand', syncAdalService, client)
+      },  
+      {
         name: 'CleanupCommand',
         command: CommandFactory.createCommand('CleanupCommand', syncAdalService, client)
       }
