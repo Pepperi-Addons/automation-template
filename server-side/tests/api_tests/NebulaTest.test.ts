@@ -50,14 +50,11 @@ export async function NebulaTest(generalService: GeneralService, addonService: G
 
     function buildPathData(destinations?: PathDestination[], includedResources: string[] = [], excludedResources: string[] = []): GetResourcesRequiringSyncParameters['PathData'] {
 
-        if (destinations === undefined && includedResources.length === 0 && excludedResources.length === 0) {
-            return undefined;
-        }
-
         return {
-            Destinations: destinations,
+            Destinations: destinations ?? [],
             IncludedResources: includedResources,
             ExcludedResources: excludedResources,
+            PermissionSet: 'Sync'
         } as GetResourcesRequiringSyncParameters['PathData'];
     }
 
