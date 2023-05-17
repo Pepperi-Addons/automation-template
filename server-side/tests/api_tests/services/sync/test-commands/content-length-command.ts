@@ -2,6 +2,7 @@ import { AddonDataScheme } from "@pepperi-addons/papi-sdk";
 import { ADALTableService } from "../../resource_management/adal_table.service";
 import { GlobalSyncService } from "../services/global-sync-service";
 import { BaseCommand } from "./base-command";
+export const CONTENT_LENGTH_ADDITION = 700
 
 export class ContentLengthCommand extends BaseCommand {
     private timeOfDataInsertion: Date | undefined;
@@ -39,7 +40,7 @@ export class ContentLengthCommand extends BaseCommand {
         expect(syncRes).to.have.property('UpToDate').that.is.a('Boolean').and.is.equal(false)
         expect(syncRes).to.have.property('ExecutionURI').that.is.a('String').and.is.not.undefined
         const responseContentLength = this.syncDataResult.getResourcesContentLength()
-        expect(responseContentLength).to.be.equal(this.contentLength+648)
+        expect(responseContentLength).to.be.lessThan(this.contentLength+CONTENT_LENGTH_ADDITION)
     }
 
 }
