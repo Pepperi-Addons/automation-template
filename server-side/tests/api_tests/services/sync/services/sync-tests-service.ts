@@ -24,6 +24,16 @@ export class SyncService {
         return parsedData
     }
 
+    async setSyncSoftLimit(softLimitInMB: Number){
+        const softLimit = {
+            key: 'SYNC_DATA_SIZE_LIMITATION',
+            softValue: softLimitInMB, //MB
+            hardValue: 1024, //MB
+        }
+        const res = await this.papiClient.post('/addons/api/5122dc6d-745b-4f46-bb8e-bd25225d350a/api/sync_variables',softLimit)
+        return res
+    }
+
     async handleSyncData(syncRes: any, return_url: boolean){
         let data = await this.auditLogService.getSyncDataFromAudit(syncRes)
         let res = data
