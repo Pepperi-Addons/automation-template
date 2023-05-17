@@ -25,10 +25,10 @@ export class SyncService {
     }
 
     async setSyncSoftLimit(softLimitInMB: Number){
+        // set sync soft limit, limits are in MB
         const softLimit = {
-            key: 'SYNC_DATA_SIZE_LIMITATION',
-            softValue: softLimitInMB, //MB
-            hardValue: 1024, //MB
+            "SYNC_DATA_SIZE_LIMITATION": softLimitInMB,
+            "SYNC_TIME_LIMITATION": 5 // Default soft limit, not changing
         }
         const res = await this.papiClient.post('/addons/api/5122dc6d-745b-4f46-bb8e-bd25225d350a/api/sync_variables',softLimit)
         return res
