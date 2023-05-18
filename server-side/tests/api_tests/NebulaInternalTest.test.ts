@@ -2,7 +2,7 @@
 import { unitTestsResult } from "./services/NebulaTest.service";
 import { PerformanceManager } from "./services/performance_management/performance_manager";
 import { NebulaServiceFactory } from "./services/NebulaServiceFactory";
-import { GeneralService, TesterFunctions } from "test_infra";
+import { GeneralService, TesterFunctions } from "../../potentialQA_SDK/src/infra_services/general.service";
 
 export async function NebulaInternalTest(generalService: GeneralService, addonService: GeneralService, request, tester: TesterFunctions) {
 

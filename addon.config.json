@@ -6,8 +6,7 @@
   "DefaultEditor": "main",
   "Endpoints": [
     "installation.ts",
-    "tests.ts",
-    "dimx_sync_tests.ts"
+    "tests.ts"
   ],
   "Editors": [
     "editor"

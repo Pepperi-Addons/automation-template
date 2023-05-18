@@ -1,6 +1,6 @@
 import { Client } from "@pepperi-addons/debug-server/dist";
 import { PapiClient } from "@pepperi-addons/papi-sdk";
-import {GeneralService} from "test_infra";
+import {GeneralService} from '../../../../../potentialQA_SDK/src/infra_services/general.service';
 
 import { GlobalSyncService as GlobalSyncService } from "./global-sync-service";
 

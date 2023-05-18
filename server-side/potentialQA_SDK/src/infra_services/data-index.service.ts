@@ -1,5 +1,5 @@
 import /*FindOptions*/ '@pepperi-addons/papi-sdk';
-import { ElasticSearchService } from './/elastic-search.service';
+import { ElasticSearchService } from './elastic-search.service';
 import {GeneralService} from './general.service';
 
 const stringFieldsArr: string[] = ['City', 'Country', 'Remark'];

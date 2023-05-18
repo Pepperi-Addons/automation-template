@@ -1,6 +1,6 @@
 //00000000-0000-0000-0000-000000006a91
 import { AddonDataScheme, AddonData, PapiClient } from "@pepperi-addons/papi-sdk";
-import GeneralService, { TesterFunctions } from "test_infra";
+import { GeneralService, TesterFunctions } from "../../potentialQA_SDK/src/infra_services/general.service";
 import { SystemFilter, GetResourcesRequiringSyncParameters, SystemFilterType } from "../entities/nebula/types";
 import { BasicRecord } from "./services/NebulaPNSEmulator.service";
 import { NebulaServiceFactory } from "./services/NebulaServiceFactory";
