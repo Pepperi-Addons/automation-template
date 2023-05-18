@@ -21,20 +21,73 @@ export class CoreResourcesService {
         this.dataObject = dataObject;
     }
 
-    async getAdalResourceObjects(resource: string, options?: FindOptions): Promise<any[]> {
-        return this.papiClient.addons.data.uuid(this.addonUUID).table(resource).find(options);
+    async getGenericResourceObjects(resource: string): Promise<any[]> {
+        return this.papiClient.get(`/resources/${resource}`);
     }
 
 	async getPapiResourceObjects(resource: string): Promise<any[]> {
 		return await this.papiClient.get(`/${resource}`);
 	}
 
+	async createTestAccount() {
+		const account = await this.papiClient.post('/accounts', {
+			UUID: uuid(),
+			Email: "test@core-resources.com",
+    		Name: "core-resources test account"
+		});
+		return account;
+	}
+
+	// async papiBatchUpsert(resource: string, objects: any[]): Promise<any> {
+	// 	return await this.papiClient.post(`/batch/${resource}`, objects);
+	// }
+
+	async createPapiUsers(count: number): Promise<any[]> {
+		let users: any[] = [];
+		for(let i = 0; i < count; i++) {
+			const user = await this.papiClient.post('/createUser',{
+				Email: `test${i}@test.com`,
+				FirstName: `test${i}`,
+				LastName: `test${i}`
+			});
+			users.push(user);
+		}
+		return users;
+	}
+
+	async createPapiAccountUsers(users: any[], account): Promise<any[]> {
+		let accountUsers: any[] = [];
+		for(let i = 0; i < users.length; i++) {
+			const user = await this.papiClient.post('/account_users',{
+				Account: {
+					"Data": {
+						"InternalID": account.InternalID,
+						"UUID": account.UUID,
+						"ExternalID": null
+					},
+					"URI": `/accounts/${account.InternalID}}`
+				},
+				User: {
+					"Data": {
+						"InternalID": users[i].InternalID,
+						"UUID": users[i].UUID,
+						"ExternalID": null
+					},
+					"URI": `/users/${users[i].InternalID}}`
+				}
+			});
+			accountUsers.push(user);
+		}
+		return accountUsers;
+	}
+
+
 	async buildTable(resource: string): Promise<any> {
 		return await this.papiClient.post(`/addons/api/${this.addonUUID}/adal/build?resource=${resource}`);
 	}
 
 	async cleanTable(resource: string): Promise<void> {
-		let objects = await this.getAdalResourceObjects(resource);
+		let objects = await this.getGenericResourceObjects(resource);
 		objects.forEach(obj => obj.Hidden = true);
 		await this.papiClient.post(`/addons/data/batch/${this.addonUUID}/${resource}`, {Objects: objects});
 	}
@@ -45,27 +98,37 @@ export class CoreResourcesService {
     }
 
 	// should be used by PNS tests
-    async createContactsForTest(body) {
+    async createContactsForTest(count: number, account: any): Promise<string[]> {
         let contactsUUIDs: string[] = [];
         const unique = uuid();
-        for(let i = 0; i < body.Count; i++) {
+        for(let i = 0; i < count; i++) {
             const body = {
                 FirstName: `test${i}-${unique}`,
                 Email: `test${i}-${unique}@test.com`,
                 IsBuyer: false,
                 Account: {
                     "Data": {
-                        "InternalID": 14346030,
-                        "UUID": "b888b24c-3022-4ca9-8322-63ada2780f9e",
-                        "ExternalID": "12345"
+                        "InternalID": account.InternalID,
+                        "UUID": account.UUID,
+                        "ExternalID": null
                     },
-                    "URI": "/accounts/14346030"
+                    "URI": `/accounts/${account.InternalID}}`
                 }
             }
-            const created = await this.createContact(body);
+            await this.createContact(body);
         }
-        return {UUIDs: contactsUUIDs};
+        return contactsUUIDs;
     }
+
+	async setContactsAsBuyersState(contactsUUIDs: string[], isBuyer: boolean): Promise<any> {
+		const contacts = contactsUUIDs.map(uuid => { return {UUID: uuid, IsBuyer: isBuyer} });
+		return await this.papiClient.post(`/batch/contacts`, contacts);
+	}
+
+	async hideCreatedPapiObjects(resource: string, objects: any[]): Promise<void> {
+		objects.forEach(obj => obj.Hidden = true);
+		await this.papiClient.post(`/batch/${resource}`, {Objects: objects});
+	}
 
     async waitForAsyncJob(seconds: number = 30): Promise<void> {
         console.log(`Waiting for ${seconds} seconds for opeation to catch up...`);

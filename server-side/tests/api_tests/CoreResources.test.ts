@@ -10,7 +10,7 @@ export async function CoreResources(generalService: GeneralService, addonService
     const expect = tester.expect;
     const it = tester.it;
 
-    describe('Build ADAL tables tests', () => { //the string inside the describe will effect the title of this suite in the report
+    describe('Build ADAL tables tests', () => {
             const coreResourcesService = new CoreResourcesService(generalService, addonService.papiClient, dataObj);
     
             it('Build users adal table', async () => {
@@ -19,7 +19,7 @@ export async function CoreResources(generalService: GeneralService, addonService
 				await coreResourcesService.cleanTable('users'); // clean the table before build
                 const buildTableResponse = await coreResourcesService.buildTable('users');
 				await coreResourcesService.waitForAsyncJob(30);
-				const adalUsersList = await coreResourcesService.getAdalResourceObjects('users');
+				const adalUsersList = await coreResourcesService.getGenericResourceObjects('users');
 				expect(buildTableResponse).to.have.property('res');
                 expect(buildTableResponse.res).to.have.property('success').that.is.true;
 				expect(adalUsersList).to.be.an('array').with.lengthOf(papiUsersList.length + papiContactsList.length);
@@ -41,24 +41,84 @@ export async function CoreResources(generalService: GeneralService, addonService
 				await coreResourcesService.cleanTable('account_users'); // clean the table before build
                 const buildTableResponse = await coreResourcesService.buildTable('account_users');
 				await coreResourcesService.waitForAsyncJob(30);
-				const adalAccountUsersList = await coreResourcesService.getAdalResourceObjects('account_users');
+				const adalAccountUsersList = await coreResourcesService.getGenericResourceObjects('account_users');
 				expect(buildTableResponse).to.have.property('res');
                 expect(buildTableResponse.res).to.have.property('success').that.is.true;
 				expect(adalAccountUsersList).to.be.an('array').with.lengthOf(papiAccountUsersList.length + papiAccountBuyersList.length);
 				expect(adalAccountUsersList[0]).to.have.property('Key').that.is.a('string').and.is.not.empty;
 				expect(adalAccountUsersList[0]).to.have.property('Account').that.is.a('string').and.is.not.empty;
 				expect(adalAccountUsersList[0]).to.have.property('User').that.is.a('string').and.is.not.empty;
-
             });
-            // !!!IMPORTANT COMMENT: all the resource you set or create - MUST be deleted (!); in this case: we created a user so we delete it and validate that it is
-            // in fact was deleted, if you set a code job - you MUST set it off, if you create a scheme you MUST delete it, etc...
-            // it('Basic Test Example #3: Cleanup Of All Inserted Data', async () => {
-            //     expect(await coreResourcesService.deleteUser('InternalID', createdUser.InternalID)).to.be.true;
-            //     expect(await coreResourcesService.deleteUser('InternalID', createdUser.InternalID)).to.be.false;
-            //     expect(await coreResourcesService.getUsers())
-            //         .to.be.an('array')
-            //         .with.lengthOf(currentUserQuantity - 1);
-            // });
 
+            it('Clean tables', async () => {
+                await coreResourcesService.cleanTable('users');
+				await coreResourcesService.cleanTable('account_users');
+            });
     });
+
+	describe('users, contacts, account_users PNS tests', () => {
+		const coreResourcesService = new CoreResourcesService(generalService, addonService.papiClient, dataObj);
+		const testAccount = coreResourcesService.createTestAccount();
+		it('Create papi contacts, PNS should upsert buyers only to adal users table', async () => {
+			const initialAdalUsersList = await coreResourcesService.getGenericResourceObjects('users');
+			const createdContacts = await coreResourcesService.createContactsForTest(100, testAccount);
+			// wait for PNS to finish
+			await coreResourcesService.waitForAsyncJob(20);
+			let currentAdalUsersList = await coreResourcesService.getGenericResourceObjects('users');
+			// contacts should not be upserted to adal users table
+			expect(currentAdalUsersList.length).to.equal(initialAdalUsersList.length);
+			await coreResourcesService.setContactsAsBuyersState(createdContacts.slice(0, 50), true);
+			// wait for PNS to finish
+			await coreResourcesService.waitForAsyncJob(20);
+			currentAdalUsersList = await coreResourcesService.getGenericResourceObjects('users');
+			expect(currentAdalUsersList.length).to.equal(initialAdalUsersList.length + 50);
+			await coreResourcesService.setContactsAsBuyersState(createdContacts.slice(0, 20), false);
+			// wait for PNS to finish
+			await coreResourcesService.waitForAsyncJob(20);
+			currentAdalUsersList = await coreResourcesService.getGenericResourceObjects('users');
+			expect(currentAdalUsersList.length).to.equal(initialAdalUsersList.length + 30); // 50 - 20 = 30
+			//expected properties
+			expect(currentAdalUsersList[0]).to.have.property('Key').that.is.a('string').and.is.not.empty;
+			expect(currentAdalUsersList[0]).to.have.property('Email').that.is.a('string').and.is.not.empty;
+			expect(currentAdalUsersList[0]).to.have.property('FirstName').that.is.a('string').and.is.not.empty;
+			expect(currentAdalUsersList[0]).to.have.property('LastName').that.is.a('string').and.is.not.empty;
+			expect(currentAdalUsersList[0]).to.have.property('Name').that.is.a('string').and.is.not.empty;
+			expect(currentAdalUsersList[0]).to.have.property('ExternalID').that.is.a('string').and.is.not.empty;
+			expect(currentAdalUsersList[0]).to.have.property('Mobile').that.is.a('string');
+			expect(currentAdalUsersList[0]).to.have.property('Phone').that.is.a('string');
+			expect(currentAdalUsersList[0]).to.have.property('Profile').that.is.a('string').and.is.not.empty;
+			expect(currentAdalUsersList[0]).to.have.property('UserType').that.is.equal('Buyer');
+
+			await coreResourcesService.hideCreatedPapiObjects('contacts', createdContacts);
+		});
+
+		it('Create papi users, then account_users. PNS should upsert them to adal tables', async () => {
+			const initialAdalUsersList = await coreResourcesService.getGenericResourceObjects('users');
+			const createdUsers = await coreResourcesService.createPapiUsers(100);
+			// wait for PNS to finish
+			await coreResourcesService.waitForAsyncJob(20);
+			const currentAdalUsersList = await coreResourcesService.getGenericResourceObjects('users');
+			expect(currentAdalUsersList.length).to.equal(initialAdalUsersList.length + 100);
+			//expected properties
+			expect(currentAdalUsersList[0]).to.have.property('Key').that.is.a('string').and.is.not.empty;
+			expect(currentAdalUsersList[0]).to.have.property('Email').that.is.a('string').and.is.not.empty;
+			expect(currentAdalUsersList[0]).to.have.property('FirstName').that.is.a('string').and.is.not.empty;
+			expect(currentAdalUsersList[0]).to.have.property('LastName').that.is.a('string').and.is.not.empty;
+			expect(currentAdalUsersList[0]).to.have.property('UserType').that.is.equal('Employee');
+
+			const initialAdalAccountUsersList = await coreResourcesService.getGenericResourceObjects('account_users');
+			const createdAccountUsers = await coreResourcesService.createPapiAccountUsers(createdUsers, testAccount);
+			// wait for PNS to finish
+			await coreResourcesService.waitForAsyncJob(20);
+			const currentAdalAccountUsersList = await coreResourcesService.getGenericResourceObjects('account_users');
+			expect(currentAdalAccountUsersList.length).to.equal(initialAdalAccountUsersList.length + 100);
+			//expected properties
+			expect(currentAdalUsersList[0]).to.have.property('Key').that.is.a('string').and.is.not.empty;
+			expect(currentAdalUsersList[0]).to.have.property('Account').that.is.a('string').and.is.not.empty;
+			expect(currentAdalUsersList[0]).to.have.property('User').that.is.a('string').and.is.not.empty;
+
+			await coreResourcesService.hideCreatedPapiObjects('users', createdUsers);
+			await coreResourcesService.hideCreatedPapiObjects('account_users', createdAccountUsers);
+		});
+	});
 }
