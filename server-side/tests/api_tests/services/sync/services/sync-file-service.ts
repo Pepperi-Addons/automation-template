@@ -126,12 +126,4 @@ export class SyncFileService {
         }
         return res;
     }
-
-    get filesToDownload(){
-        return this.urlsToDownload
-    }
-    
-    async uploadAsset(body: string){
-        return await this.papiClient.post('/assets',body)
-    }
 }

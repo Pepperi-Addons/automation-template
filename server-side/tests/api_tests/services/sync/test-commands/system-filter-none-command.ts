@@ -89,13 +89,9 @@ export class SystemFilterNone extends BaseCommand {
         expect(Object.keys(noneObjects)).to.have.a.lengthOf(2)
         
         const accountObjects = this.syncDataResult.getObjects(this.adalTableServices!.account.schemaName)
-        expect(Object.keys(accountObjects)).to.have.a.lengthOf(1)
+        expect(Object.keys(accountObjects)).to.have.a.lengthOf(0)
         
         const userObjects = this.syncDataResult.getObjects(this.adalTableServices!.user.schemaName)
-        expect(Object.keys(userObjects)).to.have.a.lengthOf(1)
-
-        const currentUserUUID = this.systemFilterService.usersService.getCurrentUserUUID();
-    
-        expect(userObjects[0].User_Field == currentUserUUID)
+        expect(Object.keys(userObjects)).to.have.a.lengthOf(0)
     }
   }

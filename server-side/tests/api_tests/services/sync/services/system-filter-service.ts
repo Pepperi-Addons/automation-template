@@ -16,7 +16,7 @@ export class SystemFilterService extends SyncAdalService {
   
     generateScheme(type: 'User' | 'Account' | 'None'){
         const syncSchema:AddonDataScheme = {
-            Name: this.generateScehmaName(`_${type.toLowerCase()}`),
+            Name: this.generateScehmaName(`_${ this.constructor.name}_${type.toLowerCase()}`),
             Type: "data",
             Fields: this.generateSchemaField(type),
             SyncData: {
@@ -72,18 +72,6 @@ export class SystemFilterService extends SyncAdalService {
         }
 
         return pathData
-
-        // let Type = account ? 'Account' : webapp? 'User' : 'None'
-        // let SystemFilter = {
-        //     SystemFilter: {
-        //         Type: Type 
-        //     }
-        // }
-        // if(account && !accountUUID){
-        //     throw new Error('Account must have Account UUID')
-        // }
-        // account ? SystemFilter.SystemFilter["AccountUUID"] = accountUUID : undefined
-        // return SystemFilter
     }
 
     generateSchemaField(type: 'User' | 'Account' | 'None'){

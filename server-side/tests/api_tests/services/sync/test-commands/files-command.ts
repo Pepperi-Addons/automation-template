@@ -34,14 +34,6 @@ export class FilesCommand extends BaseCommand {
 
         const downloadableUrl = await this.syncFileService.uploadFile(fileToUpload,true)
         this.fileToDownload = downloadableUrl
-
-        // const bodyToUpload = {
-            // AddonUUID: AddonUUID,
-            // Sync: "Device",
-            // URL: url
-        // }
-
-        // return await this.syncFileService.uploadAsset(JSON.stringify(bodyToUpload))
     }
 
     async sync(): Promise<any> {
@@ -63,13 +55,12 @@ export class FilesCommand extends BaseCommand {
         // tests
         expect(syncRes).to.have.property('UpToDate').that.is.a('Boolean').and.is.equal(false)
         expect(syncRes).to.have.property('ExecutionURI').that.is.a('String').and.is.not.undefined
-        let files = await this.syncDataResult.getFilesURLS()
-        expect(files).to.contain(this.fileNotToDownload)
-        expect(files).to.contain(this.fileToDownload)
-        const downloadableStatus = this.syncDataResult.getFileDownload(this.fileToDownload)
-        const notDownloadableStatus = this.syncDataResult.getFileDownload(this.fileNotToDownload)
-        expect(downloadableStatus).to.equal(true)
-        expect(notDownloadableStatus).to.equal(false)
+        const downloadableFile = await this.syncDataResult.getFile(this.fileToDownload)
+        const notDownloadableFile = await this.syncDataResult.getFile(this.fileNotToDownload)
+        expect(downloadableFile.URL).to.equal(this.fileToDownload)
+        expect(notDownloadableFile.URL).to.equal(this.fileNotToDownload)
+        expect(downloadableFile.DownloadToWebApp).to.equal(true)
+        expect(notDownloadableFile.DownloadToWebApp).to.equal(false)
     }
     
   }

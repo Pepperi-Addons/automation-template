@@ -22,10 +22,7 @@ export class GlobalSyncService {
               });
               res.on('end', () => {
                   try {
-                    const urlData = data.split('\r\n').map(resource => {
-                        return JSON.parse(Buffer.from(resource,'base64').toString('utf-8'))
-                    })
-                    resolve(urlData);
+                    resolve(data);
                   } catch (err) {
                     reject(err);
                   }

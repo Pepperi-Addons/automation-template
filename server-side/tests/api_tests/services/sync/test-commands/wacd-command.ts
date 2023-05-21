@@ -15,8 +15,8 @@ export class WACDCommand extends SchemaExistsCommand {
     }
 
     test(auditLog: any, syncData: any, expect: Chai.ExpectStatic): Promise<any> {
-        expect(syncData.ResourcesData).to.be.an('Array').that.is.not.empty
-        for (let metaDataResource of syncData.ResourcesData) {
+        expect(syncData.Resources.Data).to.be.an('Array').that.is.not.empty
+        for (let metaDataResource of syncData.Resources.Data) {
             // Resource level tests
             expect(metaDataResource).to.have.property('MetaData').that.is.an('Array').and.is.not.undefined
             expect(metaDataResource).to.have.property('Data').that.is.an('Array').and.is.not.undefined
