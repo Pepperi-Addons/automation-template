@@ -50,6 +50,9 @@ export async function CoreResources(generalService: GeneralService, addonService
 				expect(adalAccountUsersList[0]).to.have.property('User').that.is.a('string').and.is.not.empty;
             });
 
+			genericResourceTests(it, expect, coreResourcesService, 'users', 'ExternalID', 'Name');
+			genericResourceTests(it, expect, coreResourcesService, 'account_users', 'ExternalID', 'Account');
+
             it('Clean tables', async () => {
                 await coreResourcesService.cleanTable('users');
 				await coreResourcesService.cleanTable('account_users');
@@ -121,4 +124,70 @@ export async function CoreResources(generalService: GeneralService, addonService
 			await coreResourcesService.hideCreatedPapiObjects('account_users', createdAccountUsers);
 		});
 	});
+}
+
+async function genericResourceTests(it: any, expect: Chai.ExpectStatic, coreResourcesService: CoreResourcesService, resource: string, uniqueFieldID: string, nonUniqueFieldID: string) {
+
+	const schemeFields = await coreResourcesService.getAdalSchemeFieldsNames(resource);
+
+	const objects = await coreResourcesService.getGenericResourceObjects(resource);
+	expect(objects).to.be.an('array').with.lengthOf.above(0);
+
+	it('Get by key test', async () => {
+		
+		expect(objects[0]).to.have.property('Key').that.is.a('string').and.is.not.empty;
+		const requestedObject = await coreResourcesService.getGenericResourceByKey(resource, objects[0].Key);
+		for(const field of schemeFields) {
+			expect(requestedObject).to.have.property(field).that.equals(objects[0][field]);
+		}
+		expect(await coreResourcesService.getGenericResourceByKey(resource, 'badKey')).to.throw('Not Found');
+		const validKey = coreResourcesService.generateValidKey();
+		expect(await coreResourcesService.getGenericResourceByKey(resource, validKey)).to.throw('Not Found');
+
+	});
+
+	it('Get by unique field test', async () => {
+
+		expect(objects[0]).to.have.property(uniqueFieldID).that.is.not.empty;
+		const requestedObject = await coreResourcesService.getGenericResourceByUniqueField(resource, uniqueFieldID, objects[0][uniqueFieldID]);
+		for(const field of schemeFields) {
+			expect(requestedObject).to.have.property(field).that.equals(objects[0][field]);
+		}
+		expect(await coreResourcesService.getGenericResourceByUniqueField(resource, uniqueFieldID, 'randomValue')).to.throw('not found');
+		expect(await coreResourcesService.getGenericResourceByUniqueField(resource, nonUniqueFieldID, 'randomValue')).to.throw('field_id is not unique');
+	});
+
+	it('Search test', async () => {
+
+		let searchBody = {};
+		let requestedObjects = await coreResourcesService.searchGenericResource(resource, searchBody);
+		expect(requestedObjects).to.have.property('Objects').that.is.an('array').and.is.not.empty;
+		for(const obj of requestedObjects['Objects']) {
+			for(const field of schemeFields) {
+				expect(obj).to.have.property(field);
+			}
+		}
+
+		// IncludeCount
+		searchBody['IncludeCount'] = true;
+		requestedObjects = await coreResourcesService.searchGenericResource(resource, searchBody);
+		expect(requestedObjects).to.have.property('Count').that.equals(requestedObjects['Objects'].length);
+
+		// Where
+		searchBody['Where'] = `${nonUniqueFieldID}='${objects[0][nonUniqueFieldID]}'`;
+		requestedObjects = await coreResourcesService.searchGenericResource(resource, searchBody);
+		expect(requestedObjects).to.have.property('Objects').that.is.an('array').and.is.not.empty;
+		for(const obj of requestedObjects['Objects']) {
+			expect(obj).to.have.property(nonUniqueFieldID);
+			expect(obj[nonUniqueFieldID]).to.equal(objects[0][nonUniqueFieldID]);
+		}
+
+		// Unique field
+		delete searchBody['Where'];
+		searchBody['UniqueFieldList'] = [objects[0][uniqueFieldID], objects[1][uniqueFieldID]];
+		searchBody['UniqueFieldID'] = uniqueFieldID;
+		requestedObjects = await coreResourcesService.searchGenericResource(resource, searchBody);
+		expect(requestedObjects).to.have.property('Objects').that.is.an('array').with.lengthOf(2);
+	});
+
 }

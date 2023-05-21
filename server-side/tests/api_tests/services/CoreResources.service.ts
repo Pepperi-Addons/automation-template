@@ -1,9 +1,5 @@
 //fc5a5974-3b30-4430-8feb-7d5b9699bc9f
-import {
-    FindOptions,
-    User,
-    PapiClient,
-} from '@pepperi-addons/papi-sdk';
+import { PapiClient } from '@pepperi-addons/papi-sdk';
 import GeneralService from 'test_infra';
 import { v4 as uuid } from 'uuid';
 
@@ -22,8 +18,20 @@ export class CoreResourcesService {
     }
 
     async getGenericResourceObjects(resource: string): Promise<any[]> {
-        return this.papiClient.get(`/resources/${resource}`);
+        return await this.papiClient.get(`/resources/${resource}`);
     }
+
+	async getGenericResourceByKey(resource: string, key: string): Promise<any> {
+        return await this.papiClient.get(`/resources/${resource}/key/${key}`);
+    }
+
+	async getGenericResourceByUniqueField(resource: string, fieldID: string, key: string): Promise<any[]> {
+        return await this.papiClient.get(`/resources/${resource}/unique/${fieldID}/${key}`);
+    }
+
+	async searchGenericResource(resource: string, body: any): Promise<any> {
+		return await this.papiClient.post(`/resources/${resource}/search`, body);
+	}
 
 	async getPapiResourceObjects(resource: string): Promise<any[]> {
 		return await this.papiClient.get(`/${resource}`);
@@ -135,5 +143,14 @@ export class CoreResourcesService {
         await this.generalService.sleep(seconds * 1000);
         console.log(`Done waiting for operation`);
     }
+
+	async getAdalSchemeFieldsNames(resource: string): Promise<string[]> {
+		const scheme = await this.papiClient.get(`/addons/data/schemes/${resource}`);
+		return Object.keys(scheme.Fields);
+	}
+
+	generateValidKey() {
+		return uuid();
+	}
 
 }
