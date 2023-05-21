@@ -25,4 +25,6 @@ export * from './connect-account-delta-command';
 export * from './webapp-command'
 export * from './push/push-data-time-command'
 export * from './upload-data-to-sync'
+export * from './files-command'
+export * from './additional-fields-command'
 

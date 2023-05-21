@@ -23,11 +23,11 @@ export class UploadDataToSync extends BaseCommand {
         this.client = client
         this.syncDimxService = new SyncDimxService()
         this.papiClient = syncAdalService.papiClient
-        this.syncFileService = new SyncFileService(this.client, this.papiClient)
+        this.syncFileService = new SyncFileService(this.client, this.papiClient, false)
         this.resourceManager = new ResourceManagerService(this.papiClient, this.automationUUID) 
         
     }
-    protected MAX_RECORDS_TO_UPLOAD = 20
+    protected MAX_RECORDS_TO_UPLOAD = 10
     protected schemeCreated: any = undefined
     private automationUUID = "02754342-e0b5-4300-b728-a94ea5e0e8f4"
 
@@ -39,7 +39,7 @@ export class UploadDataToSync extends BaseCommand {
     // inserting the data according to the index in the for loop
     async pushData(adalService1: ADALTableService): Promise<any> {  
         const promises: Promise<any>[] = []
-        for (let index = 0; index < 1; index++) {
+        for (let index = 0; index < 10; index++) {
             const p = new Promise<any>(async (resolve, reject) =>{
                 console.log(`in loop index: ${index} `)
                 const schema = this.syncAdalService.generateSchemeWithFields(1, `test_sync_data_capacity`)
@@ -62,7 +62,7 @@ export class UploadDataToSync extends BaseCommand {
             
         }
         
-        await Promise.all(promises)
+        return await Promise.all(promises)
     
     }
 
@@ -80,6 +80,7 @@ export class UploadDataToSync extends BaseCommand {
     }
     
     async cleanup(): Promise<any> {
+        await this.resourceManager.cleanup()
         return Promise.resolve(undefined)
     }
     

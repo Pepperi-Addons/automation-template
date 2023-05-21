@@ -10,10 +10,10 @@ export class PapiConnectAccountCommand extends SystemFilterNone {
         // start sync
         let dateTime = new Date();
         dateTime.setHours(dateTime.getHours()-1)
-        const systemFilter = this.systemFilterService.generateSystemFilter(true, false, this.connectedAccountUUID)
+        const pathData = this.systemFilterService.generateSystemFilter(true, false, this.connectedAccountUUID)
         let auditLog = await this.syncService.pullConnectAccount({
             ModificationDateTime: dateTime.toISOString(),
-            ...systemFilter
+            PathData: pathData
         }, this.connectedAccountUUID)
         return auditLog
     }

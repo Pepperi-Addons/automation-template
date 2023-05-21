@@ -26,7 +26,7 @@ export class SyncService {
         let data = await this.auditLogService.getSyncDataFromAudit(syncRes)
         let res = data
         if(return_url){
-            res = await this.getSyncDataFromUrl(data.ResourcesURL)
+            res = {Resources: {Data:await this.getSyncDataFromUrl(data.Resources.URL)}}
         }
         return res
     }
@@ -34,8 +34,8 @@ export class SyncService {
     async getSyncData(syncRes: any){
         let data = await this.auditLogService.getSyncDataFromAudit(syncRes)
         let res = data
-        if(data.ResourcesURL){
-            res = await this.getSyncDataFromUrl(data.ResourcesURL)
+        if(data.Resources.URL){
+            res = await this.getSyncDataFromUrl(data.Resources.URL)
         }
         return res
     }
@@ -74,5 +74,5 @@ export class SyncService {
 
 export interface PullOptions {
     ModificationDateTime: string;
-    SystemFilter?: object;
+    PathData?: object;
 }

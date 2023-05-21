@@ -16,7 +16,6 @@ export class ReturnURLCommand extends SchemaExistsCommand {
         // tests
         expect(syncRes).to.have.property('UpToDate').that.is.a('Boolean').and.is.equal(false)
         expect(syncRes).to.have.property('ExecutionURI').that.is.a('String').and.is.not.undefined
-        await this.syncService.getSyncData(syncRes)
         let schemes = await this.syncDataResult.getSchemes()
         expect(schemes).to.contain(this.syncAdalService.schemeName)
     }

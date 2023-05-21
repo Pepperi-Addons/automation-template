@@ -60,11 +60,11 @@ export class SystemFilterNone extends BaseCommand {
         // start sync
         let dateTime = new Date();
         dateTime.setHours(dateTime.getHours()-1)
-        const systemFilter = this.systemFilterService.generateSystemFilter(false,false)
+        const pathData = this.systemFilterService.generateSystemFilter(false,false)
         
         let auditLog = await this.syncService.pull({
             ModificationDateTime: dateTime.toISOString(),
-            ...systemFilter
+            PathData: pathData
         }, false, false, false)
 
         return auditLog
