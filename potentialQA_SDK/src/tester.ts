@@ -49,6 +49,22 @@ export function Tester(client?: Client, testName?: string, environment?: string)
             context = suite.parent;
         },
 
+        after: (fn: Mocha.Func | Mocha.AsyncFunc) => {
+            context?.afterAll(fn);
+        },
+
+        afterEach: (fn: Mocha.Func | Mocha.AsyncFunc) => {
+            context?.afterEach(fn);
+        },
+
+        before: (fn: Mocha.Func | Mocha.AsyncFunc) => {
+            context?.beforeAll(fn);
+        },
+
+        beforeEach: (fn: Mocha.Func | Mocha.AsyncFunc) => {
+            context?.beforeEach(fn);
+        },
+
         it: (name: string, fn: Mocha.Func | Mocha.AsyncFunc | undefined) => {
             context?.addTest(new Mocha.Test(name, fn));
         },

@@ -21,6 +21,7 @@
     "devDependencies": {
         "@rollup/plugin-commonjs": "^21.0.0",
         "@rollup/plugin-node-resolve": "^8.0.0",
+        "@types/mocha": "^10.0.1",
         "@types/node": "^10.17.24",
         "@types/node-fetch": "^2.5.7",
         "nodemon": "^2.0.4",
