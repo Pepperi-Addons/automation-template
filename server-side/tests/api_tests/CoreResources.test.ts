@@ -9,6 +9,7 @@ export async function CoreResources(generalService: GeneralService, addonService
     const describe = tester.describe;
     const expect = tester.expect;
     const it = tester.it;
+	const afterEach = tester.afterEach;
 
     describe('Build ADAL tables tests', () => {
             const coreResourcesService = new CoreResourcesService(generalService, addonService.papiClient, dataObj);
@@ -54,6 +55,19 @@ export async function CoreResources(generalService: GeneralService, addonService
                 await coreResourcesService.cleanTable('users');
 				await coreResourcesService.cleanTable('account_users');
             });
+
+			describe('Build role_roles ADAL table', () => {
+
+				const coreResourcesService = new CoreResourcesService(generalService, addonService.papiClient, dataObj);
+
+				afterEach(async () => {
+					await coreResourcesService.cleanTable('role_roles');
+				});
+		
+				it('Build table using only roots', async () => {
+					
+				});
+		});
     });
 
 	describe('users, contacts, account_users PNS tests', () => {
