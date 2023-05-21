@@ -38,10 +38,10 @@ export class ConnectAccountDelta extends SystemFilterNone{
 
     async sync(): Promise<any> {
         // start sync
-        const systemFilter = this.systemFilterService.generateSystemFilter(false,false)
+        const pathData = this.systemFilterService.generateSystemFilter(false,false)
         let auditLog = await this.syncService.pull({
             ModificationDateTime:this.timeAfterCreation.toISOString(),
-            ...systemFilter
+            PathData: pathData
         },false, false, false)
         return auditLog
     }

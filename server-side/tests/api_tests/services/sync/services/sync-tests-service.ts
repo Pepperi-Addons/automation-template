@@ -19,14 +19,16 @@ export class SyncService {
     }
 
     async getSyncDataFromUrl(url: string){
-        return await GlobalSyncService.httpGet(url)
+        const data = await GlobalSyncService.httpGet(url)
+        const parsedData = data.split('\r\n').map(resource => JSON.parse(resource));
+        return parsedData
     }
 
     async handleSyncData(syncRes: any, return_url: boolean){
         let data = await this.auditLogService.getSyncDataFromAudit(syncRes)
         let res = data
         if(return_url){
-            res = await this.getSyncDataFromUrl(data.ResourcesURL)
+            res = {Resources: {Data:await this.getSyncDataFromUrl(data.Resources.URL)}}
         }
         return res
     }
@@ -34,8 +36,8 @@ export class SyncService {
     async getSyncData(syncRes: any){
         let data = await this.auditLogService.getSyncDataFromAudit(syncRes)
         let res = data
-        if(data.ResourcesURL){
-            res = await this.getSyncDataFromUrl(data.ResourcesURL)
+        if(data.Resources.URL){
+            res = {Resources:{Data: await this.getSyncDataFromUrl(data.Resources.URL)}}
         }
         return res
     }
@@ -75,5 +77,5 @@ export class SyncService {
 
 export interface PullOptions {
     ModificationDateTime: string;
-    SystemFilter?: object;
+    PathData?: object;
 }
