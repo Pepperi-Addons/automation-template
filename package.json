@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "cd ./server-side && npm run build",
-    "init": "cd ./potentialQA_SDK && npm install && npm run build && cd ..&& cd ./script && npm i && cd.. && cd ./server-side && npm install && cd .. && npm install ",
+    "init": "cd ./server-side && npm ci && cd ..&& cd ./script && npm i && cd.. && npm ci",
     "client:singlespa": "cd client-side && ng serve --port 4400 --configuration SingleSpa && cd..",
     "client:standalone": "cd client-side && ng serve --port 4400 --configuration Standalone && cd..",
     "publish-addon": "npm run build && publish-addon",
