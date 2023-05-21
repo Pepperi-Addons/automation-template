@@ -140,9 +140,18 @@ async function genericResourceTests(it: any, expect: Chai.ExpectStatic, coreReso
 		for(const field of schemeFields) {
 			expect(requestedObject).to.have.property(field).that.equals(objects[0][field]);
 		}
-		expect(await coreResourcesService.getGenericResourceByKey(resource, 'badKey')).to.throw('Not Found');
+
+		// Invalid key test
+		const badKey = '0000';
+		let errorMessage = `${badKey} is not vaild UUID.`;
+		expect(coreResourcesService.getGenericResourceByKey(resource, badKey))
+		.to.eventually.be.rejectedWith(errorMessage);
+
+		// Not found test
+		errorMessage = 'Object ID does not exist.';
 		const validKey = coreResourcesService.generateValidKey();
-		expect(await coreResourcesService.getGenericResourceByKey(resource, validKey)).to.throw('Not Found');
+		expect(coreResourcesService.getGenericResourceByKey(resource, validKey))
+		.to.eventually.be.rejectedWith(errorMessage);
 
 	});
 
@@ -153,8 +162,17 @@ async function genericResourceTests(it: any, expect: Chai.ExpectStatic, coreReso
 		for(const field of schemeFields) {
 			expect(requestedObject).to.have.property(field).that.equals(objects[0][field]);
 		}
-		expect(await coreResourcesService.getGenericResourceByUniqueField(resource, uniqueFieldID, 'randomValue')).to.throw('not found');
-		expect(await coreResourcesService.getGenericResourceByUniqueField(resource, nonUniqueFieldID, 'randomValue')).to.throw('field_id is not unique');
+
+		// Not found test
+		let errorMessage = `Object ID does not exist.`;
+		expect(await coreResourcesService.getGenericResourceByUniqueField(resource, uniqueFieldID, 'randomValue'))
+		.to.eventually.be.rejectedWith(errorMessage);
+
+
+		// Non unique field test
+		errorMessage = `The provided field_id is not unique`;
+		expect(await coreResourcesService.getGenericResourceByUniqueField(resource, nonUniqueFieldID, 'randomValue'))
+		.to.eventually.be.rejectedWith(errorMessage);
 	});
 
 	it('Search test', async () => {
