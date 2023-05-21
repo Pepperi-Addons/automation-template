@@ -15,7 +15,7 @@ export class WebappCommand extends SystemFilterUser {
     }
 
     async test(auditLog: any, syncData: any, expect: Chai.ExpectStatic): Promise<any> {
-        expect(syncData.ResourcesData).to.be.an('Array').that.is.not.empty
+        expect(syncData.Resources.Data).to.be.an('Array').that.is.not.empty
         let schemes = this.syncDataResult.getSchemesFromWACD()
 
         // validating that all of the schemes exists
