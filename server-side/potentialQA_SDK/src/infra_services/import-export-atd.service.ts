@@ -1,5 +1,5 @@
 import { PapiClient } from '@pepperi-addons/papi-sdk';
-import { ResourceTypes } from '../server_side/general.service';
+import { ResourceTypes } from './general.service';
 
 export interface MetaDataATD {
     TypeID?: number;

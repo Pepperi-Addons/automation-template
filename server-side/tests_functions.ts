@@ -6,11 +6,11 @@ import { NebulaInternalTest } from './tests/api_tests/NebulaInternalTest.test';
 
 import { SchemaExtensions } from './tests/api_tests/SchemaExtensions.test';
 import { Client, Request } from '@pepperi-addons/debug-server';
-import { JsonMapper } from 'test_infra';
+import { JsonMapper } from "./potentialQA_SDK/src/mapper";
 import { UsersTests } from './tests/api_tests/Users.example.test';
 import { DimxTests } from './tests/api_tests/DimxTests.test';
 import { AddonUUID as AddonUUIDFromAddonConfig } from '../addon.config.json'; // TODO: remove, part of a temporarily fix
-import { GeneralService, TesterFunctions } from 'test_infra';
+import { GeneralService,TesterFunctions } from "./potentialQA_SDK/src/infra_services/general.service";
 import { TestDataTests } from './tests/api_tests/test_data';
 import { SyncTests } from './tests/api_tests/SyncTests.test';
 

@@ -1,5 +1,5 @@
 import { PapiClient } from "@pepperi-addons/papi-sdk"
-import  {GeneralService} from "test_infra";
+import  {GeneralService} from "../../../../../potentialQA_SDK/src/infra_services/general.service";
 import { Client } from  '@pepperi-addons/debug-server'
 import { GlobalSyncService } from "./global-sync-service";
 import { AuditLogService } from "./audit-log-service";

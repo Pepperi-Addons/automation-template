@@ -1,4 +1,4 @@
-import { GeneralService, TesterFunctions } from "test_infra";
+import { GeneralService, TesterFunctions } from "../../potentialQA_SDK/src/infra_services/general.service";
 
 
 const installedAddons = {

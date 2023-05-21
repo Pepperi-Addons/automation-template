@@ -12,7 +12,7 @@ import { SystemFilter, GetRecordsRequiringSyncParameters } from "../entities/neb
 import { NebulaServiceFactory } from "./services/NebulaServiceFactory";
 import { AccountUser, AccountUsersService } from "./services/account-users.service";
 import { UsersService } from "./services/users.service";
-import { GeneralService, TesterFunctions } from "test_infra";
+import { GeneralService, TesterFunctions } from "../../potentialQA_SDK/src/infra_services/general.service";
 
 export async function NebulaTestPart2(generalService: GeneralService, addonService: GeneralService, request, tester: TesterFunctions) {
 

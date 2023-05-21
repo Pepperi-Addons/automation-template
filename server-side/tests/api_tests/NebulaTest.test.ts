@@ -9,7 +9,7 @@ import { BasicRecord } from "./services/NebulaPNSEmulator.service";
 import jwt from 'jwt-decode';
 import { SystemFilter, GetRecordsRequiringSyncParameters, GetResourcesRequiringSyncParameters, SystemFilterType } from "../entities/nebula/types";
 import { NebulaServiceFactory } from "./services/NebulaServiceFactory";
-import { GeneralService, TesterFunctions } from "test_infra";
+import { GeneralService, TesterFunctions } from "../../potentialQA_SDK/src/infra_services/general.service";
 
 export async function NebulaTest(generalService: GeneralService, addonService: GeneralService, request, tester: TesterFunctions) {
 
