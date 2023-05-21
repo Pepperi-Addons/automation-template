@@ -1,12 +1,5 @@
 //fc5a5974-3b30-4430-8feb-7d5b9699bc9f
-import {
-    FindOptions,
-    User,
-    PapiClient,
-	SearchData,
-	AddonData,
-	SearchBody,
-} from '@pepperi-addons/papi-sdk';
+import { PapiClient, SearchData, AddonData, SearchBody } from '@pepperi-addons/papi-sdk';
 import GeneralService from 'test_infra';
 import { v4 as uuid } from 'uuid';
 
@@ -28,9 +21,17 @@ export class CoreResourcesService {
         return await this.papiClient.get(`/resources/${resource}`);
     }
 
-	async searchGenericResourceObjects(resource: string, searchBody: SearchBody): Promise<SearchData<AddonData>> {
-        return await this.papiClient.resources.resource(resource).search(searchBody);
+	async getGenericResourceByKey(resource: string, key: string): Promise<any> {
+        return await this.papiClient.get(`/resources/${resource}/key/${key}`);
     }
+
+	async getGenericResourceByUniqueField(resource: string, fieldID: string, key: string): Promise<any[]> {
+        return await this.papiClient.get(`/resources/${resource}/unique/${fieldID}/${key}`);
+    }
+
+	async searchGenericResource(resource: string, searchBody: SearchBody): Promise<SearchData<AddonData>> {
+        return await this.papiClient.resources.resource(resource).search(searchBody);
+	}
 
 	async getPapiResourceObjects(resource: string): Promise<any[]> {
 		return await this.papiClient.get(`/${resource}`);
@@ -105,7 +106,7 @@ export class CoreResourcesService {
 				Fields: ["Key"]
 			};
 
-			searchResponse = await this.searchGenericResourceObjects(resource, searchOptions);
+			searchResponse = await this.searchGenericResource(resource, searchOptions);
 			
 			// For each object, set the Hidden field to true
 			searchResponse.Objects.forEach(obj => obj.Hidden = true);
@@ -160,5 +161,14 @@ export class CoreResourcesService {
         await this.generalService.sleep(seconds * 1000);
         console.log(`Done waiting for operation`);
     }
+
+	async getAdalSchemeFieldsNames(resource: string): Promise<string[]> {
+		const scheme = await this.papiClient.get(`/addons/data/schemes/${resource}`);
+		return Object.keys(scheme.Fields);
+	}
+
+	generateValidKey() {
+		return uuid();
+	}
 
 }
