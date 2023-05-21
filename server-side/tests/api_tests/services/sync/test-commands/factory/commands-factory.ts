@@ -29,8 +29,8 @@ import {
   PushDataTimeCommand,
   UploadDataToSync,
   FilesCommand,
+  ContentLengthCommand
   AdditionalFieldsCommand
-
 } from "..";
 
 export class CommandFactory {
@@ -63,6 +63,7 @@ export class CommandFactory {
     UploadDataToSync:UploadDataToSync,
     CleanupCommand: CleanupCommand,
     FilesCommand: FilesCommand,
+    ContentLengthCommand: ContentLengthCommand
     AdditionalFieldsCommand: AdditionalFieldsCommand
   };
 
