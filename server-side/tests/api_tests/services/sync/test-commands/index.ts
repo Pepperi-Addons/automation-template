@@ -27,5 +27,4 @@ export * from './push/push-data-time-command'
 export * from './upload-data-to-sync'
 export * from './files-command'
 export * from './content-length-command'
-export * from './additional-fields-command'
 
