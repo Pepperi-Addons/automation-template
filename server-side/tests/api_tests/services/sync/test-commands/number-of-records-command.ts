@@ -21,7 +21,7 @@ export class NumberOfRecordsCommand extends BaseCommand {
         this.client = client
         this.syncDimxService = new SyncDimxService()
         this.papiClient = syncAdalService.papiClient
-        this.syncFileService = new SyncFileService(this.client, this.papiClient)
+        this.syncFileService = new SyncFileService(this.client, this.papiClient,false)
         this.resourceManager = new ResourceManagerService(this.papiClient, this.automationUUID) 
         
     }

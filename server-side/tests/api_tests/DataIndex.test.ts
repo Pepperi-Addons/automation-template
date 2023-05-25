@@ -3,8 +3,8 @@ import { Connector, validateOrderOfResponseBySpecificField } from './services/Da
 import { PapiClient, SearchBody } from '@pepperi-addons/papi-sdk';
 //00000000-0000-0000-0000-00000e1a571c
 import { DataIndexService } from "./services/DataIndex.service";
-import { GeneralService, TesterFunctions } from 'test_infra';
-// import GeneralService, { TesterFunctions } from "../../potentialQA_SDK/server_side/general.service";
+// import { GeneralService, TesterFunctions } from 'test_infra';
+import { GeneralService, TesterFunctions } from "../../potentialQA_SDK/src/infra_services/general.service";
 // import {GeneralSer} from 'tests';
 
 

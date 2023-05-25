@@ -26,8 +26,11 @@ import {
   RecordSizeHundredThousandCommand,
   ConnectAccountDelta,
   WebappCommand,
-  PushDataTimeCommand
-
+  PushDataTimeCommand,
+  UploadDataToSync,
+  FilesCommand,
+  ContentLengthCommand,
+  AdditionalFieldsCommand
 } from "..";
 
 export class CommandFactory {
@@ -57,7 +60,11 @@ export class CommandFactory {
     ConnectAccountDelta: ConnectAccountDelta,
     WebappCommand: WebappCommand,
     PushDataTimeCommand: PushDataTimeCommand,
-    CleanupCommand: CleanupCommand
+    UploadDataToSync:UploadDataToSync,
+    CleanupCommand: CleanupCommand,
+    FilesCommand: FilesCommand,
+    ContentLengthCommand: ContentLengthCommand,
+    AdditionalFieldsCommand: AdditionalFieldsCommand
   };
 
   static createCommand(type: string, syncAdalService: SyncAdalService, client: Client): TestCommand {

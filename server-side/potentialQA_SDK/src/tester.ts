@@ -5,7 +5,7 @@ import fs from 'fs';
 import path from 'path';
 import Mochawesome from 'mochawesome';
 import { Client } from '@pepperi-addons/debug-server';
-import { ConsoleColors } from './server_side/general.service';
+import { ConsoleColors } from './infra_services/general.service';
 
 chai.use(promised);
 

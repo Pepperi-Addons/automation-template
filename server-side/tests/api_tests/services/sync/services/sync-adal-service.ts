@@ -1,9 +1,9 @@
 import { Client } from "@pepperi-addons/debug-server/dist";
 import { PapiClient, AddonDataScheme, SchemeField, AddonData } from "@pepperi-addons/papi-sdk";
-import {GeneralService} from "test_infra";
+import {GeneralService} from '../../../../../potentialQA_SDK/src/infra_services/general.service';
 import { ADALTableService } from "../../resource_management/adal_table.service";
 import { v4 as uuid } from 'uuid';
-import { ADALService } from "test_infra";
+import { ADALService } from "../../../../../potentialQA_SDK/src/infra_services/adal.service";
 
 export class SyncAdalService {
     client : Client

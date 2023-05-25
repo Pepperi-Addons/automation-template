@@ -20,10 +20,10 @@ export class SystemFilterUser extends SystemFilterNone {
         // start sync
         let dateTime = new Date();
         dateTime.setHours(dateTime.getHours()-1)
-        const systemFilter = this.systemFilterService.generateSystemFilter(false,true)
+        const pathData = this.systemFilterService.generateSystemFilter(false,true)
         let auditLog = await this.syncService.pull({
             ModificationDateTime:dateTime.toISOString(),
-            ...systemFilter
+            PathData: pathData
         },false, false, false)
         return auditLog
     }
@@ -39,7 +39,7 @@ export class SystemFilterUser extends SystemFilterNone {
        expect(responseSchemes).to.contain(this.adalTableServices?.none.schemaName)
        
        const noneObjects = this.syncDataResult.getObjects(this.adalTableServices!.none.schemaName)
-       expect(Object.keys(noneObjects)).to.have.a.lengthOf(2)
+       expect(Object.keys(noneObjects)).to.have.a.lengthOf(0)
        
        const accountObjects = this.syncDataResult.getObjects(this.adalTableServices!.account.schemaName)
        expect(Object.keys(accountObjects)).to.have.a.lengthOf(0)

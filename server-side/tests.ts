@@ -1,5 +1,5 @@
 import { Client } from '@pepperi-addons/debug-server';
-import { TesterFunctions } from 'test_infra';
+import { TesterFunctions } from "./potentialQA_SDK/src/infra_services/general.service";
 import { mapUuidToTestName, runTest } from './tests_functions';
 
 // import { runTest } from './potentialQA_SDK/tests_functions';

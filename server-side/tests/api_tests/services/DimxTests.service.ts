@@ -13,8 +13,7 @@ import {
 // import GeneralService from '../../../potentialQA_SDK/server_side/general.service';
 import { FileExportOutput, FileImportOutput, RecursiveImportOutput, RecursiveExportOutput, CreateMappingInput, CreateMappingOutput, DIMX_ADDON_UUID } from './DIMXTests_types_and_schemes';
 import fetch from 'node-fetch';
-import { GeneralService } from 'test_infra';
-
+import {GeneralService} from '../../../potentialQA_SDK/src/infra_services/general.service';
 
 export class DimxTestsService {
     papiClient: PapiClient;

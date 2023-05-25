@@ -1,7 +1,7 @@
 // factory for Nebula service.
 
 import { PapiClient } from "@pepperi-addons/papi-sdk";
-import { GeneralService } from "test_infra";
+import {GeneralService} from '../../../potentialQA_SDK/src/infra_services/general.service';
 // import GeneralService from "../../../potentialQA_SDK/server_side/general.service";
 import { NebulaLocalFunctions } from "./NebulaLocalFunctions.service";
 import { NebulaTestService } from "./NebulaTest.service";

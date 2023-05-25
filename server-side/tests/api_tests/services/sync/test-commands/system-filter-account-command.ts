@@ -23,10 +23,10 @@ export class SystemFilterAccount extends SystemFilterNone {
         // start sync
         let dateTime = new Date();
         dateTime.setHours(dateTime.getHours()-1)
-        const systemFilter = this.systemFilterService.generateSystemFilter(true, false, this.connectedAccountUUID)
+        const pathData = this.systemFilterService.generateSystemFilter(true, false, this.connectedAccountUUID)
         let auditLog = await this.syncService.pull({
             ModificationDateTime:dateTime.toISOString(),
-            ...systemFilter
+            PathData: pathData
         }, false, false, false)
         return auditLog
     }

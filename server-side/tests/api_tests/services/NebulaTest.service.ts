@@ -1,7 +1,7 @@
 //00000000-0000-0000-0000-000000006a91
 import { PapiClient } from '@pepperi-addons/papi-sdk';
 import jwtDecode from "jwt-decode";
-import { GeneralService } from 'test_infra';
+import { GeneralService } from '../../../potentialQA_SDK/src/infra_services/general.service';
 import { GetResourcesRequiringSyncParameters, GetResourcesRequiringSyncResponse, GetRecordsRequiringSyncParameters } from '../../entities/nebula/types';
 import { BasicRecord } from './NebulaPNSEmulator.service';
 
