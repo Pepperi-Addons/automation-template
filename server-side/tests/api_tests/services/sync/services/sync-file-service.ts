@@ -87,7 +87,7 @@ export class SyncFileService {
                 this.urlsToDownload.push(downloadURL)
             }
             else {
-                throw new Error(`Failed to import file`);
+                throw new Error(`Failed to import file, error ${JSON.parse(ansFromAuditLog.resultObject).errorMessage}`);
             }
         }
     }

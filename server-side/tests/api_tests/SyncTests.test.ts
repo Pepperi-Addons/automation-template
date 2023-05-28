@@ -29,6 +29,10 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
         command: CommandFactory.createCommand('CleanRebuild', syncAdalService, client)
       },
       {
+        name: 'ResyncCommand',
+        command: CommandFactory.createCommand('ResyncCommand', syncAdalService, client)
+      },
+      {
         name: 'SchemaExistsTest',
         command: CommandFactory.createCommand('SchemaExistsTest', syncAdalService, client)
       },
@@ -63,10 +67,6 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
       {
         name: 'DeltaTestCommand',
         command: CommandFactory.createCommand('DeltaTestCommand', syncAdalService, client)
-      },
-      {
-        name: 'ResyncCommand',
-        command: CommandFactory.createCommand('ResyncCommand', syncAdalService, client)
       },
       {
         name: 'HundredRecordsCommand',

@@ -66,8 +66,8 @@ export class SystemFilterService extends SyncAdalService {
                     Key: account ? accountUUID : webapp ? this.usersService.getCurrentUserUUID(): undefined 
                 }
             ],
-            IncludedResources: account? ['accounts']: webapp? ['users'] : [],
-            ExcludedResources: account? ['users']: webapp? ['accounts'] : [],
+            IncludedResources: account ? ['accounts'] : [],
+            ExcludedResources: webapp? ['accounts'] : [],
             PermissionSet: "Sync"
         }
 
