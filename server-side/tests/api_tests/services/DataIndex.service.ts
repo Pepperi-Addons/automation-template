@@ -8,7 +8,7 @@ import {
     SearchData,
 } from '@pepperi-addons/papi-sdk';
 
-import {GeneralService} from '../../../potentialQA_SDK/src/infra_services/general.service';
+import { GeneralService } from '../../../potentialQA_SDK/src/infra_services/general.service';
 // import { GeneralService } from 'test_infra'
 import { v4 as uuidv4 } from 'uuid';
 
@@ -161,4 +161,21 @@ export function validateOrderOfResponseBySpecificField(response: ElasticSearchDo
     if (!!values.reduce((n, item) => n !== false && item >= n && item))
         return;
     throw new Error(`Response isn't ordered correctly`);
+}
+
+export function validateOrderOfResponseByArrayOfKeys(response: ElasticSearchDocument[], keys: string[]) {
+    let values: (string | undefined)[];
+    values = response.map(doc => doc.Key);
+    if (!arraysOfKeysEqual(keys, values))
+        throw new Error(`Response isn't ordered correctly`);
+}
+
+function arraysOfKeysEqual(a: (string | undefined)[], b: (string | undefined)[]) {
+    if (a.length !== b.length)
+        return false;
+    for (var i = 0; i < a.length; ++i) {
+        if (a[i] !== b[i])
+            return false;
+    }
+    return true;
 }

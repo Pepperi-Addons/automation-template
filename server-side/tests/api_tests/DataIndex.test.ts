@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { Connector, validateOrderOfResponseBySpecificField } from './services/DataIndex.service';
+import { Connector, validateOrderOfResponseBySpecificField, validateOrderOfResponseByArrayOfKeys } from './services/DataIndex.service';
 import { PapiClient, SearchBody } from '@pepperi-addons/papi-sdk';
 //00000000-0000-0000-0000-00000e1a571c
 import { DataIndexService } from "./services/DataIndex.service";
@@ -406,6 +406,69 @@ function baseTester(it: any, expect, connector: Connector, generalService: Gener
             expect(diResponse["Objects"][0], "Response first result").to.be.an('object').to.include.all.keys("name.first", "name.last", "string_field", "bool_field", "ElasticSearchType");
         })
     }
+
+    // adding some documents in order to test DI-23847
+    it(`Create More Documents`, async () => {
+        await connector.batchUpsertDocuments([
+            {
+                Key: "7",
+                string_field: "Susann Renato",
+                bool_field: true,
+                int_field: 6,
+                double_field: 9.5,
+                date_field: "2022-11-24T12:43:32.166Z",
+                unindexed_field: "shouldn't be indexed",
+                "name.Key": "10",
+                "name.first": "Susann",
+                "name.last": "Renato"
+            },
+            {
+                Key: "8",
+                string_field: "Jessika Renato",
+                bool_field: false,
+                int_field: 4,
+                double_field: 6.2,
+                date_field: "2022-11-24T12:45:32.166Z",
+                unindexed_field: "shouldn't be indexed",
+                "name.Key": "20",
+                "name.first": "Jessika",
+                "name.last": "Renato"
+            },
+            {
+                Key: "9",
+                string_field: "Jessika Silvano",
+                bool_field: true,
+                int_field: 2,
+                double_field: 1.5,
+                date_field: "2022-11-24T12:47:32.166Z",
+                unindexed_field: "shouldn't be indexed",
+                "name.Key": "30",
+                "name.first": "Jessika",
+                "name.last": "Silvano"
+            }
+        ]);
+        generalService.sleep(5000);
+    });
+
+    // Validate order_by with multiple fields works (DI-23847)
+    it("Get all documents ordered by int_field and Key", async () => {
+        let diResponse = await connector.getDocuments({
+            order_by: "int_field,Key"
+        });
+        console.log(diResponse);
+        expect(diResponse, "Response array").to.be.an('array').with.lengthOf(9);
+        validateOrderOfResponseByArrayOfKeys(diResponse, ['4', '3', '9', '5', '2', '8', '1', '7', '6']);
+    });
+
+    // Validate order_by with multiple fields works (DI-23847)
+    it("Get all documents ordered by int_field and Key (where Key is desc)", async () => {
+        let diResponse = await connector.getDocuments({
+            order_by: "int_field,Key desc"
+        });
+        console.log(diResponse);
+        expect(diResponse, "Response array").to.be.an('array').with.lengthOf(9);
+        validateOrderOfResponseByArrayOfKeys(diResponse, ['4', '9', '3', '5', '8', '2', '7', '1', '6']);
+    });
 
     it(`Index Purge`, async () => {
         await connector.purgeSchema();
