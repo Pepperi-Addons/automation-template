@@ -1,7 +1,7 @@
 import { GlobalSyncService } from "../services/global-sync-service";
-import { SystemFilterNone } from "./system-filter-none-command";
+import { PathDataNone } from "./path-data-none-command";
 
-export class PapiConnectAccountCommand extends SystemFilterNone {
+export class PapiConnectAccountCommand extends PathDataNone {
 
     connectedAccountUUID: string = "";
 
@@ -10,7 +10,7 @@ export class PapiConnectAccountCommand extends SystemFilterNone {
         // start sync
         let dateTime = new Date();
         dateTime.setHours(dateTime.getHours()-1)
-        const pathData = this.systemFilterService.generateSystemFilter(true, false, this.connectedAccountUUID)
+        const pathData = this.systemFilterService.generatePathData(true, false, this.connectedAccountUUID)
         let auditLog = await this.syncService.pullConnectAccount({
             ModificationDateTime: dateTime.toISOString(),
             PathData: pathData

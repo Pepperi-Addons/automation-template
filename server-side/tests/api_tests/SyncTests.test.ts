@@ -29,6 +29,10 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
         command: CommandFactory.createCommand('CleanRebuild', syncAdalService, client)
       },
       {
+        name: 'ResyncCommand',
+        command: CommandFactory.createCommand('ResyncCommand', syncAdalService, client)
+      },
+      {
         name: 'SchemaExistsTest',
         command: CommandFactory.createCommand('SchemaExistsTest', syncAdalService, client)
       },
@@ -49,24 +53,20 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
         command: CommandFactory.createCommand('PapiConnectAccountCommand', syncAdalService, client)
       },
       {
-        name: 'SystemFilterNone',
-        command: CommandFactory.createCommand('SystemFilterNone',syncAdalService,client)
+        name: 'PathDataNone',
+        command: CommandFactory.createCommand('PathDataNone',syncAdalService,client)
       },
       {
-        name: 'SystemFilterAccount',
-        command: CommandFactory.createCommand('SystemFilterAccount',syncAdalService,client)
+        name: 'PathDataAccount',
+        command: CommandFactory.createCommand('PathDataAccount',syncAdalService,client)
       },
       {
-        name: 'SystemFilterUser',
-        command: CommandFactory.createCommand('SystemFilterUser',syncAdalService,client)
+        name: 'PathDataUser',
+        command: CommandFactory.createCommand('PathDataUser',syncAdalService,client)
       },
       {
         name: 'DeltaTestCommand',
         command: CommandFactory.createCommand('DeltaTestCommand', syncAdalService, client)
-      },
-      {
-        name: 'ResyncCommand',
-        command: CommandFactory.createCommand('ResyncCommand', syncAdalService, client)
       },
       {
         name: 'HundredRecordsCommand',

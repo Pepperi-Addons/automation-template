@@ -11,7 +11,7 @@ export class SyncDimxService{
             Name: schemaName,
             Description: "Sync Test Import Relation",
             Type: "AddonAPI",
-            AddonRelativeURL: "/dimx_sync_tests/import_dimx_object_do_nothing"
+            AddonRelativeURL: ""
         }
         try{
             await resourcaManager.createRelation(relation)
