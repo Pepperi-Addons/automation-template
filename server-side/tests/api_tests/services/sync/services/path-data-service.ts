@@ -3,7 +3,7 @@ import { AccountsService, CORE_RESOURCES_ADDON_UUID } from "./accounts-service";
 import { SyncAdalService } from "./sync-adal-service";
 import { UsersService } from "./users-service";
 
-export class SystemFilterService extends SyncAdalService {  
+export class PathDataService extends SyncAdalService {  
     usersService: UsersService;
     accountsService: AccountsService;
 
@@ -57,7 +57,7 @@ export class SystemFilterService extends SyncAdalService {
         return this.accountsService.generateAccountData([connectedAccount.UUID,notConnectedAccount.UUID])
     }        
 
-    generateSystemFilter(account:boolean,webapp:boolean,accountUUID?:string){
+    generatePathData(account:boolean,webapp:boolean,accountUUID?:string){
         const pathData: NebulaPathData = 
         {
             Destinations:[
