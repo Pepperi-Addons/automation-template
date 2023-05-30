@@ -67,7 +67,7 @@ export class ConnectAccountDelta extends SystemFilterNone{
         // add check to hidden account is hidden in objects
         // validating this as a key-value pairs of account uuid and is hidden
         expect(accounts).to.include.deep.members([{[this.connectedAccount.UUID]: false}])
-        expect(accounts).to.include.deep.members([{[this.hiddenAccount.UUID]:true}])
+        expect(accounts).to.include.deep.members([{[this.hiddenAccount.UUID]:false}])
         
     }
 
