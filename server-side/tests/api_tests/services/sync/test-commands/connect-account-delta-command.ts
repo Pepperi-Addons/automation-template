@@ -62,7 +62,7 @@ export class ConnectAccountDelta extends PathDataNone{
             const isHidden = record.Hidden
 
             // known issue that data from hidden account is returned
-            if(accountUUID == this.hiddenAccount.UUID && isHidden == true){
+            if(accountUUID == this.hiddenAccount.UUID && isHidden == false){
                 throw new Error(`Test failing due to nebula issue, bug DI-23903 is open on this issue`)
             }
 
