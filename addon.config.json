@@ -1,19 +1,17 @@
 {
   "AddonUUID": "02754342-e0b5-4300-b728-a94ea5e0e8f4",
-  "AddonVersion": "0.0.47",
+  "AddonVersion": "0.0.122",
   "DebugPort": 4600,
   "WebappBaseUrl": "https://app.sandbox.pepperi.com",
   "DefaultEditor": "main",
   "Endpoints": [
     "installation.ts",
-    "tests.ts",
-    "dimx_sync_tests.ts"
+    "tests.ts"
   ],
   "Editors": [
     "editor"
   ],
   "PublishConfig": {
-    "ClientStack": "ng10",
     "Editors": [
       {
         "ParentPackageName": "automation_template_addon",
@@ -21,7 +19,6 @@
         "Description": "CHANGE_TO_ADDON_DESCRIPTION"
       }
     ],
-    "Dependencies": {},
     "CPISide": [
       "addon-cpi.ts"
     ]

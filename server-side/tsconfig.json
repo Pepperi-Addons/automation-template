@@ -16,7 +16,6 @@
   },
   "exclude": [
     "./build/**",
-    "./dest/**",
-    "./potentialQA_SDK/*"
+    "./dest/**"
   ]
 }

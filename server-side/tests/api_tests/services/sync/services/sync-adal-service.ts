@@ -1,9 +1,9 @@
 import { Client } from "@pepperi-addons/debug-server/dist";
 import { PapiClient, AddonDataScheme, SchemeField, AddonData } from "@pepperi-addons/papi-sdk";
-import GeneralService from "../../../../../potentialQA_SDK/server_side/general.service";
+import {GeneralService} from '../../../../../potentialQA_SDK/src/infra_services/general.service';
 import { ADALTableService } from "../../resource_management/adal_table.service";
 import { v4 as uuid } from 'uuid';
-import { ADALService } from "../../../../../potentialQA_SDK/server_side/adal.service";
+import { ADALService } from "../../../../../potentialQA_SDK/src/infra_services/adal.service";
 
 export class SyncAdalService {
     client : Client
@@ -14,8 +14,9 @@ export class SyncAdalService {
     adalResources: ADALTableService[] = [];
 
     constructor(client: Client){
-        this.client = client
-        this.systemService = new GeneralService(this.client)
+        debugger;
+        this.client = client;
+        this.systemService = new GeneralService(this.client);
         this.papiClient = this.systemService.papiClient as any;
         this.schemaName = "";
         this.addonUUID = '02754342-e0b5-4300-b728-a94ea5e0e8f4'

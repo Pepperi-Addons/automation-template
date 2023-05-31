@@ -1,7 +1,6 @@
 import { AddonDataScheme, PapiClient, AddonData, FindOptions } from '@pepperi-addons/papi-sdk';
-import { ADALService } from "../../../../potentialQA_SDK/server_side/adal.service"
 import { RemovableResource } from './removable_resource.service';
-
+import { ADALService } from '../../../../potentialQA_SDK/src/infra_services/adal.service';
 export class ADALTableService extends RemovableResource {
     adalService: ADALService;
     schemaName: string;
@@ -77,6 +76,16 @@ export class ADALTableService extends RemovableResource {
         }
         catch (ex) {
             console.error(`upsertRecord - adal_table: ${ex}`);
+            throw new Error((ex as { message: string }).message);
+        }
+    }
+
+    async updateSchema(schema: AddonDataScheme): Promise<AddonDataScheme> {
+        try {
+            return await this.adalService.postSchema(schema);
+        }
+        catch (ex) {
+            console.error(`updateSchema - adal_table: ${ex}`);
             throw new Error((ex as { message: string }).message);
         }
     }
