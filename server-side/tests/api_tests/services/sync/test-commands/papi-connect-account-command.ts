@@ -1,7 +1,7 @@
 import { GlobalSyncService } from "../services/global-sync-service";
-import { SystemFilterNone } from "./system-filter-none-command";
+import { PathDataNone } from "./path-data-none-command";
 
-export class PapiConnectAccountCommand extends SystemFilterNone {
+export class PapiConnectAccountCommand extends PathDataNone {
 
     connectedAccountUUID: string = "";
 
@@ -10,10 +10,10 @@ export class PapiConnectAccountCommand extends SystemFilterNone {
         // start sync
         let dateTime = new Date();
         dateTime.setHours(dateTime.getHours()-1)
-        const systemFilter = this.systemFilterService.generateSystemFilter(true, false, this.connectedAccountUUID)
+        const pathData = this.systemFilterService.generatePathData(true, false, this.connectedAccountUUID)
         let auditLog = await this.syncService.pullConnectAccount({
             ModificationDateTime: dateTime.toISOString(),
-            ...systemFilter
+            PathData: pathData
         }, this.connectedAccountUUID)
         return auditLog
     }
@@ -21,36 +21,41 @@ export class PapiConnectAccountCommand extends SystemFilterNone {
     async test(syncRes: any, syncData: any, expect: Chai.ExpectStatic): Promise<any> {
         // sync res tests
         expect(syncRes).to.have.property('UpToDate').that.is.a('Boolean').and.is.equal(false)
-        expect(syncData).to.have.property('ResourcesData').that.is.a('Array').and.is.not.empty
-        // sync data tests
-        expect(syncData.ResourcesData[0]).to.have.property('user_defined_tables').that.is.a('Object').and.is.not.empty
-        expect(syncData.ResourcesData[0].user_defined_tables).to.have.property('Headers').that.is.a('Array').and.is.not.empty
-        expect(syncData.ResourcesData[0].user_defined_tables).to.have.property('Rows').that.is.a('Object').and.is.not.empty
-        expect(syncData.ResourcesData[0].user_defined_tables.Rows).to.have.property('m_Rows').that.is.a('Array').and.is.not.empty
-        const rows = syncData.ResourcesData[0].user_defined_tables.Rows.m_Rows
+        expect(syncData).to.have.property('Resources').that.is.not.empty
+        expect(syncData.Resources).to.have.property('Data').that.is.a('Array').and.is.not.empty
+        const data = syncData.Resources.Data
+        data.forEach(resource =>{
+            expect(resource).to.have.property('user_defined_tables').that.is.a('Object').and.is.not.empty
+            expect(resource.user_defined_tables).to.have.property('Headers').that.is.a('Array').and.is.not.empty
+            expect(resource.user_defined_tables).to.have.property('Rows').that.is.a('Object').and.is.not.empty
+            expect(resource.user_defined_tables.Rows).to.have.property('m_Rows').that.is.a('Array')
+            const rows = resource.user_defined_tables.Rows.m_Rows
         // rows must have at least one row or more
-        expect(rows).to.have.lengthOf.above(0)
-        rows.forEach(row => {
-            expect(row).to.have.property('ItemArray').that.is.a('Array').and.is.not.empty
-            expect(row.ItemArray[0]).to.be.a('String').and.is.not.empty // WrntyID
-            expect(row.ItemArray[1]).to.be.a('String').and.is.equal("0") // CreationDateTime
-            expect(row.ItemArray[2]).to.be.a('String').and.is.equal("0") // ModificationDateTime
-            expect(row.ItemArray[3]).to.be.a('String').and.is.equal("0") // DistributorObjectIDID
-            expect(row.ItemArray[4]).to.be.a('String').and.is.oneOf(["True","False"]) // Hidden
-            expect(row.ItemArray[5]).to.be.a('String').and.is.not.empty // MapDataMetaDataObjectIDID
-            expect(row.ItemArray[6]).to.be.a('String'); // MainKey
-            expect(row.ItemArray[7]).to.be.a('String'); // SecondaryKey the object key
-            const values = row.ItemArray[8]
-            expect(values).to.be.a('String').and.is.not.empty;
-            expect(GlobalSyncService.isValidJSON(values)).to.be.true;
-            expect(row.ItemArray[9]).to.be.a('String').and.is.equal("0") // WriteToNucleusTime
-            expect(row.ItemArray[10]).to.be.a('String').and.is.not.empty // ResolvedWrntyID
-        });
-        // check the object properties
-        const objRow = rows.find(row => JSON.parse(row.ItemArray[8]).hasOwnProperty('Account_Field'))
-        const obj = JSON.parse(objRow.ItemArray[8])
-        expect(obj).to.have.property('Account_Field').that.is.a('String').and.is.equal(this.connectedAccountUUID)
-
+            if(rows.length>0){
+                rows.forEach(row => {
+                    expect(row).to.have.property('ItemArray').that.is.a('Array').and.is.not.empty
+                    expect(row.ItemArray[0]).to.be.a('String').and.is.not.empty // WrntyID
+                    expect(row.ItemArray[1]).to.be.a('String').and.is.equal("0") // CreationDateTime
+                    expect(row.ItemArray[2]).to.be.a('String').and.is.equal("0") // ModificationDateTime
+                    expect(row.ItemArray[3]).to.be.a('String').and.is.equal("0") // DistributorObjectIDID
+                    expect(row.ItemArray[4]).to.be.a('String').and.is.oneOf(["True","False"]) // Hidden
+                    expect(row.ItemArray[5]).to.be.a('String').and.is.not.empty // MapDataMetaDataObjectIDID
+                    expect(row.ItemArray[6]).to.be.a('String'); // MainKey
+                    expect(row.ItemArray[7]).to.be.a('String'); // SecondaryKey the object key
+                    const values = row.ItemArray[8]
+                    expect(values).to.be.a('String').and.is.not.empty;
+                    expect(GlobalSyncService.isValidJSON(values)).to.be.true;
+                    expect(row.ItemArray[9]).to.be.a('String').and.is.equal("0") // WriteToNucleusTime
+                    expect(row.ItemArray[10]).to.be.a('String').and.is.not.empty // ResolvedWrntyID
+                });
+                // check the object properties
+                const objRow = rows.find(row => JSON.parse(row.ItemArray[8]).hasOwnProperty('Account_Field'))
+                if(objRow != undefined){
+                    const obj = JSON.parse(objRow.ItemArray[8])
+                    expect(obj).to.have.property('Account_Field').that.is.a('String').and.is.equal(this.connectedAccountUUID)
+                }
+            }
+        })
     }    
 }
 

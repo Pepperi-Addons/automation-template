@@ -3,27 +3,27 @@ import { PapiClient } from "@pepperi-addons/papi-sdk";
 import { ADALTableService } from "../../resource_management/adal_table.service";
 import { ResourceManagerService } from "../../resource_management/resource_manager.service";
 import { SyncAdalService } from "../services/sync-adal-service";
-import { SystemFilterService } from "../services/system-filter-service";
-import { SystemFilterNone } from "./system-filter-none-command";
+import { PathDataService } from "../services/path-data-service";
+import { PathDataNone } from "./path-data-none-command";
 
 
-export class SystemFilterUser extends SystemFilterNone {
-    protected systemFilterService: SystemFilterService; 
+export class PathDataUser extends PathDataNone {
+    protected systemFilterService: PathDataService; 
     protected adalTableServices? : {account: ADALTableService, user: ADALTableService, none: ADALTableService}
     auditLogService: any;
     constructor(adalTableService: SyncAdalService, client: Client){
         super(adalTableService, client)
-        this.systemFilterService = new SystemFilterService(client)
+        this.systemFilterService = new PathDataService(client)
     } 
   
     async sync(): Promise<any> {
         // start sync
         let dateTime = new Date();
         dateTime.setHours(dateTime.getHours()-1)
-        const systemFilter = this.systemFilterService.generateSystemFilter(false,true)
+        const pathData = this.systemFilterService.generatePathData(false,true)
         let auditLog = await this.syncService.pull({
             ModificationDateTime:dateTime.toISOString(),
-            ...systemFilter
+            PathData: pathData
         },false, false, false)
         return auditLog
     }

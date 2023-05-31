@@ -5,9 +5,9 @@ export * from './future-date-command';
 export * from './papi-connect-account-command';
 export * from './return-url-command';
 export * from './schema-exists-command';
-export * from './system-filter-account-command';
-export * from './system-filter-none-command';
-export * from './system-filter-user-command';
+export * from './path-data-account-command';
+export * from './path-data-none-command';
+export * from './path-data-user-command';
 export * from './wacd-command';
 export * from './resync-command';
 export * from './delta-test-command';
@@ -24,4 +24,7 @@ export * from './record-size-hundred-thousand-command';
 export * from './connect-account-delta-command';
 export * from './webapp-command'
 export * from './push/push-data-time-command'
+export * from './upload-data-to-sync'
+export * from './files-command'
+export * from './content-length-command'
 

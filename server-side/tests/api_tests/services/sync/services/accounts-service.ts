@@ -30,6 +30,11 @@ export class AccountsService {
         const notConnectedAccounts = allAccounts.filter(account => {
             return !connectedAccounts.find(conn => conn.UUID === account.UUID)
         });
+        if(notConnectedAccounts.length == 0){
+            let acc = await this.createAccount()
+            await this.hideAccountFromCurrentUser(acc)
+            return [acc]
+        }
         return notConnectedAccounts;
     }
 
@@ -39,15 +44,18 @@ export class AccountsService {
         const currentUserUUID = this.usersService.getCurrentUserUUID();
         const accountsUsers = await this.papiClient.get(`/addons/data/${CORE_RESOURCES_ADDON_UUID}/account_users?where=Hidden=0`);
 
+        // Search for an account that points to current user
         const connectedAccountUsers = accountsUsers.filter(accountUser => accountUser.User === currentUserUUID);
 
         const accountThatConnected = accounts.filter(account => connectedAccountUsers.find(accountUser => accountUser.Account === account.UUID));
 
+        // if there is not connected account, create one
         if (connectedAccountUsers.length === 0) {
-            throw new Error('Could not find an account that points to current user, create one and try again.');
+            let acc = await this.createAccount()
+            return [acc]
         }
 
-        // Search for an account that points to current user
+
         return accountThatConnected
     }
 

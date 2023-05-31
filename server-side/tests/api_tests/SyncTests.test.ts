@@ -1,4 +1,4 @@
-import GeneralService, { TesterFunctions } from "test_infra";
+import { GeneralService, TesterFunctions } from "../../potentialQA_SDK/src/infra_services/general.service";
 import { Client } from "@pepperi-addons/debug-server/dist";
 import { CommandFactory } from "./services/sync/test-commands/factory/commands-factory";
 import { TestCommand } from "./services/sync/test-commands/base-command";
@@ -7,26 +7,30 @@ import { SyncAdalService } from "./services/sync/services/sync-adal-service";
 
 // create ADAL Object
 
-export async function SyncTests(generalService: GeneralService, addonService: GeneralService, request, tester: TesterFunctions){
+export async function SyncTests(generalService: GeneralService, addonService: GeneralService, request, tester: TesterFunctions) {
   const describe = tester.describe;
   const expect = tester.expect;
   const it = tester.it;
   const dataObj = request.body.Data;
 
-  describe("SyncTests Suites",() => {
+  describe("SyncTests Suites", () => {
     const client: Client = generalService['client']
     const addonUUID = "5122dc6d-745b-4f46-bb8e-bd25225d350a";
     const automationUUID = "02754342-e0b5-4300-b728-a94ea5e0e8f4"
 
     const syncAdalService = new SyncAdalService(client)
-    
-  
+
+
     // Note: CleanRebuild and CleanupCommand are not part of the tests
     // just an hack to make sure that nebula will work
     let tests: Test[] = [
       {
         name: 'CleanRebuild',
         command: CommandFactory.createCommand('CleanRebuild', syncAdalService, client)
+      },
+      {
+        name: 'ResyncCommand',
+        command: CommandFactory.createCommand('ResyncCommand', syncAdalService, client)
       },
       {
         name: 'SchemaExistsTest',
@@ -49,24 +53,31 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
         command: CommandFactory.createCommand('PapiConnectAccountCommand', syncAdalService, client)
       },
       {
+        name: 'PathDataNone',
+        command: CommandFactory.createCommand('PathDataNone',syncAdalService,client)
+      },
+      {
+        name: 'PathDataAccount',
+        command: CommandFactory.createCommand('PathDataAccount',syncAdalService,client)
+      },
+      {
+        name: 'PathDataUser',
+        command: CommandFactory.createCommand('PathDataUser',syncAdalService,client)
+      },
         name: 'SystemFilterNone',
-        command: CommandFactory.createCommand('SystemFilterNone',syncAdalService,client)
+        command: CommandFactory.createCommand('SystemFilterNone', syncAdalService, client)
       },
       {
         name: 'SystemFilterAccount',
-        command: CommandFactory.createCommand('SystemFilterAccount',syncAdalService,client)
+        command: CommandFactory.createCommand('SystemFilterAccount', syncAdalService, client)
       },
       {
         name: 'SystemFilterUser',
-        command: CommandFactory.createCommand('SystemFilterUser',syncAdalService,client)
+        command: CommandFactory.createCommand('SystemFilterUser', syncAdalService, client)
       },
       {
         name: 'DeltaTestCommand',
         command: CommandFactory.createCommand('DeltaTestCommand', syncAdalService, client)
-      },
-      {
-        name: 'ResyncCommand',
-        command: CommandFactory.createCommand('ResyncCommand', syncAdalService, client)
       },
       {
         name: 'HundredRecordsCommand',
@@ -107,25 +118,37 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
       {
         name: 'RecordSizeHundredThousandCommand',
         command: CommandFactory.createCommand('RecordSizeHundredThousandCommand', syncAdalService, client)
-      }, 
+      },
       {
         name: 'ConnectAccountDelta',
         command: CommandFactory.createCommand('ConnectAccountDelta', syncAdalService, client)
-      }, 
+      },
       {
         name: 'WebappCommand',
         command: CommandFactory.createCommand('WebappCommand', syncAdalService, client)
-      }, 
+      },
       {
         name: 'PushDataTimeCommand',
         command: CommandFactory.createCommand('PushDataTimeCommand', syncAdalService, client)
+      },
+      {
+        name: 'FilesCommand',
+        command: CommandFactory.createCommand('FilesCommand', syncAdalService, client)
+      },
+      {
+        name: 'ContentLengthCommand',
+        command: CommandFactory.createCommand('ContentLengthCommand', syncAdalService, client)
       },       
+      {
+        name: 'AdditionalFieldsCommand',
+        command: CommandFactory.createCommand('AdditionalFieldsCommand', syncAdalService, client)
+      },
       {
         name: 'CleanupCommand',
         command: CommandFactory.createCommand('CleanupCommand', syncAdalService, client)
       }
     ];
-  
+
     for (const test of tests) {
       it(test.name, async () => {
         await test.command.execute(expect);

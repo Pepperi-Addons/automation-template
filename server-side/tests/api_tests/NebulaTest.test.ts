@@ -1,8 +1,7 @@
 //00000000-0000-0000-0000-000000006a91
-import { GetRecordsRequiringSyncResponse, unitTestsResult } from "./services/NebulaTest.service";
 import { PerformanceManager } from "./services/performance_management/performance_manager";
 import { ResourceManagerService } from "./services/resource_management/resource_manager.service";
-import { Account, AddonData, AddonDataScheme, PapiClient, User } from "@pepperi-addons/papi-sdk";
+import { AddonData, AddonDataScheme, PapiClient } from "@pepperi-addons/papi-sdk";
 import { ADALTableService } from "./services/resource_management/adal_table.service";
 import { v4 as uuidv4 } from 'uuid';
 import { AddonUUID as testingAddonUUID } from "../../../addon.config.json";
@@ -16,6 +15,7 @@ import { UsersService } from "./services/users.service";
 import { GeneralService, TesterFunctions } from "test_infra";
 import { FabulaService } from "./services/febula/febula.service";
 import { EmployeeType, FilterObject, ProfileFilterObject } from "./services/febula/types";
+import { GeneralService, TesterFunctions } from "../../potentialQA_SDK/src/infra_services/general.service";
 
 export async function NebulaTest(generalService: GeneralService, addonService: GeneralService, request, tester: TesterFunctions) {
 
@@ -28,11 +28,6 @@ export async function NebulaTest(generalService: GeneralService, addonService: G
     const it = tester.it;
 
     const automationAddonUUID = "02754342-e0b5-4300-b728-a94ea5e0e8f4";
-    const CORE_RESOURCES_UUID = 'fc5a5974-3b30-4430-8feb-7d5b9699bc9f';
-    const CORE_UUID = '00000000-0000-0000-0000-00000000c07e';
-    const accountsService = new AccountsService(generalService.papiClient);
-    const usersService = new UsersService(generalService.papiClient);
-    const accountUsersService = new AccountUsersService(generalService.papiClient);
 
     async function cleanUp(resourceManager: ResourceManagerService, performanceManager: PerformanceManager) {
         //TODO: add PNS cleanup here
@@ -87,20 +82,6 @@ export async function NebulaTest(generalService: GeneralService, addonService: G
         const currentlyTestedResource = resourcesRequiringSync.find(resource => resource.Resource === schemaName);        
         return currentlyTestedResource?.Token;
     }
-
-    describe('Nebula unit tests', () => {
-        const nebulaTestService = NebulaServiceFactory.getNebulaService(generalService, addonService.papiClient, dataObj, isLocal);
-        const performanceManager: PerformanceManager = new PerformanceManager();
-
-        it(`run the Nebula unit tests endpoint and make sure everything passed`, async () => {
-            performanceManager.startMeasure(`Test 1`, `run the Nebula unit tests endpoint and make sure everything passed`);
-            const results: unitTestsResult = await nebulaTestService.runUnitTests();
-            expect(results.stats.failures).to.equal(0,
-                `The following unit tests failed: ${JSON.stringify(results.tests.filter(test => test.failed === true))}`);
-            performanceManager.stopMeasure(`Test 1`);
-        })
-
-    });
 
     describe('NebulaTest Suites', () => {
         const nebulatestService = NebulaServiceFactory.getNebulaService(generalService, addonService.papiClient, dataObj, isLocal);
@@ -1829,6 +1810,8 @@ export async function NebulaTest(generalService: GeneralService, addonService: G
         const febulaService = new FabulaService(addonService.papiClient);
         const USERS_TABLE = 'users';
         const ACCOUNTS_TABLE = 'accounts';
+    });    
+}
 
         function getSchemaPointingToResource(resource: string, field: string, referencedAddonUUID: string): AddonDataScheme {
             return {

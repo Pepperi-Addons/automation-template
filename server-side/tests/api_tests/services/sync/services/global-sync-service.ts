@@ -22,8 +22,7 @@ export class GlobalSyncService {
               });
               res.on('end', () => {
                   try {
-                    const jsonData = JSON.parse(data);
-                    resolve(jsonData);
+                    resolve(data);
                   } catch (err) {
                     reject(err);
                   }

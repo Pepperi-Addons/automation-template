@@ -9,9 +9,9 @@ import {
   ResyncCommand,
   ReturnURLCommand,
   SchemaExistsCommand,
-  SystemFilterAccount,
-  SystemFilterNone,
-  SystemFilterUser,
+  PathDataAccount,
+  PathDataNone,
+  PathDataUser,
   TestCommand,
   WACDCommand,
   TenThousandRecordsCommand,
@@ -26,8 +26,11 @@ import {
   RecordSizeHundredThousandCommand,
   ConnectAccountDelta,
   WebappCommand,
-  PushDataTimeCommand
-
+  PushDataTimeCommand,
+  UploadDataToSync,
+  FilesCommand,
+  ContentLengthCommand,
+  AdditionalFieldsCommand
 } from "..";
 
 export class CommandFactory {
@@ -38,9 +41,9 @@ export class CommandFactory {
     FutureDateCommand: FutureDateCommand,
     ReturnURLCommand: ReturnURLCommand,
     PapiConnectAccountCommand: PapiConnectAccountCommand,
-    SystemFilterNone: SystemFilterNone,
-    SystemFilterAccount: SystemFilterAccount,
-    SystemFilterUser: SystemFilterUser,
+    PathDataNone: PathDataNone,
+    PathDataAccount: PathDataAccount,
+    PathDataUser: PathDataUser,
     DeltaTestCommand: DeltaTestCommand,
     ResyncCommand: ResyncCommand,
     WACDCommand: WACDCommand,
@@ -57,7 +60,11 @@ export class CommandFactory {
     ConnectAccountDelta: ConnectAccountDelta,
     WebappCommand: WebappCommand,
     PushDataTimeCommand: PushDataTimeCommand,
-    CleanupCommand: CleanupCommand
+    UploadDataToSync:UploadDataToSync,
+    CleanupCommand: CleanupCommand,
+    FilesCommand: FilesCommand,
+    ContentLengthCommand: ContentLengthCommand,
+    AdditionalFieldsCommand: AdditionalFieldsCommand
   };
 
   static createCommand(type: string, syncAdalService: SyncAdalService, client: Client): TestCommand {
