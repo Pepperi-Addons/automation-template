@@ -41,6 +41,15 @@ export class SyncService {
         }
         return res
     }
+
+    async getSyncFilesData(syncRes: any){
+        let data = await this.auditLogService.getSyncDataFromAudit(syncRes)
+        let res = data
+        if(data.Files.URL){
+            res = {Files:{Data: await this.getSyncDataFromUrl(data.Files.URL)}}
+        }
+        return res
+    }
     
     async nebulaCleanRebuild(){
         debugger;

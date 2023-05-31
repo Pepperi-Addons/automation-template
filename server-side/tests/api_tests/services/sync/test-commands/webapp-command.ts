@@ -1,7 +1,7 @@
-import { SystemFilterUser } from "./system-filter-user-command";
+import { PathDataUser } from "./path-data-user-command";
 
 
-export class WebappCommand extends SystemFilterUser {
+export class WebappCommand extends PathDataUser {
     private automationAddonUUID = ''
 
     async sync(): Promise<any> {

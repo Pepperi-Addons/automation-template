@@ -1,9 +1,9 @@
 import { ADALTableService } from "../../resource_management/adal_table.service";
 import { AccountsService } from "../services/accounts-service";
 import { GlobalSyncService } from "../services/global-sync-service";
-import { SystemFilterNone } from "./system-filter-none-command";
+import { PathDataNone } from "./path-data-none-command";
 
-export class ConnectAccountDelta extends SystemFilterNone{
+export class ConnectAccountDelta extends PathDataNone{
     private adalScheme
     private connectedAccount
     private hiddenAccount
@@ -38,7 +38,7 @@ export class ConnectAccountDelta extends SystemFilterNone{
 
     async sync(): Promise<any> {
         // start sync
-        const pathData = this.systemFilterService.generateSystemFilter(false,false)
+        const pathData = this.systemFilterService.generatePathData(false,false)
         let auditLog = await this.syncService.pull({
             ModificationDateTime:this.timeAfterCreation.toISOString(),
             PathData: pathData
@@ -60,6 +60,12 @@ export class ConnectAccountDelta extends SystemFilterNone{
         const accounts = recordsObjects.map(record =>{
             const accountUUID = record.Account_Field
             const isHidden = record.Hidden
+
+            // known issue that data from hidden account is returned
+            if(accountUUID == this.hiddenAccount.UUID && isHidden == false){
+                throw new Error(`Test failing due to nebula issue, bug DI-23903 is open on this issue`)
+            }
+
              return { [accountUUID]:isHidden}
         })
 

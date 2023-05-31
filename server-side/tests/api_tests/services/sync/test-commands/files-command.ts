@@ -47,7 +47,7 @@ export class FilesCommand extends BaseCommand {
     }
 
     async processSyncResponse(syncRes: any): Promise<any> {
-        this.syncDataResult.data =  await this.syncService.getSyncData(syncRes)
+        this.syncDataResult.data =  await this.syncService.getSyncFilesData(syncRes)
         return this.syncDataResult.data;
     }
     
