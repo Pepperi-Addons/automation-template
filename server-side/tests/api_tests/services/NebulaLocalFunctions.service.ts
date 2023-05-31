@@ -20,6 +20,8 @@ export class NebulaLocalFunctions extends NebulaTestService {
     nebulaGetRecordsRelativeURL = `${this.nebulaLocalRelativeURL}/inner_endpoints/get_records_of_schema_from_nebula`;
     nebulaSchemesChangesRelativeURL = `${this.nebulaLocalRelativeURL}/pns_endpoints/schemes_changes`;
     nebulaRecordChangesRelativeURL = `${this.nebulaLocalRelativeURL}/pns_endpoints/record_changes`;
+    nebulaProfileFilterChangesRelativeURL = `${this.nebulaLocalRelativeURL}/pns_endpoints/profile_filters_changes`;
+    nebulaFilterChangesRelativeURL = `${this.nebulaLocalRelativeURL}/pns_endpoints/filters_changes`;
     nebulaUnitTests = `${this.nebulaLocalRelativeURL}/tests/neptune_graph_service`
 
     constructor(public systemService: GeneralService, public addonService: PapiClient, dataObject: any) {
@@ -133,7 +135,7 @@ export class NebulaLocalFunctions extends NebulaTestService {
             const results = (await this.routerClient.post(this.nebulaGetResourcesRequiringSyncRelativeURL, {
                 ModificationDateTime: parameters.ModificationDateTime,
                 IncludeDeleted: parameters.IncludeDeleted,
-                SystemFilter: parameters.SystemFilter
+                PathData: parameters.PathData,
             }, { 'Content-Type': 'application/json' })).results;
             this.routerClient['options']['baseURL'] = this.originalBaseURL;
             return results;
@@ -150,9 +152,7 @@ export class NebulaLocalFunctions extends NebulaTestService {
         try {
             this.routerClient['options']['baseURL'] = "";
             const results = await this.routerClient.post(`${this.nebulaGetRecordsRequiresSyncRelativeURL}?addon_uuid=${parameters.AddonUUID}&resource=${parameters.Resource}`, {
-                "ModificationDateTime": parameters.ModificationDateTime,
-                "IncludeDeleted": parameters.IncludeDeleted,
-                "SystemFilter": parameters.SystemFilter
+                Token: parameters.Token
             }, { 'Content-Type': 'application/json' });
             this.routerClient['options']['baseURL'] = this.originalBaseURL;
             return results;
@@ -193,6 +193,54 @@ export class NebulaLocalFunctions extends NebulaTestService {
         catch (ex) {
             console.error(`Error in pnsInsertSchema: ${ex}`);
             throw new Error((ex as { message: string }).message);
+        }
+    }
+
+    async pnsInsertProfileFilter(key: string) {
+        var data: PNSPostBody = {
+            addonUUID: this.adalAddonUUID,
+            resource: 'filterRules',
+            action: 'insert',
+            modifiedObjects: [{
+                ObjectKey: key,
+                ModifiedFields: [
+                ]
+            }]
+        };
+
+        const url = this.nebulaProfileFilterChangesRelativeURL;
+
+        try {
+            const postPNSdataResults = await this.pnsEmulator.postPNSData(data, url);
+            console.log(`postPNSdataResults: ${JSON.stringify(postPNSdataResults)}`);
+        }
+        catch (error) {
+            console.error(`Error in pnsInsertSchema: ${(error as Error).message}`);
+            throw error;
+        }
+    }
+
+    async pnsInsertFilter(key: string) {
+        var data: PNSPostBody = {
+            addonUUID: this.adalAddonUUID,
+            resource: 'filterObjects',
+            action: 'insert',
+            modifiedObjects: [{
+                ObjectKey: key,
+                ModifiedFields: [
+                ]
+            }]
+        };
+
+        const url = this.nebulaFilterChangesRelativeURL;
+
+        try {
+            const postPNSdataResults = await this.pnsEmulator.postPNSData(data, url);
+            console.log(`postPNSdataResults: ${JSON.stringify(postPNSdataResults)}`);
+        }
+        catch (error) {
+            console.error(`Error in pnsInsertSchema: ${(error as Error).message}`);
+            throw error;
         }
     }
 

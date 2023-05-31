@@ -20,8 +20,7 @@ import { SyncTests } from './tests/api_tests/SyncTests.test';
 let testName = '';
 let context = {};
 
-export async function runTest(addonUUID: string, nameOfTest: string, client: Client, request, testerFunctions: TesterFunctions) {
-    let functionNames;
+export async function runTest(addonUUID: string, client: Client, request, testerFunctions: TesterFunctions) {
     if (addonUUID.length !== 36) {
         throw new Error(`Error: ${addonUUID} Is Not A Valid Addon UUID`);
     }

@@ -106,6 +106,15 @@ export class NebulaTestService {
     pnsUpdateSchemaHiddenStatus(addonUUID: string, resource: string, hiddenNewValue: boolean) {
         return;
     }
+
+    async pnsInsertProfileFilter(key: string) {
+        return;
+    }
+
+    async pnsInsertFilter(key: string) {
+       return;
+    }
+
     papiClient: PapiClient;
     routerClient: PapiClient;
     generalService: GeneralService;
@@ -143,7 +152,7 @@ export class NebulaTestService {
             return (await this.routerClient.post(this.nebulaGetResourcesRequiringSyncRelativeURL, {
                 ModificationDateTime: parameters.ModificationDateTime,
                 IncludeDeleted: parameters.IncludeDeleted ?? false,
-                SystemFilter: parameters.SystemFilter
+                PathData: parameters.PathData
             })).results;
         }
         catch (error) {
@@ -155,9 +164,7 @@ export class NebulaTestService {
     async getRecordsRequiringSync(parameters: GetRecordsRequiringSyncParameters): Promise<GetRecordsRequiringSyncResponse> {
         try {
             return await this.routerClient.post(`${this.nebulaGetRecordsRequiresSyncRelativeURL}?addon_uuid=${parameters.AddonUUID}&resource=${parameters.Resource}`, {
-                ModificationDateTime: parameters.ModificationDateTime,
-                IncludeDeleted: parameters.IncludeDeleted,
-                SystemFilter: parameters.SystemFilter
+                Token: parameters.Token
             });
         }
         catch (error) {
