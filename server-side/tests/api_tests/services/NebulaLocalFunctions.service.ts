@@ -4,7 +4,7 @@ import { Promise } from "bluebird";
 import { BasicRecord, NebulaPNSEmulator, PNSPostBody } from "./NebulaPNSEmulator.service";
 import { AddonUUID as testingAddonUUID } from "../../../../addon.config.json";
 import { GetResourcesRequiringSyncParameters, GetResourcesRequiringSyncResponse, GetRecordsRequiringSyncParameters, GetRecordsRequiringSyncResponse } from "../../entities/nebula/types";
-import { GeneralService } from "test_infra";
+import {GeneralService} from '../../../potentialQA_SDK/src/infra_services/general.service';
 
 export class NebulaLocalFunctions extends NebulaTestService {
 

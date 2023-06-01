@@ -7,7 +7,7 @@ import { DIMX_ADDON_UUID, HOST_SCHEMA_NAME, REFERENCE_SCHEMA_NAME, CONTAINED_SCH
 import { ADALTableService } from "./services/resource_management/adal_table.service";
 import { ResourceManagerService } from "./services/resource_management/resource_manager.service";
 import { Client } from "@pepperi-addons/debug-server/dist";
-import { GeneralService, TesterFunctions } from "test_infra";
+import { GeneralService, TesterFunctions } from "../../potentialQA_SDK/src/infra_services/general.service";
 
 async function convertSchemasToAdalTableService(resourceManagerService: ResourceManagerService, schemasObjectDict: {
     [schema_name: string]: AddonDataScheme;
