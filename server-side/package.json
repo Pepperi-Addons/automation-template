@@ -24,6 +24,7 @@
         "@rollup/plugin-node-resolve": "^8.0.0",
         "@types/chai": "^4.2.21",
         "@types/chai-as-promised": "^7.1.2",
+        "@types/mocha": "^10.0.1",
         "@types/node": "^10.17.24",
         "@types/node-fetch": "^2.5.7",
         "@types/uuid": "^8.3.3",
@@ -37,13 +38,13 @@
     "dependencies": {
         "@pepperi-addons/debug-server": "^0.0.38",
         "@pepperi-addons/papi-sdk": "^1.47.1",
+        "bluebird": "^3.7.2",
         "lorem-ipsum": "^2.0.4",
         "mocha": "^7.2.0",
         "mochawesome": "^7.0.1",
         "node-fetch": "^2.6.7",
         "test_infra": "file:../potentialQA_SDK/",
         "ts-mocha": "^8.0.0",
-        "uuid": "^8.3.2",
-        "bluebird": "^3.7.2"
+        "uuid": "^8.3.2"
     }
 }

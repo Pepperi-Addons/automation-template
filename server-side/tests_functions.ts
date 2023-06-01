@@ -14,6 +14,8 @@ import { GeneralService, TesterFunctions } from 'test_infra';
 import { TestDataTests } from './tests/api_tests/test_data';
 import { SyncTests } from './tests/api_tests/SyncTests.test';
 
+import { validate as uuidValidate } from 'uuid';
+
 
 
 let testName = '';
@@ -21,7 +23,7 @@ let context = {};
 
 export async function runTest(addonUUID: string, nameOfTest: string, client: Client, request, testerFunctions: TesterFunctions) {
     let functionNames;
-    if (addonUUID.length !== 36) {
+    if(!uuidValidate(addonUUID)){
         throw new Error(`Error: ${addonUUID} Is Not A Valid Addon UUID`);
     }
     if (nameOfTest === undefined) {
@@ -29,17 +31,15 @@ export async function runTest(addonUUID: string, nameOfTest: string, client: Cli
         if (functionNames.length === 0) {
             throw new Error(`Error: No Test For Addon UUID ${addonUUID} Is Existing`);
         }
-    } else {
-        if (!doWeHaveSuchTest(nameOfTest)) {
+    } else if (!doWeHaveSuchTest(nameOfTest)) {
             throw new Error(`Error: No Such Test ${nameOfTest} Is Existing`);
-        }
     }
     if (request.body.isLocal === undefined) {
         throw new Error("Error: isLocal is Mandatory Field Inside Test Request Body");
     }
     // copy client object to avoid changing the original client object
     const addonService = Object.assign({}, client)
-    if (request.body.isLocal === "true") {
+    if (request.body.isLocal === "true"|| request.body.isLocal === true) {
         addonService.BaseURL = "http://localhost:4500";
     }
     if (nameOfTest) {
