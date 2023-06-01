@@ -5,11 +5,11 @@ import fs from 'fs';
 import path from 'path';
 import Mochawesome from 'mochawesome';
 import { Client } from '@pepperi-addons/debug-server';
-import { ConsoleColors } from './server_side/general.service';
+import { ConsoleColors, TesterFunctions } from './server_side/general.service';
 
 chai.use(promised);
 
-export function Tester(client?: Client, testName?: string, environment?: string) {
+export function Tester(client?: Client, testName?: string, environment?: string): TesterFunctions {
     const failedTestsNames: string[] = [];
     let suitName = '';
     let wholeTestName = '';
@@ -141,12 +141,12 @@ export function Tester(client?: Client, testName?: string, environment?: string)
                                     }
 
                                     //Test results report might be to big for the addon, so remove some data from response
-                                    let outpot = JSON.stringify(res);
+                                    let output = JSON.stringify(res);
                                     //------------------------------------------------------------------------------------
                                     //Check response length to remove the code parts if needed
                                     //Changed from 200000 to 100000 since KB limitation is set to 128KB (16/11/2021 by Nofar)
-                                    if (outpot.length > 100000) {
-                                        outpot = outpot
+                                    if (output.length > 100000) {
+                                        output = output
                                             .replace(/\s/g, '')
                                             .replace(/,"fullFile":""/g, '')
                                             .replace(/,"afterHooks":\[\]/g, '')
@@ -163,7 +163,7 @@ export function Tester(client?: Client, testName?: string, environment?: string)
                                             .replace(/,"rootEmpty":true/g, '')
                                             .replace(/(\"code\":)(.*?)(?=\"uuid\":)/g, '');
                                     }
-                                    return resolve(JSON.parse(outpot));
+                                    return resolve(JSON.parse(output));
                                 }
                             });
                         }, 4000);

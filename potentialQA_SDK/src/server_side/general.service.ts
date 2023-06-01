@@ -90,8 +90,8 @@ console.log('%c#FF0000\t\tError\t\t\t', `${ConsoleColors.MenuBackground}; ${Cons
 console.log('%c#00FF00\t\tSuccess\t\t\t', `${ConsoleColors.MenuBackground}; ${ConsoleColors.Success}`); //green
 
 /**
- * This listner will be added when scripts start from the API or from CLI
- * In cased of errors from selenium-webdriver libary or an error that includes message of "Error"
+ * This listener will be added when scripts start from the API or from CLI
+ * In cased of errors from selenium-webdriver library or an error that includes message of "Error"
  * The process will end
  */
 process.on('unhandledRejection', async (error) => {
@@ -222,16 +222,20 @@ export class GeneralService {
         return query ? url + '?' + query : url;
     }
 
-    initiateTesterFunctions(client: Client, testName: string) {
+    initiateTesterFunctions(client: Client, testName: string): TesterFunctions {
         const testEnvironment = client.BaseURL.includes('staging')
             ? 'Sandbox'
             : client.BaseURL.includes('papi-eu')
                 ? 'Production-EU'
                 : 'Production';
-        const { describe, expect, assert, it, run, setNewTestHeadline, addTestResultUnderHeadline, printTestResults } =
+        const { describe, after, afterEach, before, beforeEach, expect, assert, it, run, setNewTestHeadline, addTestResultUnderHeadline, printTestResults } =
             Tester(client, testName, testEnvironment);
         return {
             describe,
+            after,
+            afterEach,
+            before,
+            beforeEach,
             expect,
             assert,
             it,
@@ -575,7 +579,7 @@ export class GeneralService {
      * changes the version of the already installed addons based on 'test data'
      * @param varKey
      * @param testData
-     * @param isPhased if true will query only for pahsed versions
+     * @param isPhased if true will query only for phased versions
      * @returns
      */
     async changeVersion(
@@ -753,11 +757,11 @@ export class GeneralService {
         })
             .then(async (response) => {
                 const end = performance.now();
-                const isSucsess = response.status > 199 && response.status < 400 ? true : false;
-                console[isSucsess ? 'log' : 'debug'](
-                    `%cFetch ${isSucsess ? '' : 'Error '}${requestInit?.method ? requestInit?.method : 'GET'}: ${uri.startsWith('/') ? this['client'].BaseURL + uri : uri
+                const isSuccess = response.status > 199 && response.status < 400 ? true : false;
+                console[isSuccess ? 'log' : 'debug'](
+                    `%cFetch ${isSuccess ? '' : 'Error '}${requestInit?.method ? requestInit?.method : 'GET'}: ${uri.startsWith('/') ? this['client'].BaseURL + uri : uri
                     } took ${(end - start).toFixed(2)} milliseconds`,
-                    `${isSucsess ? ConsoleColors.FetchStatus : ConsoleColors.Information}`,
+                    `${isSuccess ? ConsoleColors.FetchStatus : ConsoleColors.Information}`,
                 );
                 try {
                     if (response.headers.get('content-type')?.startsWith('image')) {
@@ -988,6 +992,10 @@ function msSleep(ms: number) {
 export interface TesterFunctions {
     describe: { (name: string, fn: () => any): any };
     expect: Chai.ExpectStatic;
+    after: (fn: Mocha.Func | Mocha.AsyncFunc) => void;
+    afterEach: (fn: Mocha.Func | Mocha.AsyncFunc) => void;
+    before: (fn: Mocha.Func | Mocha.AsyncFunc) => void;
+    beforeEach: (fn: Mocha.Func | Mocha.AsyncFunc) => void;
     assert?: Chai.AssertStatic | any;
     it: any;
     run: any;
