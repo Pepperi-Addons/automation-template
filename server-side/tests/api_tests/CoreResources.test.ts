@@ -1,6 +1,6 @@
 //fc5a5974-3b30-4430-8feb-7d5b9699bc9f
-import { CoreResourcesService } from "./services/CoreResources.service";
-import GeneralService, { TesterFunctions } from "test_infra";
+import { GeneralService, TesterFunctions } from "test_infra";
+import { AdalBuildingTestBody, RoleRole } from "../entities/coreResources/types";
 
 
 export async function CoreResources(generalService: GeneralService, addonService: GeneralService, request, tester: TesterFunctions) {

@@ -1,7 +1,8 @@
+import { performance } from "perf_hooks";
 import { BaseCommand } from "./base-command";
 
 // Passing a future time to sync should not return data,
-// the result shuold be sync is up to date and should return in no more than 5 Seconds
+// the result should be sync is up to date and should return in no more than 5 Seconds
 export class FutureDateCommand extends BaseCommand{
     private OPTIMAL_FUTURE_SYNC_TIME : number = 5000
     setupSchemes(): Promise<any> {

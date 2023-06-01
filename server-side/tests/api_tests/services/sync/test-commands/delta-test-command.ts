@@ -1,3 +1,4 @@
+import { performance } from "perf_hooks";
 import { ADALTableService } from "../../resource_management/adal_table.service";
 import { GlobalSyncService } from "../services/global-sync-service";
 import { BaseCommand } from "./base-command";
@@ -10,7 +11,7 @@ export class DeltaTestCommand extends BaseCommand {
     OPTIMAL_DELTA_SYNC_TIME: number = 5000;
   
     async setupSchemes(): Promise<ADALTableService> {
-        // generate schema with fields - first and second schemes, and saving the time befor creating second scheme 
+        // generate schema with fields - first and second schemes, and saving the time before creating second scheme 
         // and after creating first scheme for delta tests
         const firstSchema = this.syncAdalService.generateSchemeWithFields(1, `_${ this.constructor.name}_firstSchema`)
         const firstAdalService = await this.syncAdalService.getAdalService(firstSchema)
@@ -25,7 +26,7 @@ export class DeltaTestCommand extends BaseCommand {
 
     async pushData(adalService: ADALTableService): Promise<any> {
         // initializing adal schema with data, first property is number of fields
-        // second propety is number of characters in each field
+        // second property is number of characters in each field
         const data = this.syncAdalService.generateFieldsData(1, 1)
         
         // upserting the same data for both schemes and saving again the time between second and first

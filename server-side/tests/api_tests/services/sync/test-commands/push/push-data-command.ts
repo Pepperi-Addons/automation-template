@@ -1,4 +1,5 @@
 import { Client } from "@pepperi-addons/debug-server/dist";
+import { performance } from "perf_hooks";
 import { ResourceManagerService } from "../../../resource_management/resource_manager.service";
 import { GlobalSyncService } from "../../services/global-sync-service";
 import { SyncAdalService } from "../../services/sync-adal-service";
@@ -28,7 +29,7 @@ export class PushDataCommand extends SchemaExistsCommand{
     }
 
     async pushData(adalService: any): Promise<any> {
-        // create relation between DIMX and the created shchema
+        // create relation between DIMX and the created schema
         await this.syncDimxService.createRelation(this.resourceManagerService, this.firstSchemaName) 
         await this.syncDimxService.createRelation(this.resourceManagerService, this.secondSchemaName) 
         // pushing data using sync push endpoint

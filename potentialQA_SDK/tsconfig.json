@@ -5,7 +5,7 @@
     "strict": true,
     "outDir": "build",
     "esModuleInterop": true,
-    "declaration": false,
+    "declaration": true,
     "sourceMap": true,
     "noImplicitAny": false,
     "allowJs": true,
