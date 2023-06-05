@@ -1,5 +1,5 @@
 import { PapiClient } from "@pepperi-addons/papi-sdk"
-import  GeneralService from "../../../../../potentialQA_SDK/server_side/general.service";
+import  {GeneralService} from "../../../../../potentialQA_SDK/src/infra_services/general.service";
 import { Client } from  '@pepperi-addons/debug-server'
 import { GlobalSyncService } from "./global-sync-service";
 import { AuditLogService } from "./audit-log-service";
@@ -12,8 +12,8 @@ export class SyncService {
     auditLogService: AuditLogService
 
     constructor(client: Client) {
-        this.client = client
-        this.systemService = new GeneralService(this.client)
+        this.client = client;
+        this.systemService = new GeneralService(this.client);
         this.papiClient = this.systemService.papiClient;
         this.auditLogService = new AuditLogService(client)
     }
@@ -64,6 +64,7 @@ export class SyncService {
     }
     
     async nebulaCleanRebuild(){
+        debugger;
         const baseUrl = `/addons/api/00000000-0000-0000-0000-000000006a91/api/clean_rebuild`
         let res = await this.papiClient.post(baseUrl)
         let ansFromAuditLog =  await this.auditLogService.pollExecution(res.ExecutionUUID!)

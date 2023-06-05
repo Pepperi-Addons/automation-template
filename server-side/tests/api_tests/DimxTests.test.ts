@@ -1,12 +1,13 @@
 //44c97115-6d14-4626-91dc-83f176e9a0fc
-import { DimxTestsService } from "./services/dimxtests.service";
-import GeneralService, { TesterFunctions } from "../../potentialQA_SDK/server_side/general.service";
+import { DimxTestsService } from "./services/DimxTests.service";
+// import GeneralService, { TesterFunctions } from "../../potentialQA_SDK/server_side/general.service";
 import { Relation, AddonDataScheme, DataImportInput, DIMXObject, AddonData, RecursiveImportInput, PapiClient } from "@pepperi-addons/papi-sdk";
 import Promise from 'bluebird';
 import { DIMX_ADDON_UUID, HOST_SCHEMA_NAME, REFERENCE_SCHEMA_NAME, CONTAINED_SCHEMA_NAME, BASE_SCHEMA_NAME, SECOND_BASE_SCHEMA_NAME, baseSchema, hostSchema, referenceSchema, containedSchema, MAX_CONCURRENCY, FileExportOutput, FileImportOutput, RecursiveExportOutput, RecursiveImportOutput, BaseTableObject, HostTableObject, ReferenceTableObject } from "./services/DIMXTests_types_and_schemes";
 import { ADALTableService } from "./services/resource_management/adal_table.service";
 import { ResourceManagerService } from "./services/resource_management/resource_manager.service";
 import { Client } from "@pepperi-addons/debug-server/dist";
+import { GeneralService, TesterFunctions } from "../../potentialQA_SDK/src/infra_services/general.service";
 
 async function convertSchemasToAdalTableService(resourceManagerService: ResourceManagerService, schemasObjectDict: {
     [schema_name: string]: AddonDataScheme;
@@ -225,7 +226,7 @@ export async function DimxTests(generalService: GeneralService, addonService: Ge
 
         // services
         const dimxService = new DimxTestsService(generalService, addonService.papiClient, dataObj);
-        const client: Client = generalService['client'];
+        const client: any = generalService['client'];
         const dimxPapiClient = new PapiClient({
             baseURL: client.BaseURL,
             token: client.OAuthAccessToken,

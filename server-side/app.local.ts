@@ -3,9 +3,9 @@ import config from '../addon.config.json';
 
 const dir = __dirname;
 const server = new DebugServer({
-    addonUUID: process.env.AddonUUID,
+    addonUUID: '02754342-e0b5-4300-b728-a94ea5e0e8f4',
     apiDirectory: dir,
-    port: config.DebugPort,
+    port: 4600,
 });
 
 // serve the plugin file locally

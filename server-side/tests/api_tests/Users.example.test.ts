@@ -1,4 +1,5 @@
-import GeneralService, { TesterFunctions } from '../../potentialQA_SDK/server_side/general.service';
+// import GeneralService, { TesterFunctions } from '../../potentialQA_SDK/server_side/general.service';
+import { GeneralService, TesterFunctions } from "../../potentialQA_SDK/src/infra_services/general.service";
 import { ObjectsService } from './services/Objects.example.service';
 
 
