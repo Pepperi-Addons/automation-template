@@ -29,8 +29,7 @@ import {
   PushDataTimeCommand,
   UploadDataToSync,
   FilesCommand,
-  ContentLengthCommand,
-  AdditionalFieldsCommand
+  ContentLengthCommand
 } from "..";
 
 export class CommandFactory {
@@ -63,8 +62,7 @@ export class CommandFactory {
     UploadDataToSync:UploadDataToSync,
     CleanupCommand: CleanupCommand,
     FilesCommand: FilesCommand,
-    ContentLengthCommand: ContentLengthCommand,
-    AdditionalFieldsCommand: AdditionalFieldsCommand
+    ContentLengthCommand: ContentLengthCommand
   };
 
   static createCommand(type: string, syncAdalService: SyncAdalService, client: Client): TestCommand {
