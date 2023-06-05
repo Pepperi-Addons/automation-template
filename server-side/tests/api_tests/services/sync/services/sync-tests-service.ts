@@ -34,7 +34,13 @@ export class SyncService {
     }
 
     async getSyncData(syncRes: any){
-        let data = await this.auditLogService.getSyncDataFromAudit(syncRes)
+        let data
+        if(syncRes['ExecutionURI']){
+            data = await this.auditLogService.getSyncDataFromAudit(syncRes)
+        }
+        else{
+            data = syncRes
+        }
         let res = data
         if(data.Resources.URL){
             res = {Resources:{Data: await this.getSyncDataFromUrl(data.Resources.URL)}}
@@ -43,7 +49,13 @@ export class SyncService {
     }
 
     async getSyncFilesData(syncRes: any){
-        let data = await this.auditLogService.getSyncDataFromAudit(syncRes)
+        let data
+        if(syncRes['ExecutionURI']){
+            data = await this.auditLogService.getSyncDataFromAudit(syncRes)
+        }
+        else{
+            data = syncRes
+        }
         let res = data
         if(data.Files.URL){
             res = {Files:{Data: await this.getSyncDataFromUrl(data.Files.URL)}}
