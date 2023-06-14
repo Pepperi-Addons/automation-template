@@ -2,7 +2,9 @@ import { AddonDataScheme } from "@pepperi-addons/papi-sdk";
 import { ADALTableService } from "../../resource_management/adal_table.service";
 import { GlobalSyncService } from "../services/global-sync-service";
 import { BaseCommand } from "./base-command";
-export const CONTENT_LENGTH_ADDITION = 700
+
+// sync response receives extra data from ADAL, that increases the content legth size
+export const CONTENT_LENGTH_ADDITION = 2*700
 
 export class ContentLengthCommand extends BaseCommand {
     private timeOfDataInsertion: Date | undefined;

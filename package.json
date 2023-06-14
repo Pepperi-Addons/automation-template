@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "cd ./server-side && npm run build && cd ..",
-    "init": "npm install && cd ./server-side && npm install && cd ./potentialQA_SDK && npm install && cd ../.. && cd ./script && npm install && node ./setVarSk.js ",
+    "build": "cd ./server-side && npm run build",
+    "init": "cd ./server-side && npm ci && cd ..&& cd ./script && npm i && cd.. && npm ci",
     "client:singlespa": "cd client-side && ng serve --port 4400 --configuration SingleSpa && cd..",
     "client:standalone": "cd client-side && ng serve --port 4400 --configuration Standalone && cd..",
     "publish-addon": "npm run build && publish-addon",
@@ -16,9 +16,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@pepperi-addons/scripts": "^2.0.4"
-  },
-  "devDependencies": {
-    "@types/node": "^18.0.6"
+    "@pepperi-addons/scripts": "^2.0.13"
   }
 }

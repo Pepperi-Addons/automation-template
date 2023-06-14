@@ -5,9 +5,12 @@ import {
     PapiClient,
     AddonDataScheme,
     ElasticSearchDocument,
+    SearchData,
 } from '@pepperi-addons/papi-sdk';
-import GeneralService from '../../../potentialQA_SDK/server_side/general.service';
-import { v4 as uuid } from 'uuid';
+
+import { GeneralService } from '../../../potentialQA_SDK/src/infra_services/general.service';
+// import { GeneralService } from 'test_infra'
+import { v4 as uuidv4 } from 'uuid';
 
 type PartialScheme = Omit<AddonDataScheme, "Name" | "Type" | "DataSourceData">;
 
@@ -18,8 +21,9 @@ export interface Connector {
     purgeSchema: () => any;
     getDocuments: (params: FindOptions) => Promise<ElasticSearchDocument[]>;
     postDocument(arg0: {}): unknown;
-    searchByDSL: (dslQuery: any) => Promise<ElasticSearchDocument[]>;
+    search: (requestBody: any) => Promise<ElasticSearchDocument[] | SearchData<ElasticSearchDocument>>;
     getDocumentsFromAbstract: (params: FindOptions) => Promise<ElasticSearchDocument[]>;
+    isShared: () => boolean;
 }
 
 export class DataIndexService {
@@ -40,14 +44,14 @@ export class DataIndexService {
         this.routerClient = addonService; // will run according to passed 'isLocal' flag
         this.dataObject = dataObject;
         this.addonUUID = "02754342-e0b5-4300-b728-a94ea5e0e8f4";
-        this.sharedIndexName = "integration-test-shared-index-" + uuid();
+        this.sharedIndexName = "integration-test-shared-index-" + uuidv4();
         this.indexSchema = {
-            Name: "integration-test-regular-index-" + uuid(),
+            Name: "integration-test-regular-index-" + uuidv4(),
             Type: "index"
         }
         console.log("Regular index schema will be called: " + this.indexSchema.Name);
         this.sharedIndexSchema = {
-            Name: "integration-test-schema-of-shared-index-" + uuid(),
+            Name: "integration-test-schema-of-shared-index-" + uuidv4(),
             Type: "shared_index",
             DataSourceData: {
                 IndexName: this.sharedIndexName
@@ -55,14 +59,14 @@ export class DataIndexService {
         }
         console.log("Shared index schema will be called: " + this.sharedIndexSchema.Name);
         this.inheritingSchema1 = {
-            Name: "integration-test-schema-of-inheriting-schema-1-" + uuid(),
+            Name: "integration-test-schema-of-inheriting-schema-1-" + uuidv4(),
             Type: "shared_index",
             DataSourceData: {
                 IndexName: this.sharedIndexName
             }
         }
         this.inheritingSchema2 = {
-            Name: "integration-test-schema-of-inheriting-schema-2-" + uuid(),
+            Name: "integration-test-schema-of-inheriting-schema-2-" + uuidv4(),
             Type: "shared_index",
             DataSourceData: {
                 IndexName: this.sharedIndexName
@@ -115,9 +119,9 @@ export class DataIndexService {
                     .resource(baseSchema.Name)
                     .create(body);
             },
-            searchByDSL: (dslQuery: any): Promise<any> => {
+            search: (requestBody: any): Promise<any> => {
                 return api
-                    .search(dslQuery)
+                    .search(requestBody)
                     .uuid(this.addonUUID)
                     .resource(baseSchema.Name);
             },
@@ -130,6 +134,9 @@ export class DataIndexService {
             purgeSchema: () => {
                 return this.papiClient
                     .post(`/addons/data/schemes/${baseSchema.Name}/purge`);
+            },
+            isShared: () => {
+                return type === "shared";
             }
         }
     }
@@ -154,4 +161,21 @@ export function validateOrderOfResponseBySpecificField(response: ElasticSearchDo
     if (!!values.reduce((n, item) => n !== false && item >= n && item))
         return;
     throw new Error(`Response isn't ordered correctly`);
+}
+
+export function validateOrderOfResponseByArrayOfKeys(response: ElasticSearchDocument[], keys: string[]) {
+    let values: (string | undefined)[];
+    values = response.map(doc => doc.Key);
+    if (!arraysOfKeysEqual(keys, values))
+        throw new Error(`Response isn't ordered correctly`);
+}
+
+function arraysOfKeysEqual(a: (string | undefined)[], b: (string | undefined)[]) {
+    if (a.length !== b.length)
+        return false;
+    for (var i = 0; i < a.length; ++i) {
+        if (a[i] !== b[i])
+            return false;
+    }
+    return true;
 }

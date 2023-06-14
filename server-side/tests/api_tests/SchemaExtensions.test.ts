@@ -1,6 +1,6 @@
 // 00000000-0000-0000-0000-00000000ada1
+import { GeneralService, TesterFunctions } from "../../potentialQA_SDK/src/infra_services/general.service";
 import { SchemaExtensionsService } from "./services/SchemaExtensions.service";
-import GeneralService, { TesterFunctions } from "../../potentialQA_SDK/server_side/general.service";
 
 export async function SchemaExtensions(generalService: GeneralService, addonService: GeneralService, request, tester: TesterFunctions) {
 

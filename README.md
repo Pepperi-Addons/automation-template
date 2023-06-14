@@ -10,7 +10,7 @@ A template for creating a Pepperi automation test using QA team infrastructure
 ---
 1. It's recommended to open your own branch inside this repo: you CAN'T push to main
 2. Clone
-3. Run `npm run init` from the root
+3. Run `npm run init` & `npm run build` from the root
 
 ## Debugging
 ---

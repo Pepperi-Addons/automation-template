@@ -77,7 +77,7 @@ export class ResyncCommand extends BaseCommand {
         // getting schemes from sync response and validating that both new and old schemes is in the rsponse,
         // because sync returns all of the schemas even if they are not for sync
         expect(schemes).to.contain(newSchemaName)
-        expect(schemes).to.not.contain(noDataSchemaName)
+        expect(schemes).to.contain(noDataSchemaName)
 
         // getting from the sync response the fields from each scheme,
         // validating that the no data scheme will not have any field to update and the new will have a field
