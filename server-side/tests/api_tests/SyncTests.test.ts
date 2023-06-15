@@ -64,6 +64,7 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
         name: 'PathDataUser',
         command: CommandFactory.createCommand('PathDataUser',syncAdalService,client)
       },
+      {
         name: 'SystemFilterNone',
         command: CommandFactory.createCommand('SystemFilterNone', syncAdalService, client)
       },
