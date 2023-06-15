@@ -14,7 +14,6 @@ export class SyncAdalService {
     adalResources: ADALTableService[] = [];
 
     constructor(client: Client){
-        debugger;
         this.client = client;
         this.systemService = new GeneralService(this.client);
         this.papiClient = this.systemService.papiClient as any;

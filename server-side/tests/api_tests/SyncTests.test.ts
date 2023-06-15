@@ -65,18 +65,6 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
         command: CommandFactory.createCommand('PathDataUser',syncAdalService,client)
       },
       {
-        name: 'SystemFilterNone',
-        command: CommandFactory.createCommand('SystemFilterNone', syncAdalService, client)
-      },
-      {
-        name: 'SystemFilterAccount',
-        command: CommandFactory.createCommand('SystemFilterAccount', syncAdalService, client)
-      },
-      {
-        name: 'SystemFilterUser',
-        command: CommandFactory.createCommand('SystemFilterUser', syncAdalService, client)
-      },
-      {
         name: 'DeltaTestCommand',
         command: CommandFactory.createCommand('DeltaTestCommand', syncAdalService, client)
       },
@@ -140,10 +128,6 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
         name: 'ContentLengthCommand',
         command: CommandFactory.createCommand('ContentLengthCommand', syncAdalService, client)
       },       
-      {
-        name: 'AdditionalFieldsCommand',
-        command: CommandFactory.createCommand('AdditionalFieldsCommand', syncAdalService, client)
-      },
       {
         name: 'CleanupCommand',
         command: CommandFactory.createCommand('CleanupCommand', syncAdalService, client)
