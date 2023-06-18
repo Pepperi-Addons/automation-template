@@ -4,11 +4,6 @@ import { NumberOfRecordsCommand } from "./number-of-records-command";
 
 export class SoftLimitCommand extends NumberOfRecordsCommand {
 
-    async setupSchemes(): Promise<ADALTableService> {
-        const schema = this.syncAdalService.generateSchemeWithFields(1, `_${this.constructor.name}`)
-        const adalService = await this.syncAdalService.getAdalService(schema)
-        return adalService
-    }
     async pushData(adalService: ADALTableService): Promise<any> {
         const data = this.syncAdalService.generateFieldsData(1,100000,20)
         console.log(`uploading data with size ${Buffer.byteLength(JSON.stringify(data), 'utf8')/1024/1024}MB`)
@@ -20,18 +15,6 @@ export class SoftLimitCommand extends NumberOfRecordsCommand {
         await this.syncService.setSyncSoftLimit(1)
 
         await GlobalSyncService.sleep(this.TIME_TO_SLEEP_FOR_NEBULA)
-    }
-    async sync(): Promise<any> {
-        let dateTime = new Date();
-        dateTime.setHours(dateTime.getHours()-1)
-        let auditLog = await this.syncService.pull({
-            ModificationDateTime: dateTime.toISOString(),
-        }, false, false, false)
-        return auditLog
-    }
-    async processSyncResponse(syncRes: any): Promise<any> {
-        this.syncDataResult.data =  await this.syncService.extractSyncResData(syncRes)
-        return this.syncDataResult.data;
     }
 
     async test(syncRes: any, syncData:any, expect: Chai.ExpectStatic): Promise<any> {

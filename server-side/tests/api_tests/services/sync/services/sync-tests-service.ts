@@ -56,7 +56,7 @@ export class SyncService {
 
     async getSyncData(syncRes: any){
         let res = await this.extractSyncResData(syncRes)
-        if(res.Resources.URL){
+        if(res?.Resources?.URL){
             res = {Resources:{Data: await this.getSyncDataFromUrl(res.Resources.URL)}}
         }
         return res
@@ -64,7 +64,7 @@ export class SyncService {
 
     async getSyncFilesData(syncRes: any){
         let res = await this.extractSyncResData(syncRes)
-        if(res.Files.URL){
+        if(res?.Files?.URL){
             res = {Files:{Data: await this.getSyncDataFromUrl(res.Files.URL)}}
         }
         return res
