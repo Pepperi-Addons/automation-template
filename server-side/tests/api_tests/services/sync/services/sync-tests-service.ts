@@ -24,14 +24,20 @@ export class SyncService {
         return parsedData
     }
 
-    async setSyncSoftLimit(softLimitInMB: Number){
+    async setSyncSoftLimit(softLimitInMB: Number, softLimitInMinutes: Number){
         // set sync soft limit, limits are in MB
         const softLimit = {
             "SYNC_DATA_SIZE_LIMITATION": softLimitInMB,
-            "SYNC_TIME_LIMITATION": 5 // Default soft limit, not changing
+            "SYNC_TIME_LIMITATION": softLimitInMinutes
         }
         const res = await this.papiClient.post('/addons/api/5122dc6d-745b-4f46-bb8e-bd25225d350a/api/sync_variables',softLimit)
         return res
+    }
+
+    async getSyncVariables(){
+        const res = await this.papiClient.get('/addons/api/5122dc6d-745b-4f46-bb8e-bd25225d350a/api/sync_variables')
+        return (({SYNC_DATA_SIZE_LIMITATION, SYNC_TIME_LIMITATION}) => ({SYNC_DATA_SIZE_LIMITATION, SYNC_TIME_LIMITATION}))(res)
+
     }
 
     async handleSyncData(syncRes: any, return_url: boolean){
