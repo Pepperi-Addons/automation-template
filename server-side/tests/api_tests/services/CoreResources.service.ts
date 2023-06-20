@@ -1,6 +1,6 @@
 //fc5a5974-3b30-4430-8feb-7d5b9699bc9f
 import { PapiClient } from '@pepperi-addons/papi-sdk';
-import GeneralService from 'test_infra';
+import {GeneralService} from '../../../potentialQA_SDK/src/infra_services/general.service';
 import { v4 as uuid } from 'uuid';
 
 export class CoreResourcesService {
