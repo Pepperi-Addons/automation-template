@@ -58,7 +58,6 @@ export class SyncFileService {
             const start = i * rowLimit;
             const end = (i + 1) * rowLimit;
             const chunk = body.slice(start, end);
-            // debugger
             await this.uploadFileAndImport(chunk, schemaName);
         }
     }

@@ -24,6 +24,22 @@ export class SyncService {
         return parsedData
     }
 
+    async setSyncSoftLimit(softLimitInMB: Number, softLimitInMinutes: Number){
+        // set sync soft limit, limits are in MB
+        const softLimit = {
+            "SYNC_DATA_SIZE_LIMITATION": softLimitInMB,
+            "SYNC_TIME_LIMITATION": softLimitInMinutes
+        }
+        const res = await this.papiClient.post('/addons/api/5122dc6d-745b-4f46-bb8e-bd25225d350a/api/sync_variables',softLimit)
+        return res
+    }
+
+    async getSyncVariables(){
+        const res = await this.papiClient.get('/addons/api/5122dc6d-745b-4f46-bb8e-bd25225d350a/api/sync_variables')
+        return (({SYNC_DATA_SIZE_LIMITATION, SYNC_TIME_LIMITATION}) => ({SYNC_DATA_SIZE_LIMITATION, SYNC_TIME_LIMITATION}))(res)
+
+    }
+
     async handleSyncData(syncRes: any, return_url: boolean){
         let data = await this.auditLogService.getSyncDataFromAudit(syncRes)
         let res = data
@@ -33,28 +49,36 @@ export class SyncService {
         return res
     }
 
+    async extractSyncResData(syncRes: any){
+        let data
+        if(syncRes['ExecutionURI']){
+            data = await this.auditLogService.getSyncDataFromAudit(syncRes)
+        }
+        else{
+            data = syncRes
+        }
+        return data
+    }
+
     async getSyncData(syncRes: any){
-        let data = await this.auditLogService.getSyncDataFromAudit(syncRes)
-        let res = data
-        if(data.Resources.URL){
-            res = {Resources:{Data: await this.getSyncDataFromUrl(data.Resources.URL)}}
+        let res = await this.extractSyncResData(syncRes)
+        if(res?.Resources?.URL){
+            res = {Resources:{Data: await this.getSyncDataFromUrl(res.Resources.URL)}}
         }
         return res
     }
 
     async getSyncFilesData(syncRes: any){
-        let data = await this.auditLogService.getSyncDataFromAudit(syncRes)
-        let res = data
-        if(data.Files.URL){
-            res = {Files:{Data: await this.getSyncDataFromUrl(data.Files.URL)}}
+        let res = await this.extractSyncResData(syncRes)
+        if(res?.Files?.URL){
+            res = {Files:{Data: await this.getSyncDataFromUrl(res.Files.URL)}}
         }
         return res
     }
     
     async nebulaCleanRebuild(){
-        debugger;
         const baseUrl = `/addons/api/00000000-0000-0000-0000-000000006a91/api/clean_rebuild`
-        let res = await this.papiClient.post(baseUrl)
+        let res = await this.papiClient.post(baseUrl,{})
         let ansFromAuditLog =  await this.auditLogService.pollExecution(res.ExecutionUUID!)
         if (ansFromAuditLog.success === true) {
             console.log('successfully did clean rebuild in nebula')

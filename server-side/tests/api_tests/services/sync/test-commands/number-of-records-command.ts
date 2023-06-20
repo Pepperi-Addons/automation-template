@@ -25,7 +25,7 @@ export class NumberOfRecordsCommand extends BaseCommand {
         this.resourceManager = new ResourceManagerService(this.papiClient, this.automationUUID) 
         
     }
-    protected MAX_RECORDS_TO_UPLOAD = -1
+    protected MAX_RECORDS_TO_UPLOAD = 1
     protected schemeCreated: any = undefined
     private automationUUID = "02754342-e0b5-4300-b728-a94ea5e0e8f4"
 

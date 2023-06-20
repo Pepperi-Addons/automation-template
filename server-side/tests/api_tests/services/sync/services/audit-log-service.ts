@@ -25,7 +25,7 @@ export class AuditLogService {
             res = await this.papiClient.get(syncRes['ExecutionURI'])
         }
         if(res.AuditInfo.Error || res.AuditInfo.ErrorMessage){
-            throw new Error(res.AuditInfo.ErrorMessage)
+            return { success: res.Status.Name === 'Success', errorCode: 0, resultObject: JSON.parse(res.AuditInfo.ResultObject) }
         }
         return JSON.parse(res.AuditInfo.ResultObject)
     }
