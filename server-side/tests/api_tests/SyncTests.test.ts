@@ -129,6 +129,10 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
         command: CommandFactory.createCommand('ContentLengthCommand', syncAdalService, client)
       },       
       {
+        name: 'SoftLimitCommand',
+        command: CommandFactory.createCommand('SoftLimitCommand', syncAdalService, client)
+      },
+      {
         name: 'CleanupCommand',
         command: CommandFactory.createCommand('CleanupCommand', syncAdalService, client)
       }
