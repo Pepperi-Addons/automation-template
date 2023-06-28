@@ -89,7 +89,7 @@ export class PathDataNone extends BaseCommand {
         expect(Object.keys(noneObjects)).to.have.a.lengthOf(2)
         
         const accountObjects = this.syncDataResult.getObjects(this.adalTableServices!.account.schemaName)
-        expect(Object.keys(accountObjects)).to.have.a.lengthOf(1)
+        expect(Object.keys(accountObjects)).to.have.a.lengthOf(2)
         
         const userObjects = this.syncDataResult.getObjects(this.adalTableServices!.user.schemaName)
         expect(Object.keys(userObjects)).to.have.a.lengthOf(1)

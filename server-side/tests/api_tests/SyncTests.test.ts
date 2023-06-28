@@ -25,10 +25,6 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
     // just an hack to make sure that nebula will work
     let tests: Test[] = [
       {
-        name: 'CleanRebuild',
-        command: CommandFactory.createCommand('CleanRebuild', syncAdalService, client)
-      },
-      {
         name: 'ResyncCommand',
         command: CommandFactory.createCommand('ResyncCommand', syncAdalService, client)
       },
