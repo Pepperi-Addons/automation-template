@@ -24,6 +24,22 @@ export class SyncService {
         return parsedData
     }
 
+    async setSyncSoftLimit(softLimitInMB: Number, softLimitInMinutes: Number){
+        // set sync soft limit, limits are in MB
+        const softLimit = {
+            "SYNC_DATA_SIZE_LIMITATION": softLimitInMB,
+            "SYNC_TIME_LIMITATION": softLimitInMinutes
+        }
+        const res = await this.papiClient.post('/addons/api/5122dc6d-745b-4f46-bb8e-bd25225d350a/api/sync_variables',softLimit)
+        return res
+    }
+
+    async getSyncVariables(){
+        const res = await this.papiClient.get('/addons/api/5122dc6d-745b-4f46-bb8e-bd25225d350a/api/sync_variables')
+        return (({SYNC_DATA_SIZE_LIMITATION, SYNC_TIME_LIMITATION}) => ({SYNC_DATA_SIZE_LIMITATION, SYNC_TIME_LIMITATION}))(res)
+
+    }
+
     async handleSyncData(syncRes: any, return_url: boolean){
         let data = await this.auditLogService.getSyncDataFromAudit(syncRes)
         let res = data
@@ -46,7 +62,7 @@ export class SyncService {
 
     async getSyncData(syncRes: any){
         let res = await this.extractSyncResData(syncRes)
-        if(res.Resources.URL){
+        if(res?.Resources?.URL){
             res = {Resources:{Data: await this.getSyncDataFromUrl(res.Resources.URL)}}
         }
         return res
@@ -54,7 +70,7 @@ export class SyncService {
 
     async getSyncFilesData(syncRes: any){
         let res = await this.extractSyncResData(syncRes)
-        if(res.Files.URL){
+        if(res?.Files?.URL){
             res = {Files:{Data: await this.getSyncDataFromUrl(res.Files.URL)}}
         }
         return res

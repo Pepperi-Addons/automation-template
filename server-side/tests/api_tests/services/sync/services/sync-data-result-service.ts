@@ -35,10 +35,15 @@ export class SyncDataResult {
     }
 
     getFile(fileURL){
-        const file = this.data.Files.Data.filter(file =>{
-            return file.URL == fileURL
-        })
-        return file[0]
+        if(this.data?.Files?.Data){
+            const file = this.data.Files.Data.filter(file =>{
+                return file.URL == fileURL
+            })
+            return file[0]
+        }
+        else{
+            return []
+        }
     }
 
     getFileDownload(fileURL: string){
