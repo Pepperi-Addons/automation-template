@@ -29,6 +29,18 @@ export async function SyncTests(generalService: GeneralService, addonService: Ge
         command: CommandFactory.createCommand('ResyncCommand', syncAdalService, client)
       },
       {
+        name: 'SchemaExistsTest',
+        command: CommandFactory.createCommand('SchemaExistsTest', syncAdalService, client)
+      },
+      {
+        name: 'FutureDateCommand',
+        command: CommandFactory.createCommand('FutureDateCommand', syncAdalService, client)
+      },
+      {
+        name: 'ReturnURLCommand',
+        command: CommandFactory.createCommand('ReturnURLCommand', syncAdalService, client)
+      },
+      {
         name: 'WACDCommand',
         command: CommandFactory.createCommand('WACDCommand', syncAdalService, client)
       },
