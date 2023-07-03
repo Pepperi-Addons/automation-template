@@ -18,7 +18,7 @@ export interface Connector {
     deleteByQuery(query: any): Promise<any>;
     upsertSchema: (partialScheme: PartialScheme) => Promise<AddonDataScheme>,
     upsertDocument(document: any): any;
-    batchUpsertDocuments(documents: any[]): any;
+    batchUpsertDocuments(documents: any[], writeMode: "Merge" | "Overwrite" | "Insert"): any;
     purgeSchema: () => any;
     getDocuments: (params: FindOptions) => Promise<ElasticSearchDocument[]>;
     postDocument(arg0: {}): unknown;
@@ -102,9 +102,9 @@ export class DataIndexService {
                     .resource(baseSchema.Name)
                     .create(document);
             },
-            batchUpsertDocuments: (documents: ElasticSearchDocument[]) => {
+            batchUpsertDocuments: (documents: ElasticSearchDocument[], writeMode: "Merge" | "Overwrite" | "Insert") => {
                 return api
-                    .batch({ Objects: documents })
+                    .batch({ Objects: documents, WriteMode: writeMode })
                     .uuid(this.addonUUID)
                     .resource(baseSchema.Name);
             },
