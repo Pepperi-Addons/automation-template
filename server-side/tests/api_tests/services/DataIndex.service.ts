@@ -15,6 +15,7 @@ import { v4 as uuidv4 } from 'uuid';
 type PartialScheme = Omit<AddonDataScheme, "Name" | "Type" | "DataSourceData">;
 
 export interface Connector {
+    deleteByQuery(query: any): Promise<any>;
     upsertSchema: (partialScheme: PartialScheme) => Promise<AddonDataScheme>,
     upsertDocument(document: any): any;
     batchUpsertDocuments(documents: any[]): any;
@@ -137,6 +138,9 @@ export class DataIndexService {
             },
             isShared: () => {
                 return type === "shared";
+            },
+            deleteByQuery: async (query: any) => {
+                return await api.delete(query).uuid(this.addonUUID).resource(baseSchema.Name);
             }
         }
     }

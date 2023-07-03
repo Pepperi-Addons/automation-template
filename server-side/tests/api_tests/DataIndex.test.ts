@@ -170,6 +170,22 @@ function baseTester(it: any, expect, connector: Connector, generalService: Gener
         validateOrderOfResponseBySpecificField(diResponse, "string_field");
     })
 
+    it("Get all documents ordered by string_field ASC", async () => {
+        let diResponse = await connector.getDocuments({
+            order_by: "string_field ASC"
+        });
+        expect(diResponse, "Response array").to.be.an('array').with.lengthOf(6);
+        validateOrderOfResponseBySpecificField(diResponse, "string_field");
+    })
+
+    it("Get all documents ordered by string_field DESC", async () => {
+        let diResponse = await connector.getDocuments({
+            order_by: "string_field DESC"
+        });
+        expect(diResponse, "Response array").to.be.an('array').with.lengthOf(6);
+        validateOrderOfResponseBySpecificField(diResponse.reverse(), "string_field");
+    })
+
     it("Get all documents ordered by bool_field", async () => {
         let diResponse = await connector.getDocuments({
             order_by: "bool_field"
@@ -455,7 +471,6 @@ function baseTester(it: any, expect, connector: Connector, generalService: Gener
         let diResponse = await connector.getDocuments({
             order_by: "int_field,Key"
         });
-        console.log(diResponse);
         expect(diResponse, "Response array").to.be.an('array').with.lengthOf(9);
         validateOrderOfResponseByArrayOfKeys(diResponse, ['4', '3', '9', '5', '2', '8', '1', '7', '6']);
     });
@@ -465,10 +480,42 @@ function baseTester(it: any, expect, connector: Connector, generalService: Gener
         let diResponse = await connector.getDocuments({
             order_by: "int_field,Key desc"
         });
-        console.log(diResponse);
         expect(diResponse, "Response array").to.be.an('array').with.lengthOf(9);
         validateOrderOfResponseByArrayOfKeys(diResponse, ['4', '9', '3', '5', '8', '2', '7', '1', '6']);
     });
+
+    // Validate delete_by_query with empty query fails (DI-23926)
+    it("Try delete_by_query with empty query", async () => {
+        try {
+            let diResponse = await connector.deleteByQuery({});
+            throw new Error(`delete_by_query with empty query should fail, succeeded with response - ${JSON.stringify(diResponse)}`);
+        } catch (err) {
+            if (err instanceof Error && err.message.includes("Query is required")) {
+                // success
+                return;
+            }
+            throw err;
+        }
+    });
+
+    // Validate delete_by_query with empty query didn't delete anything (DI-23926)
+    it("Validate delete_by_query with empty query didn't delete anything", async () => {
+        let diResponse = await connector.getDocuments({});
+        expect(diResponse, "Response array").to.be.an('array').with.lengthOf(9);
+    })
+
+    it("Try delete_by_query for all documents where int_field == 4", async () => {
+        let diResponse = await connector.deleteByQuery({
+            query: { match: { int_field: 4 } }
+        });
+        console.log("delete_by_query response: " + JSON.stringify(diResponse));
+        generalService.sleep(5000);
+    });
+
+    it("Validate delete_by_query for all documents where int_field == 4 succeeded", async () => {
+        let diResponse = await connector.getDocuments({});
+        expect(diResponse, "Response array").to.be.an('array').with.lengthOf(7);
+    })
 
     it(`Index Purge`, async () => {
         await connector.purgeSchema();
