@@ -76,6 +76,146 @@ function baseTester(it: any, expect, connector: Connector, generalService: Gener
         });
     });
 
+    it("Batch upsert one document (writeMode = Insert)", async () => {
+        let diResponse = await connector.batchUpsertDocuments(
+            [{
+                Key: "6",
+                string_field: "Shani Kimbell",
+                bool_field: false,
+                int_field: 5,
+                double_field: 10.0,
+                date_field: "2022-11-24T12:42:32.166Z",
+                unindexed_field: "shouldn't be indexed",
+                "name.Key": "60",
+                "name.first": "Shani",
+                "name.last": "Kimbell"
+            }],
+            "Insert"
+        );
+        expect(diResponse, "Response array").to.be.an('array').with.lengthOf(1);
+        expect(diResponse[0], "First response status").to.be.an('object').that.has.property('Status').that.equals('Insert');
+    })
+
+    it("Batch upsert a document thats already exist (writeMode = Insert)", async () => {
+        let diResponse = await connector.batchUpsertDocuments(
+            [{
+                Key: "6",
+                string_field: "Shani Kimbell",
+                bool_field: false,
+                int_field: 5,
+                double_field: 10.0,
+                date_field: "2022-11-24T12:42:32.166Z",
+                unindexed_field: "shouldn't be indexed",
+                "name.Key": "60",
+                "name.first": "Shani",
+                "name.last": "Kimbell"
+            }],
+            "Insert"
+        );
+        expect(diResponse, "Response array").to.be.an('array').with.lengthOf(1);
+        expect(diResponse[0], "First response status").to.be.an('object').that.has.property('Status').that.equals('Error');
+    })
+
+    it("Batch upsert one document (writeMode = Merge)", async () => {
+        let diResponse = await connector.batchUpsertDocuments(
+            [{
+                Key: "5",
+                string_field: "Susann Kimbell",
+                bool_field: true,
+                int_field: 2,
+                double_field: 8.4,
+                date_field: "2022-11-24T12:44:32.166Z",
+                unindexed_field: "shouldn't be indexed",
+                "name.Key": "50",
+                "name.first": "Susann",
+                "name.last": "Kimbell"
+            }],
+            "Merge"
+        );
+        expect(diResponse, "Response array").to.be.an('array').with.lengthOf(1);
+        expect(diResponse[0], "First response status").to.be.an('object').that.has.property('Status').that.equals('Insert');
+    })
+
+    it("Batch upsert a document thats already exist (writeMode = Merge)", async () => {
+        let diResponse = await connector.batchUpsertDocuments(
+            [{
+                Key: "5",
+                string_field: "Susann Kimbell",
+                bool_field: true,
+                int_field: 2,
+                double_field: 8.4,
+                date_field: "2022-11-24T12:44:32.166Z",
+                unindexed_field: "shouldn't be indexed",
+                "name.Key": "50",
+                "name.first": "Susann",
+                "name.last": "Kimbell"
+            }],
+            "Merge"
+        );
+        expect(diResponse, "Response array").to.be.an('array').with.lengthOf(1);
+        expect(diResponse[0], "First response status").to.be.an('object').that.has.property('Status').that.equals('Ignore');
+    })
+
+    it("Batch upsert a document thats already exist with a change (writeMode = Merge)", async () => {
+        let diResponse = await connector.batchUpsertDocuments(
+            [{
+                Key: "5",
+                string_field: "Susann Kimbell",
+                bool_field: true,
+                int_field: 3,
+                double_field: 8.4,
+                date_field: "2022-11-24T12:44:32.166Z",
+                unindexed_field: "shouldn't be indexed",
+                "name.Key": "50",
+                "name.first": "Susann",
+                "name.last": "Kimbell"
+            }],
+            "Merge"
+        );
+        expect(diResponse, "Response array").to.be.an('array').with.lengthOf(1);
+        expect(diResponse[0], "First response status").to.be.an('object').that.has.property('Status').that.equals('Update');
+    })
+
+    it("Batch upsert one document (writeMode = Overwrite)", async () => {
+        let diResponse = await connector.batchUpsertDocuments(
+            [{
+                Key: "4",
+                string_field: "Shani Silvano",
+                bool_field: false,
+                int_field: 1,
+                double_field: 2.3,
+                date_field: "2022-11-24T12:46:32.166Z",
+                unindexed_field: "shouldn't be indexed",
+                "name.Key": "40",
+                "name.first": "Shani",
+                "name.last": "Silvano"
+            }],
+            "Overwrite"
+        );
+        expect(diResponse, "Response array").to.be.an('array').with.lengthOf(1);
+        expect(diResponse[0], "First response status").to.be.an('object').that.has.property('Status').that.equals('Insert');
+    })
+
+    it("Batch upsert a document thats already exist (writeMode = Overwrite)", async () => {
+        let diResponse = await connector.batchUpsertDocuments(
+            [{
+                Key: "4",
+                string_field: "Shani Silvano",
+                bool_field: false,
+                int_field: 1,
+                double_field: 2.3,
+                date_field: "2022-11-24T12:46:32.166Z",
+                unindexed_field: "shouldn't be indexed",
+                "name.Key": "40",
+                "name.first": "Shani",
+                "name.last": "Silvano"
+            }],
+            "Overwrite"
+        );
+        expect(diResponse, "Response array").to.be.an('array').with.lengthOf(1);
+        expect(diResponse[0], "First response status").to.be.an('object').that.has.property('Status').that.equals('Update');
+    })
+
     it(`Create Documents`, async () => {
         await connector.batchUpsertDocuments([
             {
@@ -113,45 +253,8 @@ function baseTester(it: any, expect, connector: Connector, generalService: Gener
                 "name.Key": "30",
                 "name.first": "Jessika",
                 "name.last": "Silvano"
-            },
-            {
-                Key: "4",
-                string_field: "Shani Silvano",
-                bool_field: false,
-                int_field: 1,
-                double_field: 2.3,
-                date_field: "2022-11-24T12:46:32.166Z",
-                unindexed_field: "shouldn't be indexed",
-                "name.Key": "40",
-                "name.first": "Shani",
-                "name.last": "Silvano"
-            },
-            {
-                Key: "5",
-                string_field: "Susann Kimbell",
-                bool_field: true,
-                int_field: 3,
-                double_field: 8.4,
-                date_field: "2022-11-24T12:44:32.166Z",
-                unindexed_field: "shouldn't be indexed",
-                "name.Key": "50",
-                "name.first": "Susann",
-                "name.last": "Kimbell"
-            },
-            {
-                Key: "6",
-                string_field: "Shani Kimbell",
-                bool_field: false,
-                int_field: 5,
-                double_field: 10.0,
-                date_field: "2022-11-24T12:42:32.166Z",
-                unindexed_field: "shouldn't be indexed",
-                "name.Key": "60",
-                "name.first": "Shani",
-                "name.last": "Kimbell"
             }
         ]);
-        generalService.sleep(5000);
     })
 
     it("Get all documents ordered by Key", async () => {
@@ -168,6 +271,22 @@ function baseTester(it: any, expect, connector: Connector, generalService: Gener
         });
         expect(diResponse, "Response array").to.be.an('array').with.lengthOf(6);
         validateOrderOfResponseBySpecificField(diResponse, "string_field");
+    })
+
+    it("Get all documents ordered by string_field ASC", async () => {
+        let diResponse = await connector.getDocuments({
+            order_by: "string_field ASC"
+        });
+        expect(diResponse, "Response array").to.be.an('array').with.lengthOf(6);
+        validateOrderOfResponseBySpecificField(diResponse, "string_field");
+    })
+
+    it("Get all documents ordered by string_field DESC", async () => {
+        let diResponse = await connector.getDocuments({
+            order_by: "string_field DESC"
+        });
+        expect(diResponse, "Response array").to.be.an('array').with.lengthOf(6);
+        validateOrderOfResponseBySpecificField(diResponse.reverse(), "string_field");
     })
 
     it("Get all documents ordered by bool_field", async () => {
@@ -447,7 +566,6 @@ function baseTester(it: any, expect, connector: Connector, generalService: Gener
                 "name.last": "Silvano"
             }
         ]);
-        generalService.sleep(5000);
     });
 
     // Validate order_by with multiple fields works (DI-23847)
@@ -455,7 +573,6 @@ function baseTester(it: any, expect, connector: Connector, generalService: Gener
         let diResponse = await connector.getDocuments({
             order_by: "int_field,Key"
         });
-        console.log(diResponse);
         expect(diResponse, "Response array").to.be.an('array').with.lengthOf(9);
         validateOrderOfResponseByArrayOfKeys(diResponse, ['4', '3', '9', '5', '2', '8', '1', '7', '6']);
     });
@@ -465,10 +582,42 @@ function baseTester(it: any, expect, connector: Connector, generalService: Gener
         let diResponse = await connector.getDocuments({
             order_by: "int_field,Key desc"
         });
-        console.log(diResponse);
         expect(diResponse, "Response array").to.be.an('array').with.lengthOf(9);
         validateOrderOfResponseByArrayOfKeys(diResponse, ['4', '9', '3', '5', '8', '2', '7', '1', '6']);
     });
+
+    // Validate delete_by_query with empty query fails (DI-23926)
+    it("Try delete_by_query with empty query", async () => {
+        try {
+            let diResponse = await connector.deleteByQuery({});
+            throw new Error(`delete_by_query with empty query should fail, succeeded with response - ${JSON.stringify(diResponse)}`);
+        } catch (err) {
+            if (err instanceof Error && err.message.includes("Query is required")) {
+                // success
+                return;
+            }
+            throw err;
+        }
+    });
+
+    // Validate delete_by_query with empty query didn't delete anything (DI-23926)
+    it("Validate delete_by_query with empty query didn't delete anything", async () => {
+        let diResponse = await connector.getDocuments({});
+        expect(diResponse, "Response array").to.be.an('array').with.lengthOf(9);
+    })
+
+    it("Try delete_by_query for all documents where int_field == 4", async () => {
+        let diResponse = await connector.deleteByQuery({
+            query: { match: { int_field: 4 } }
+        });
+        console.log("delete_by_query response: " + JSON.stringify(diResponse));
+        generalService.sleep(5000);
+    });
+
+    it("Validate delete_by_query for all documents where int_field == 4 succeeded", async () => {
+        let diResponse = await connector.getDocuments({});
+        expect(diResponse, "Response array").to.be.an('array').with.lengthOf(7);
+    })
 
     it(`Index Purge`, async () => {
         await connector.purgeSchema();
@@ -603,7 +752,6 @@ function abstractTester(it: any, expect: Chai.ExpectStatic, connector1: Connecto
                 ElasticSearchSuperTypes: ["abstarcSchemaName"]
             }
         ]);
-        generalService.sleep(5000);
     });
 
     // DI-21565 + Tests bug DI-22195
