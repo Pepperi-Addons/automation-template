@@ -104,7 +104,10 @@ export class DataIndexService {
             },
             batchUpsertDocuments: (documents: ElasticSearchDocument[], writeMode?: "Merge" | "Overwrite" | "Insert") => {
                 return api
-                    .batch({ Objects: documents, WriteMode: writeMode })
+                    .batch(
+                        { Objects: documents, WriteMode: writeMode },
+                        { "X-Pepperi-Await-Indexing": true }
+                    )
                     .uuid(this.addonUUID)
                     .resource(baseSchema.Name);
             },

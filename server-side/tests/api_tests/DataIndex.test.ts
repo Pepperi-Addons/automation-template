@@ -255,7 +255,6 @@ function baseTester(it: any, expect, connector: Connector, generalService: Gener
                 "name.last": "Silvano"
             }
         ]);
-        generalService.sleep(5000);
     })
 
     it("Get all documents ordered by Key", async () => {
@@ -567,7 +566,6 @@ function baseTester(it: any, expect, connector: Connector, generalService: Gener
                 "name.last": "Silvano"
             }
         ]);
-        generalService.sleep(5000);
     });
 
     // Validate order_by with multiple fields works (DI-23847)
@@ -754,7 +752,6 @@ function abstractTester(it: any, expect: Chai.ExpectStatic, connector1: Connecto
                 ElasticSearchSuperTypes: ["abstarcSchemaName"]
             }
         ]);
-        generalService.sleep(5000);
     });
 
     // DI-21565 + Tests bug DI-22195
